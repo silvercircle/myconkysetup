@@ -1,0 +1,124 @@
+
+conky.config = {
+    use_xft = true,
+    font = "DejaVu Sans:bold:size=9",
+    xftalpha = 1,
+    text_buffer_size = 2048,
+    lua_load = "$HOME/.weather/conky-draw_bg.lua",
+    lua_draw_hook_pre = "conky_draw_bg",
+    update_interval = "1.5",
+    total_run_times = 0,
+
+    own_window = true,
+    own_window_transparent = true,
+    -- own_window_type override,
+    -- own_window_type dock,
+    -- own_window_type desktop,
+    own_window_type = normal,
+    border_inner_margin = 10,
+
+    own_window_argb_visual = true,
+    own_window_argb_value = 100,
+
+    -- If own_window is yes, these window manager hints may be used
+    own_window_hints = "undecorated,below,sticky,skip_taskbar,skip_pager",
+
+    -- Use double buffering (reduces flicker, may not work for everyone)
+    double_buffer = true,
+
+    -- Minimum size of text area
+    minimum_size = "200 400",
+    maximum_width = 200,
+
+    -- Draw shades?
+    draw_shades = yes,
+
+    -- Draw outlines?
+    draw_outline = no,
+
+    -- Draw borders around text
+    draw_borders = no,
+
+    stippled_borders = 0,
+
+    border_width = 1,
+
+    default_color = bbbbcc,
+    -- default_shade_color black,
+    -- default_outline_color grey,
+    own_window_colour = 101020,
+
+    -- alignment top_left
+    -- alignment top_right
+    -- alignment bottom_left
+    alignment = "bottom_right",
+
+    gap_x = 0,
+    gap_y = 50,
+
+    -- Subtract file system buffers from used memory?
+    no_buffers = yes,
+
+    -- set to yes if you want all text to be in uppercase
+    uppercase = no,
+
+    cpu_avg_samples = 5,
+    net_avg_samples = 2,
+
+    override_utf8_locale = yes,
+
+    -- Add spaces to keep things from moving about? This only affects certain objects.
+    use_spacer = none,
+
+    temperature_unit = celsius
+}
+
+conky.text = [[
+SYSTEM ${hr 2}
+${alignc +15}${font Noto Sans:bold:size=18}${alignr}${nodename}${font}
+${voffset 10}${font OpenLogos:size=16}${color cc5050}B${color}${font} ${voffset -5}Kernel: ${alignr}${kernel}
+${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU1: ${cpu cpu1}% ${alignr}${cpubar cpu1 8,60}
+${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU2: ${cpu cpu2}% ${alignr}${cpubar cpu2 8,60}
+${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU3: ${cpu cpu3}% ${alignr}${cpubar cpu3 8,60}
+${voffset 5}${font StyleBats:size=16}${color cc5050}g${color}${font} ${voffset -3}RAM: $mem ${alignr}${membar 8,60}
+${voffset 5}${font StyleBats:size=16}${color cc5050}j${color}${font} ${voffset -3}SWAP: $swap ${alignr}${swapbar 8,60}
+${voffset 5}${font StyleBats:size=16}${color cc5050}q${color}${font} ${voffset -3}Uptime: ${alignr}${uptime_short}
+
+DATE ${hr 2}
+${color 80b0c0}${voffset -20}
+${font Noto Sans:bold:size=30}${time %H:%M}${alignr}${font Noto Sans:bold:size=12}${time %Z}${font}
+${voffset -40}${alignr}${font Noto Sans:bold:size=12}Week ${time %U}${font}
+${voffset 24}${alignc}${font Noto Sans:bold:size=10}${time %A, %d %B %Y}${font}
+${hr 1}
+${font Noto Sans:size=9}
+${voffset -15}GMT: ${alignr}${tztime GMT %H:%M}
+Eastern: ${alignr}${tztime US/Eastern %H:%M}
+Central: ${alignr}${tztime US/Central %H:%M}
+West: ${alignr}${tztime US/Pacific %H:%M}
+${voffset -20}${font}
+${color}
+
+${if_existing /proc/net/route enp0s7}${voffset -20} WEATHER (${execpi 120 sed -n '26p' $HOME/.weather/weather}) ${hr 2}
+${color aaaa40}
+${voffset -15}
+${font Noto Sans:bold:size=30}${alignr}${voffset -15}${execpi 120 sed -n '16p' $HOME/.weather/weather}°C
+${voffset -55}${alignr}${font Noto Sans:bold:size=9}${voffset 20}Feels like: ${execpi 120 sed -n '3p' $HOME/.weather/weather}°C
+${alignr}${execpi 120 sed -n '27p' $HOME/.weather/weather}
+${voffset -70}${font conkyweather:size=50}${execpi 120 sed -n '2p' $HOME/.weather/weather}${font}
+${font Noto Sans:size=9}
+${voffset -5}${execpi 120 sed -n '17p' $HOME/.weather/weather}°C${alignr}${execpi 120 sed -n '21p' $HOME/.weather/weather}
+${execpi 120 sed -n '18p' $HOME/.weather/weather}%${alignr}${execpi 120 sed -n '19p' $HOME/.weather/weather} hPa
+Wind: ${execpi 120 sed -n '25p' $HOME/.weather/weather} at ${execpi 120 sed -n '20p' $HOME/.weather/weather}m/s${alignr}${execpi 120 sed -n '22p' $HOME/.weather/weather}km
+${voffset 5}${execpi 120 sed -n '23p' $HOME/.weather/weather}${alignr}${execpi 120 sed -n '24p' $HOME/.weather/weather}
+${voffset -20}${font conkyweather:size=30}${voffset 20}${goto 15}${execpi 120 sed -n '4p' $HOME/.weather/weather}${goto 90}${execpi 120 sed -n '8p' $HOME/.weather/weather}${goto 165}${execpi 120 sed -n '12p' $HOME/.weather/weather}${voffset 12}${goto 15}${font Noto Sans:bold:size=10}${execpi 120 sed -n '5p' $HOME/.weather/weather}°/${execpi 120 sed -n '6p' $HOME/.weather/weather}°${goto 85}${execpi 120 sed -n '9p' $HOME/.weather/weather}°/${execpi 120 sed -n '10p' $HOME/.weather/weather}°${goto 160}${execpi 120 sed -n '13p' $HOME/.weather/weather}°/${execpi 120 sed -n '14p' $HOME/.weather/weather}°${voffset 12}${goto 25}${font Noto Sans:bold:size=10}${execpi 120 sed -n '7p' $HOME/.weather/weather}${goto 95}${execpi 120 sed -n '11p' $HOME/.weather/weather}${goto 170}${execpi 120 sed -n '15p' $HOME/.weather/weather}${font}
+${color}
+${font}
+${voffset -20}NETWORK ${hr 2}
+
+${voffset -6}${font PizzaDude Bullets:size=14}O${font} Up: ${upspeed enp0s7}${alignr}${upspeedgraph enp0s7 8,60 black black}
+${voffset 4}${font PizzaDude Bullets:size=14}U${font} Down: ${downspeed enp0s7}${alignr}${downspeedgraph enp0s7 8,60 black black}
+${voffset 4}${font PizzaDude Bullets:size=14}N${font} Total Upload: ${alignr}${totalup enp0s7}
+${voffset 4}${font PizzaDude Bullets:size=14}T${font} Total Download: ${alignr}${totaldown enp0s7}
+${voffset -170}
+$endif
+]]
