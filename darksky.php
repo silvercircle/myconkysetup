@@ -151,9 +151,9 @@ echo("UV: " . $weatherData->currently->uvIndex); // 21
 echo("\n");
 echo("Vis: " . (int)round($weatherData->currently->visibility)); // 22
 echo("\n");
-echo("Sunrise: " . date("H:i", $weatherData->daily->data[0]->sunriseTime)); // 23
+echo(date("H:i", $weatherData->daily->data[0]->sunriseTime)); // 23
 echo("\n");
-echo("Sunset: " . date("H:i", $weatherData->daily->data[0]->sunsetTime)); // 24
+echo(date("H:i", $weatherData->daily->data[0]->sunsetTime)); // 24
 echo("\n");
 echo(degToCompass($weatherData->currently->windBearing)); // 25
 echo("\n");
