@@ -6,7 +6,7 @@ conky.config = {
     text_buffer_size = 2048,
     lua_load = "$HOME/.weather/conky-draw_bg.lua",
     lua_draw_hook_pre = "conky_draw_bg",
-    update_interval = "1.5",
+    update_interval = 1.5,
     total_run_times = 0,
 
     own_window = true,
@@ -43,10 +43,10 @@ conky.config = {
 
     border_width = 1,
 
-    default_color = bbbbcc,
+    default_color = "bbbbcc",
     -- default_shade_color black,
     -- default_outline_color grey,
-    own_window_colour = 101020,
+    own_window_colour = "101020",
 
     -- alignment top_left
     -- alignment top_right
@@ -77,17 +77,18 @@ conky.text = [[
 SYSTEM ${hr 2}
 ${alignc +15}${font Noto Sans:bold:size=18}${alignr}${nodename}${font}
 ${voffset 10}${font OpenLogos:size=16}${color cc5050}B${color}${font} ${voffset -5}Kernel: ${alignr}${kernel}
-${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU1: ${cpu cpu1}% ${alignr}${cpubar cpu1 8,60}
-${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU2: ${cpu cpu2}% ${alignr}${cpubar cpu2 8,60}
-${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU3: ${cpu cpu3}% ${alignr}${cpubar cpu3 8,60}
+${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU: ${cpu cpu0}% ${alignr}${cpubar cpu0 8,60}
+# ${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU1: ${cpu cpu1}% ${alignr}${cpubar cpu1 8,60}
+# ${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU2: ${cpu cpu2}% ${alignr}${cpubar cpu2 8,60}
+# ${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU3: ${cpu cpu3}% ${alignr}${cpubar cpu3 8,60}
 ${voffset 5}${font StyleBats:size=16}${color cc5050}g${color}${font} ${voffset -3}RAM: $mem ${alignr}${membar 8,60}
-${voffset 5}${font StyleBats:size=16}${color cc5050}j${color}${font} ${voffset -3}SWAP: $swap ${alignr}${swapbar 8,60}
+# ${voffset 5}${font StyleBats:size=16}${color cc5050}j${color}${font} ${voffset -3}SWAP: $swap ${alignr}${swapbar 8,60}
 ${voffset 5}${font StyleBats:size=16}${color cc5050}q${color}${font} ${voffset -3}Uptime: ${alignr}${uptime_short}
 
 DATE ${hr 2}
 ${color 80b0c0}${voffset -20}
-${font Noto Sans:bold:size=30}${time %H:%M}${alignr}${font Noto Sans:bold:size=12}${time %Z}${font}
-${voffset -40}${alignr}${font Noto Sans:bold:size=12}Week ${time %U}${font}
+${font Noto Sans:bold:size=30}${time %H:%M}${alignr}${font Noto Sans:bold:size=12}${time %Z}
+${voffset -40}${alignr}Week ${time %U}${font}
 ${voffset 24}${alignc}${font Noto Sans:bold:size=10}${time %A, %d %B %Y}${font}
 ${hr 1}
 ${font Noto Sans:size=9}
@@ -106,11 +107,11 @@ ${voffset -55}${alignr}${font Noto Sans:bold:size=9}${voffset 20}Feels like: ${e
 ${alignr}${execpi 120 sed -n '27p' $HOME/.weather/weather}
 ${voffset -70}${font conkyweather:size=50}${execpi 120 sed -n '2p' $HOME/.weather/weather}${font}
 ${font Noto Sans:size=9}
-${voffset -5}${execpi 120 sed -n '17p' $HOME/.weather/weather}°C${alignr}${execpi 120 sed -n '21p' $HOME/.weather/weather}
+${voffset -10}${execpi 120 sed -n '17p' $HOME/.weather/weather}°C${alignr}${execpi 120 sed -n '21p' $HOME/.weather/weather}
 ${execpi 120 sed -n '18p' $HOME/.weather/weather}%${alignr}${execpi 120 sed -n '19p' $HOME/.weather/weather} hPa
 Wind: ${execpi 120 sed -n '25p' $HOME/.weather/weather} at ${execpi 120 sed -n '20p' $HOME/.weather/weather}m/s${alignr}${execpi 120 sed -n '22p' $HOME/.weather/weather}km
-${voffset 5}${execpi 120 sed -n '23p' $HOME/.weather/weather}${alignr}${execpi 120 sed -n '24p' $HOME/.weather/weather}
-${voffset -20}${font conkyweather:size=30}${voffset 20}${goto 15}${execpi 120 sed -n '4p' $HOME/.weather/weather}${goto 90}${execpi 120 sed -n '8p' $HOME/.weather/weather}${goto 165}${execpi 120 sed -n '12p' $HOME/.weather/weather}${voffset 12}${goto 15}${font Noto Sans:bold:size=10}${execpi 120 sed -n '5p' $HOME/.weather/weather}°/${execpi 120 sed -n '6p' $HOME/.weather/weather}°${goto 85}${execpi 120 sed -n '9p' $HOME/.weather/weather}°/${execpi 120 sed -n '10p' $HOME/.weather/weather}°${goto 160}${execpi 120 sed -n '13p' $HOME/.weather/weather}°/${execpi 120 sed -n '14p' $HOME/.weather/weather}°${voffset 12}${goto 25}${font Noto Sans:bold:size=10}${execpi 120 sed -n '7p' $HOME/.weather/weather}${goto 95}${execpi 120 sed -n '11p' $HOME/.weather/weather}${goto 170}${execpi 120 sed -n '15p' $HOME/.weather/weather}${font}
+${execpi 120 sed -n '23p' $HOME/.weather/weather}${alignr}${execpi 120 sed -n '24p' $HOME/.weather/weather}
+${voffset -15}${font conkyweather:size=30}${voffset 20}${goto 15}${execpi 120 sed -n '4p' $HOME/.weather/weather}${goto 90}${execpi 120 sed -n '8p' $HOME/.weather/weather}${goto 165}${execpi 120 sed -n '12p' $HOME/.weather/weather}${voffset 12}${goto 15}${font Noto Sans:bold:size=10}${execpi 120 sed -n '5p' $HOME/.weather/weather}°/${execpi 120 sed -n '6p' $HOME/.weather/weather}°${goto 85}${execpi 120 sed -n '9p' $HOME/.weather/weather}°/${execpi 120 sed -n '10p' $HOME/.weather/weather}°${goto 160}${execpi 120 sed -n '13p' $HOME/.weather/weather}°/${execpi 120 sed -n '14p' $HOME/.weather/weather}°${voffset 12}${goto 25}${font Noto Sans:bold:size=10}${execpi 120 sed -n '7p' $HOME/.weather/weather}${goto 95}${execpi 120 sed -n '11p' $HOME/.weather/weather}${goto 170}${execpi 120 sed -n '15p' $HOME/.weather/weather}${font}
 ${color}
 ${font}
 ${voffset -20}NETWORK ${hr 2}
