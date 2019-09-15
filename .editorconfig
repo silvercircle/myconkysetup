@@ -1,0 +1,11 @@
+[*.dt]
+indent_style = tab
+indent_size = 2
+tab_size = 2
+end_of_line = lf
+
+[*.d]
+indent_style = tab
+indent_size = 4
+tab_size = 4
+end_of_line = lf

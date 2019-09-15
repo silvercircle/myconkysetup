@@ -1,0 +1,6 @@
+name "darksky-d"
+targetType "executable"
+sourcePaths "."
+dependency "vibe-d:data" version="~>0.8.6-beta.1"
+dependency "vibe-d:core" version="~>0.8.6-beta.1"
+versions "VibeManualMemoryManagement"
