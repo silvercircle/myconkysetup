@@ -36,6 +36,7 @@ private:
 		@optional @name("last_fetched") SysTime		lastFetched;
 		@optional @name("num_updates")	uint		numUpdates = 0;
 		@optional @name("location")		string		location = "48.2082,16.3738";
+        @optional @name("units")        string      units = "si";
 	}
 
 	this(ref string[] args)

@@ -85,7 +85,7 @@ void main(string[] args)
 
     void fetchFromApi()
     {
-        const string url = "https://api.darksky.net/forecast/" ~ cfg.key ~ "/" ~ ctx.cfg.location ~ "?units=si";
+        const string url = "https://api.darksky.net/forecast/" ~ cfg.key ~ "/" ~ ctx.cfg.location ~ "?units=" ~ ctx.cfg.units;
         ctx.apiJson = std.net.curl.get(url);
         try {
             File f = File(ctx.cachefile, "w");
@@ -96,6 +96,7 @@ void main(string[] args)
             ctx.orderlyShutDown(-2);
         }
         ctx.cfg.lastFetched = Clock.currTime;
+        ctx.cfg.numUpdates++;
     }
 
 	const GetoptResult stdargs = getopt(args, "key", &cfg.key, "useCached", &cfg.fUseCached);
@@ -130,62 +131,31 @@ void main(string[] args)
     ctx.orderlyShutDown(-1);
 }
 
+string[string] daytimeCodes, nighttimeCodes;
+/++
+ + this is a module constructor, it runs before main()
+ +/
+static this()
+{
+    daytimeCodes = [ "clear-day": "a", "clear-night": "a", "rain": "g",
+        "snow": "o", "sleet": "x", "wind": "9", "fog": "7", "cloudy": "e",
+        "partly-cloudy-day": "c", "partly-cloudy-night": "a"];
+
+
+    nighttimeCodes = [ "clear-day": "A", "clear-night": "A", "rain": "G",
+        "snow": "O", "sleet": "x", "wind": "9", "fog": "7", "cloudy": "f",
+        "partly-cloudy-day": "C", "partly-cloudy-night": "C"];
+}
+
 void generateOutput(Json result)
 {
-
-    string daytimeIconToCode(const string icon) {
-        final switch (icon) {
-            case "clear-day":
-                return "a";
-            case "clear-night":
-                return "a";
-            case "rain":
-                return "g";
-            case "snow":
-                return "o";
-            case "sleet":
-                return "x";
-            case "wind":
-                return "9";
-            case "fog":
-                return "7";
-            case "cloudy":
-                return "e";
-            case "partly-cloudy-day":
-                return "c";
-            case "partly-cloudy-night":
-                return "a";
-        }
-    }
-
-    string nighttimeIconToCode(const string icon) {
-        final switch(icon) {
-            case "clear-day":
-                return "A";
-            case "clear-night":
-                return "A";
-            case "rain":
-                return "G";
-            case "snow":
-                return "O";
-            case "sleet":
-                return "x";
-            case "wind":
-                return "9";
-            case "fog":
-                return "7";
-            case "cloudy":
-                return "f";
-            case "partly-cloudy-day":
-                return "C";
-            case "partly-cloudy-night":
-                return "C";
-        }
-    }    
-
     void outputForecast(const Json day)
     {
-        writeln(daytimeIconToCode(day["icon"].get!string));
+        if(day["icon"].get!string in daytimeCodes) {
+            writeln(daytimeCodes[day["icon"].get!string]);
+        } else {
+            writeln("a");
+        }
         writeln(cast(int)day["apparentTemperatureLow"].get!float);
         writeln(cast(int)day["apparentTemperatureHigh"].get!float);
         const SysTime t = SysTime.fromUnixTime(day["time"].get!int);
@@ -199,9 +169,17 @@ void generateOutput(Json result)
     //writeln(timestamp.hour);
 
     if (timestamp.hour > 6 && timestamp.hour < 18) {
-        writeln(daytimeIconToCode(currently["icon"].get!string));
+        if(currently["icon"].get!string in daytimeCodes) {
+            writeln(daytimeCodes[currently["icon"].get!string]);
+        } else {
+            writeln("a");
+        }
     } else {
-        writeln(nighttimeIconToCode(currently["icon"].get!string));
+        if(currently["icon"].get!string in nighttimeCodes) {
+            writeln(nighttimeCodes[currently["icon"].get!string]);
+        } else {
+            writeln("a");
+        }
     }
     writeln(cast(int)currently["apparentTemperature"].get!float);
     outputForecast(result["daily"]["data"][1]);
@@ -212,7 +190,7 @@ void generateOutput(Json result)
     writef("Humidity: %d\n", cast(int)(currently["humidity"].get!float * 100));
     writeln(cast(int)currently["pressure"].get!float);
     writef("%.1f\n", currently["windSpeed"].get!float);
-    writeln(currently["uvIndex"].get!int);
+    writef("UV: %d\n", currently["uvIndex"].get!int);
     writef("%.0f\n", currently["visibility"].get!float);
 
     SysTime sunrise = SysTime.fromUnixTime(result["daily"]["data"][0]["sunriseTime"].get!int);

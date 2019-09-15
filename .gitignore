@@ -3,4 +3,6 @@ darksky
 _data
 dub.selections.json
 .vscode/sftp.json
+*.vp*
+*.vtg
 
