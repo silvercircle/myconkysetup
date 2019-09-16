@@ -93,7 +93,7 @@ function test_image_forecast($icon) {
 $coords="48.2082,16.3738";
 
 # Put your API key for Dark Sky here:
-$apiKey="8b828fcdd7c329b4afee24fff3493dbb";
+$apiKey="";
 
 # Put your preferred temperature units here:
 $units="si";
