@@ -10,7 +10,6 @@ module context;
 
 import std.process, std.path, std.stdio, std.file, std.string, std.conv, core.stdc.stdlib: exit;
 import vibe.data.json, vibe.data.serialization, std.datetime :Clock, SysTime;
-import vibe.core.log;
 
 enum LOG { TRACE, DEBUG, FATAL, WARN }
 
@@ -76,7 +75,6 @@ private:
 	string      	portableDir;
 	string      	exePath;
 	string      	configFilePath, logfilePath;
-	shared      	FileLogger logger;
 	string			cacheFileName, prettyCacheFileName;
 public:
 	/**
@@ -126,13 +124,6 @@ public:
 			
 		}
 		this.logfilePath = buildPath(this.homeDir, "darksky-d.log");
-		this.logger = cast(shared) new vibe.core.log.FileLogger(this.logfilePath);
-		this.logger.useColors = true;
-		this.logger.format = FileLogger.Format.threadTime;
-		this.logger.minLevel = LogLevel.debug_;
-	   
-		vibe.core.log.registerLogger(this.logger);
-
 		this.configFilePath = buildPath(this.homeDir, "config.json");
 		try {
 			std.file.isFile(this.configFilePath);

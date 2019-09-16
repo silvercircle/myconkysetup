@@ -19,6 +19,11 @@ import context;
 struct Config {
     string  key = "";
     bool    fUseCached = false;
+    char    tempUnit = 'C';
+    string  windUnit = "ms";
+    string  visUnit = "km";
+    string  windSpeed;
+    string  vis;
 }
 
 string[] _bearings = ["N","NNE","NE","ENE","E","ESE", "SE", "SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
@@ -30,14 +35,16 @@ string[] _bearings = ["N","NNE","NE","ENE","E","ESE", "SE", "SSE","S","SSW","SW"
 void print_usage()
 {  
 	writeln("\nUSAGE:");
-	writef(q"[darksky-d --key=YOUR_API_KEY --useCached=true|false --loc=lat,lon
- 
+	writef(q"[darksky-d --key=YOUR_API_KEY --useCached=true|false --loc=lat,lon --tempUnit=C|F --windUnit=ms|km|knots|mph
+                        --visUnit = km|miles
     key:        Your darksky API key. Mandatory.
     useCached:  When true, use cached JSON. If none is found, print a notice and exit. Otherwise fetch
-                data from the darksky API.
+                fresh data from the darksky API.
     loc:        Your location, see darksky API docs. Must be in the format latitude,longitude
                 Example: --loc=48.2082,16.3738. This will be saved in the config until you specify
                 a different location.
+    tempUnit:   C or F, default is C
+    windUnit:   Unit for the wind speed. ms (m/s), km (km/h) knots, or mph are available. Defaults to m/s
 ]");
 }
 
@@ -54,13 +61,14 @@ string degToBearing(uint wind_bearing)
     return _bearings[val % 16];
 }
 
+Config cfg = Config();
+
 /++
  + returns 0 on success, any other value means failure and a possibly incomplete
  + output
  +/
 void main(string[] args)
 {
-    Config cfg = Config();
     GlobalContext ctx = GlobalContext.getInstance(args);
 
     Json returnError(uint code = 0)
@@ -85,7 +93,7 @@ void main(string[] args)
 
     void fetchFromApi()
     {
-        const string url = "https://api.darksky.net/forecast/" ~ cfg.key ~ "/" ~ ctx.cfg.location ~ "?units=" ~ ctx.cfg.units;
+        const string url = "https://api.darksky.net/forecast/" ~ cfg.key ~ "/" ~ ctx.cfg.location ~ "?units=si";
         ctx.apiJson = std.net.curl.get(url);
         try {
             File f = File(ctx.cachefile, "w");
@@ -99,7 +107,8 @@ void main(string[] args)
         ctx.cfg.numUpdates++;
     }
 
-	const GetoptResult stdargs = getopt(args, "key", &cfg.key, "useCached", &cfg.fUseCached);
+	const GetoptResult stdargs = getopt(args, "key", &cfg.key, "useCached", &cfg.fUseCached,
+                                        "tempUnit", &cfg.tempUnit, "windUnit", &cfg.windUnit, "visUnit", &cfg.visUnit);
 	if(stdargs.helpWanted) {
         print_usage();
         ctx.orderlyShutDown(-1);
@@ -164,19 +173,60 @@ static this()
 
 void generateOutput(Json result)
 {
+
+    T convertTemperature(T)(T temp)
+    {
+        if(cfg.tempUnit == 'F') {
+            temp = (temp * 9/5) + 32;
+            return temp;
+        } else {
+            return temp;
+        }
+    }
+
+    float convertVis(float vis)
+    {
+        return cfg.visUnit == "miles" ? vis / 1.609 : vis;
+    }
+
+    float convertWindspeed(float speed)
+    {
+        switch(cfg.windUnit) {
+            case "km":
+                cfg.windSpeed = "km/h".dup;
+                return speed * 3.6;
+            case "mph":
+                cfg.windSpeed = "mph".dup;
+                return speed * 2.237;
+            case "knots":
+                cfg.windSpeed = "knots".dup;
+                return speed * 1.944;
+            default:
+                cfg.windSpeed = "m/s".dup;
+                return speed;
+            }
+    }
     /++
      + output low/high temperature and condition "icon" for one day in the
      + forecast
      +/
-    void outputForecast(const Json day)
+    void outputForecast(Json day)
     {
         if(day["icon"].get!string in daytimeCodes) {
             writeln(daytimeCodes[day["icon"].get!string]);
         } else {
             writeln("a");
         }
-        writeln(cast(int)day["apparentTemperatureLow"].get!float);
-        writeln(cast(int)day["apparentTemperatureHigh"].get!float);
+        try {
+            writef("%.0f\n", convertTemperature(day["apparentTemperatureLow"].get!float));
+        } catch (JSONException e) {
+            writef("%d\n", convertTemperature(day["apparentTemperatureLow"].get!int));
+        }
+        try {
+            writef("%.0f\n", convertTemperature(day["apparentTemperatureHigh"].get!float));
+        } catch (JSONException e) {
+            writef("%d\n", convertTemperature(day["apparentTemperatureHigh"].get!int));
+        }
         const SysTime t = SysTime.fromUnixTime(day["time"].get!int);
         string dow = t.dayOfWeek.to!string;
         writeln(capitalize(cast(string)dow));
@@ -190,6 +240,7 @@ void generateOutput(Json result)
     SysTime sunset = SysTime.fromUnixTime(result["daily"]["data"][0]["sunsetTime"].get!int);
 
     const SysTime now = Clock.currTime;
+
     /+
      + show the day icon after sunrise and before sunset
      +/
@@ -206,17 +257,31 @@ void generateOutput(Json result)
             writeln("a");
         }
     }
-    writeln(cast(int)currently["apparentTemperature"].get!float);
+    try {
+        writef("%.1f°%c\n", convertTemperature(currently["apparentTemperature"].get!float), cfg.tempUnit);
+    } catch (JSONException e) {
+        writef("%d°%c\n", convertTemperature(currently["apparentTemperature"].get!int), cfg.tempUnit);
+    }
     outputForecast(result["daily"]["data"][1]);
     outputForecast(result["daily"]["data"][2]);
     outputForecast(result["daily"]["data"][3]);
-    writeln(cast(int)currently["temperature"].get!float);
-    writef("Dew point: %.1f\n", currently["dewPoint"].get!float);
+
+    try {
+        writef("%.1f°%c\n", convertTemperature(currently["temperature"].get!float), cfg.tempUnit);
+    } catch (JSONException e) {
+        writef("%d°%c\n", convertTemperature(currently["temperature"].get!int), cfg.tempUnit);
+    }
+
+    try {
+        writef("Dew point: %.1f°%c\n", convertTemperature(currently["dewPoint"].get!float), cfg.tempUnit);
+    } catch (JSONException e) {
+        writef("Dew point: %d°%c\n", convertTemperature(currently["dewPoint"].get!int), cfg.tempUnit);
+    }
     writef("Humidity: %d\n", cast(int)(currently["humidity"].get!float * 100));
     writeln(cast(int)currently["pressure"].get!float);
-    writef("%.1f\n", currently["windSpeed"].get!float);
+    writef("%.1f %s\n", convertWindspeed(currently["windSpeed"].get!float), cfg.windSpeed);
     writef("UV: %d\n", currently["uvIndex"].get!int);
-    writef("%.0f\n", currently["visibility"].get!float);
+    writef("%.1f %s\n", convertVis(currently["visibility"].get!float), cfg.visUnit);
 
     writef("%02d:%02d\n", sunrise.hour, sunrise.minute);
     writef("%02d:%02d\n", sunset.hour, sunset.minute);                  // 23
