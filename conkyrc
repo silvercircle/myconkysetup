@@ -14,11 +14,11 @@ conky.config = {
     -- own_window_type override,
     -- own_window_type dock,
     -- own_window_type desktop,
-    own_window_type = normal,
+    own_window_type = override,
     border_inner_margin = 10,
 
     own_window_argb_visual = true,
-    own_window_argb_value = 120,
+    own_window_argb_value = 130,
 
     -- If own_window is yes, these window manager hints may be used
     own_window_hints = "undecorated,below,sticky,skip_taskbar,skip_pager",
@@ -52,7 +52,7 @@ conky.config = {
     -- alignment bottom_left
     alignment = "bottom_right",
 
-    gap_x = 0,
+    gap_x = 30,
     gap_y = 50,
 
     -- Subtract file system buffers from used memory?
@@ -84,8 +84,8 @@ ${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -
 # ${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU1: ${cpu cpu1}% ${alignr}${cpubar cpu1 8,60}
 # ${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU2: ${cpu cpu2}% ${alignr}${cpubar cpu2 8,60}
 # ${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU3: ${cpu cpu3}% ${alignr}${cpubar cpu3 8,60}
-${voffset 5}${font StyleBats:size=16}${color cc5050}g${color}${font} ${voffset -3}RAM: $mem ${alignr}${membar 8,60}
-${voffset 5}${font StyleBats:size=16}${color cc5050}j${color}${font} ${voffset -3}SWAP: $swap ${alignr}${swapbar 8,60}
+# ${voffset 5}${font StyleBats:size=16}${color cc5050}g${color}${font} ${voffset -3}RAM: $mem ${alignr}${membar 8,60}
+# ${voffset 5}${font StyleBats:size=16}${color cc5050}j${color}${font} ${voffset -3}SWAP: $swap ${alignr}${swapbar 8,60}
 ${voffset 5}${font StyleBats:size=16}${color cc5050}q${color}${font} ${voffset -3}Uptime: ${alignr}${uptime_short}
 ${voffset 5}${font StyleBats:size=16}${color cc5050}K${color}${font} ${voffset -3}CPU temp: ${alignr}${hwmon 0 temp 1}°
 ${voffset 5}${font StyleBats:size=16}${color cc5050}K${color}${font} ${voffset -3}GPU temp: ${alignr}${hwmon 1 temp 1}°
@@ -117,7 +117,7 @@ ${execpi 120 sed -n '18p' ${template0}}%${alignr}${execpi 120 sed -n '19p' ${tem
 Wind: ${execpi 120 sed -n '25p' ${template0}} at ${execpi 120 sed -n '20p' ${template0}}${alignr}${execpi 120 sed -n '22p' ${template0}}
 ${voffset -3}${font Hack:bold:size=12}⬈${font Noto Sans:size=9} ${execpi 120 sed -n '23p' ${template0}}${alignr}${execpi 120 sed -n '24p' ${template0}} ${font Hack:bold:size=12}⬊${font Noto Sans:size=9}
 ${voffset -10}${hr 1}
-${voffset -20}${font conkyweather:size=30}${voffset 20}${goto 15}${execpi 120 sed -n '4p' ${template0}}${goto 90}${execpi 120 sed -n '8p' ${template0}}${goto 165}${execpi 120 sed -n '12p' ${template0}}${voffset 12}${goto 15}${font Noto Sans:bold:size=10}${execpi 120 sed -n '5p' ${template0}}°/${execpi 120 sed -n '6p' ${template0}}°${goto 85}${execpi 120 sed -n '9p' ${template0}}°/${execpi 120 sed -n '10p' ${template0}}°${goto 160}${execpi 120 sed -n '13p' ${template0}}°/${execpi 120 sed -n '14p' ${template0}}°${voffset 12}${goto 25}${font Noto Sans:bold:size=10}${execpi 120 sed -n '7p' ${template0}}${goto 95}${execpi 120 sed -n '11p' ${template0}}${goto 170}${execpi 120 sed -n '15p' ${template0}}${font}
+${voffset -25}${font conkyweather:size=30}${voffset 20}${goto 15}${execpi 120 sed -n '4p' ${template0}}${goto 90}${execpi 120 sed -n '8p' ${template0}}${goto 165}${execpi 120 sed -n '12p' ${template0}}${voffset 12}${goto 15}${font Noto Sans:bold:size=10}${execpi 120 sed -n '5p' ${template0}}°/${execpi 120 sed -n '6p' ${template0}}°${goto 85}${execpi 120 sed -n '9p' ${template0}}°/${execpi 120 sed -n '10p' ${template0}}°${goto 160}${execpi 120 sed -n '13p' ${template0}}°/${execpi 120 sed -n '14p' ${template0}}°${voffset 12}${goto 25}${font Noto Sans:bold:size=10}${execpi 120 sed -n '7p' ${template0}}${goto 95}${execpi 120 sed -n '11p' ${template0}}${goto 170}${execpi 120 sed -n '15p' ${template0}}${font}
 ${voffset -5}
 ${color}
 ${font}

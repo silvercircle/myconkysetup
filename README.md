@@ -11,6 +11,10 @@ default, darksky-d outputs to stdout so redirect to >weather
 
 ## How does it look?
 
+Note the shot shows the version I use, it's compact, some lines are missing but you can easily add 
+memory and swap information by un-commenting them in `conkyrc`. Same is true for "per CPU" load 
+values.
+
 ![Screenshot](screenshot.png)
 
 ## Default directory
