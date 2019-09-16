@@ -114,6 +114,14 @@ void main(string[] args)
         int resultcode = 0;
         fetchFromApi();
         Json result = readFromCache(resultcode);
+        try {
+            File f = File(ctx.prettycachefile, "w");
+            f.write(result.toPrettyString);
+            f.close();
+        } catch (FileException e) {
+            writeln("Error saving PRETTY json response to cache\n", e);
+            ctx.orderlyShutDown(-2);
+        }
         if(resultcode != 0) {
             ctx.orderlyShutDown(resultcode);
         }

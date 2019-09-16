@@ -17,11 +17,8 @@ Ubuntu-based distros, this is just a matter of installing `conky-all`and you sho
 ### Fonts
 
 * The [OpenLogos Font](https://www.dafont.com/openlogos.font) 
-
 * The [Style Bats Font](https://www.dafont.com/style-bats.font) 
-
 * The [Conkyweather Font](https://github.com/altinukshini/conky_blue/blob/master/fonts/conkyweather.ttf) 
-
 * The [Hack font](https://github.com/source-foundry/Hack), which should be available for most distros 
 via package management.
 

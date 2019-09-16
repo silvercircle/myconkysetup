@@ -77,7 +77,7 @@ private:
 	string      	exePath;
 	string      	configFilePath, logfilePath;
 	shared      	FileLogger logger;
-	string			cacheFileName;
+	string			cacheFileName, prettyCacheFileName;
 public:
 	/**
 	 * the configuration object
@@ -153,6 +153,7 @@ public:
 		}   
 		cfg.dataDir = this.homeDir;
 		this.cacheFileName = buildPath(this.homeDir, "darksky_response.json");
+        this.prettyCacheFileName = buildPath(this.homeDir, "darksky_pretty_response.json");
 	}
 
 	/**
@@ -205,4 +206,5 @@ public:
 	 */
 	@property homedir() const { return this.homeDir; }
 	@property cachefile() const { return this.cacheFileName; }
+    @property prettycachefile() const { return this.prettyCacheFileName; }
 }
