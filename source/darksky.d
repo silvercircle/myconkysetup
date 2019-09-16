@@ -137,6 +137,13 @@ string[string] daytimeCodes, nighttimeCodes;
  +/
 static this()
 {
+    /+ 
+     + these arrays translate condition strings to a single letter icon code which
+     + directly corresponds to the character in the weather symbol font
+     +
+     + since there are different weather icons for day and night, 2 arrays are
+     + needed
+     +/
     daytimeCodes = [ "clear-day": "a", "clear-night": "a", "rain": "g",
         "snow": "o", "sleet": "x", "wind": "9", "fog": "7", "cloudy": "e",
         "partly-cloudy-day": "c", "partly-cloudy-night": "a"];
@@ -149,6 +156,10 @@ static this()
 
 void generateOutput(Json result)
 {
+    /++
+     + output low/high temperature and condition "icon" for one day in the
+     + forecast
+     +/
     void outputForecast(const Json day)
     {
         if(day["icon"].get!string in daytimeCodes) {
@@ -163,12 +174,18 @@ void generateOutput(Json result)
         writeln(capitalize(cast(string)dow));
     }
 
-    writeln();
+    writeln();          // for compatibility with the PHP script, unknown reason
     Json currently = result["currently"];
     const SysTime timestamp = SysTime.fromUnixTime(currently["time"].get!int);
-    //writeln(timestamp.hour);
 
-    if (timestamp.hour > 6 && timestamp.hour < 18) {
+    SysTime sunrise = SysTime.fromUnixTime(result["daily"]["data"][0]["sunriseTime"].get!int);
+    SysTime sunset = SysTime.fromUnixTime(result["daily"]["data"][0]["sunsetTime"].get!int);
+
+    const SysTime now = Clock.currTime;
+    /+
+     + show the day icon after sunrise and before sunset
+     +/
+    if (now > sunrise && now < sunset) {
         if(currently["icon"].get!string in daytimeCodes) {
             writeln(daytimeCodes[currently["icon"].get!string]);
         } else {
@@ -193,14 +210,13 @@ void generateOutput(Json result)
     writef("UV: %d\n", currently["uvIndex"].get!int);
     writef("%.0f\n", currently["visibility"].get!float);
 
-    SysTime sunrise = SysTime.fromUnixTime(result["daily"]["data"][0]["sunriseTime"].get!int);
-    SysTime sunset = SysTime.fromUnixTime(result["daily"]["data"][0]["sunsetTime"].get!int);
     writef("%02d:%02d\n", sunrise.hour, sunrise.minute);
-    writef("%02d:%02d\n", sunset.hour, sunset.minute);
+    writef("%02d:%02d\n", sunset.hour, sunset.minute);                  // 23
 
-    writeln(degToBearing(currently["windBearing"].get!int));
+    writeln(degToBearing(currently["windBearing"].get!int));            // 24
 
-    SysTime time = SysTime.fromUnixTime(currently["time"].get!int);
-    writef("%02d:%02d\n", time.hour, time.minute);
-    writeln(currently["summary"].get!string);   
+    SysTime time = SysTime.fromUnixTime(currently["time"].get!int);     // 25
+    writef("%02d:%02d\n", time.hour, time.minute);                      // 26
+    writeln(currently["summary"].get!string);                           // 27
+    writeln(result["timezone"].get!string);                             // 28
 }

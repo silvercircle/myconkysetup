@@ -161,4 +161,6 @@ echo(date("H:i", $weatherData->currently->time)); // 26
 echo("\n");
 echo($weatherData->currently->summary); // 27
 echo("\n");
+echo($weatherData->timezone); // 28
+echo("\n");
 ?>
