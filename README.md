@@ -2,7 +2,9 @@
 
 This is my personal conky configuration  It is largely based on the work of others, particularly [this 
 remake](https://github.com/rsheasby/Conky-Lililo-2018) of a fairly popular conky setup. I changed 
-quite a few things though. 
+quite a few things though.
+
+The PHP script is gone and replaced with an compiled D version.
 
 ## So what's in?
 
@@ -16,8 +18,7 @@ which should be enough if you update the weather every 30 minutes.
 
 ## Requirements
 
-* A D Compiler to compile the darksky client. I recommend DMD or LDC, but both are ok. If you don't 
-want to deal with D at all, there is a PHP version of the darksky data fetcher included.
+* A D Compiler to compile the darksky client. I recommend DMD or LDC, but both are ok.
 * A darksky account and an API key. Free, but you have only 1000 API requests per month in freebie mode, 
 which should be sufficient.
 
