@@ -18,7 +18,7 @@ conky.config = {
     border_inner_margin = 10,
 
     own_window_argb_visual = true,
-    own_window_argb_value = 100,
+    own_window_argb_value = 120,
 
     -- If own_window is yes, these window manager hints may be used
     own_window_hints = "undecorated,below,sticky,skip_taskbar,skip_pager",
@@ -77,7 +77,7 @@ conky.config = {
 }
 
 conky.text = [[
-SYSTEM ${hr 2}
+${font DejaVu Sans:bold:size=9}SYSTEM ${hr 2}
 ${voffset -5}${font Noto Sans:bold:size=18}${alignr}${nodename}${font}
 # ${voffset 5}${font OpenLogos:size=16}${color cc5050}B${color}${font} ${voffset -5}Kernel: ${alignr}${kernel}
 ${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU: ${cpu cpu0}% ${alignr}${cpubar cpu0 8,60}

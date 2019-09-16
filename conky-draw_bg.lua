@@ -23,7 +23,7 @@ Changelog:
 
 -- "corner_r" is the radius, in pixels, of the rounded corners. If you don't want rounded corners, use 0.
 
-	local corner_r = 20
+	local corner_r = 10
 
 -- Set the colour and transparency (alpha) of your background (0.00 - 0.99).
 
@@ -40,7 +40,7 @@ Changelog:
 --	local bg_alpha = 0.50
 
 	local bg_colour = 0x808090
-	local bg_alpha = 0.30
+	local bg_alpha = 0.10
 
 -- Tweaks the height of your background, in pixels. If you don't need to adjust the height, use 0.
 
