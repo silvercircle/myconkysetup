@@ -12,8 +12,6 @@ module context;
 import std.process, std.path, std.stdio, std.file, std.string, std.conv, core.stdc.stdlib: exit;
 import vibe.data.json, vibe.data.serialization, std.datetime :Clock, SysTime;
 
-enum LOG { TRACE, DEBUG, FATAL, WARN }
-
 /**
  * app configuration class
  * implemented as thread safe singleton
@@ -75,7 +73,7 @@ private:
 	bool        	isPortable = false;
 	string      	portableDir;
 	string      	exePath;
-	string      	configFilePath, logfilePath;
+	string      	configFilePath;
 	string			cacheFileName, prettyCacheFileName;
 public:
 	/**
@@ -124,7 +122,6 @@ public:
 			}
 			
 		}
-		this.logfilePath = buildPath(this.homeDir, "darksky-d.log");
 		this.configFilePath = buildPath(this.homeDir, "config.json");
 		try {
 			std.file.isFile(this.configFilePath);
@@ -156,27 +153,6 @@ public:
 		exit(code);
 	}
 
-	/**
-	 * logging helper
-	 */
-	
-	void log(Args...)(LOG level, string format, Args args) const nothrow
-	{
-		final switch(level) {
-			case LOG.TRACE:
-				vibe.core.log.logInfo(format, args);
-				break;
-			case LOG.DEBUG:
-				vibe.core.log.logDebug(format, args);
-				break;
-			case LOG.FATAL:
-				vibe.core.log.logFatal(format, args);
-				break;
-			case LOG.WARN:
-				vibe.core.log.logWarn(format, args);
-				break;
-		}
-	}
 
 	/**
 	 * save configuration

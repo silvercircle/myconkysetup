@@ -4,7 +4,16 @@
  + widget. 
  + + 
  + © 2019, Alex Vie <silvercircle@gmail.com>
- + License: MIT
+ + License: MIT 
+ +  
+ + How to build: 
+ +  
+ + install DMD (D Compiler) from http://dlang.org 
+ +  
+ + > dub build --build=release --compiler=dmd --arch=x86_64 
+ +  
+ + replace release with debug to get a debug build, arch with x86 for 
+ + a 32bit build.  
  +/
  
 module darksky;
@@ -17,22 +26,28 @@ import vibe.data.json;
 import context;
 
 struct Config {
-    string  key = "";
-    bool    fUseCached = false;
-    string  tempUnit = "C";
-    string  windUnit = "ms";
-    string  visUnit = "km";
-    string  pressureUnit = "hpa";
-    string  windSpeed;
-    string  vis;
+    string  key = "";               // darksky api key. Mandatory, the application
+                                    // will not save it anywhere.
+    bool    fUseCached = false;     // use cached Json (for testing mainly, to reducee 
+                                    // API calls.
+    string  tempUnit = "C";         // C or F
+    string  windUnit = "ms";        // ms, km, knots or mph
+    string  visUnit = "km";         // km or miles
+    string  pressureUnit = "hpa";   // hpa or inhg
+    string  windSpeed;              // temporary save wind unit 
 }
+
 Config cfg = Config();
 
-string[] _bearings = ["N","NNE","NE","ENE","E","ESE", "SE", "SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
+// the wind directions
+string[] _windDirections = ["N","NNE","NE","ENE","E","ESE", "SE", "SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
 
+// translate textual condition strings into icon codes
 string[string] daytimeCodes, nighttimeCodes;
+
 /++
- + this is a module constructor, it runs before main()
+ + this is a module constructor, it runs before any other code in this module 
+ + is executed. 
  +/
 static this()
 {
@@ -40,12 +55,11 @@ static this()
      + these arrays translate condition strings to a single letter icon code which
      + directly corresponds to the character in the weather symbol font
      +
-     + since there are different weather icons for day and night, 2 arrays are
-     + needed
+     + Nighttime icons are different, so we need 2 arrays.
      +/
     daytimeCodes = [ "clear-day": "a", "clear-night": "a", "rain": "g",
         "snow": "o", "sleet": "x", "wind": "9", "fog": "7", "cloudy": "e",
-        "partly-cloudy-day": "c", "partly-cloudy-night": "a"];
+        "partly-cloudy-day": "c", "partly-cloudy-night": "C"];
 
 
     nighttimeCodes = [ "clear-day": "A", "clear-night": "A", "rain": "G",
@@ -54,7 +68,7 @@ static this()
 }
 
 /++
- + print usage and exit
+ + print usage
  +/
 void print_usage()
 {  
@@ -87,13 +101,13 @@ void print_usage()
  + take a wind bearing in degrees and return a symbolic wind direction like NNW
  +/
 
-string degToBearing(uint wind_bearing)
+string degToBearing(uint wind_direction)
 {
-    if(wind_bearing < 0 || wind_bearing > 360) {
-        wind_bearing = 0;
+    if(wind_direction < 0 || wind_direction > 360) {
+        wind_direction = 0;
     }
-    const int val = cast(int)((wind_bearing / 22.5) + .5);
-    return _bearings[val % 16];
+    const int val = cast(int)((wind_direction / 22.5) + .5);
+    return _windDirections[val % 16];
 }
 
 /++
@@ -149,7 +163,7 @@ void main(string[] args)
     }
 
     if(cfg.key.length < 10) {
-        writeln("You did not specify a valid API KEY");
+        writeln("You did not specify a valid API KEY.\nThis is mandatory, use --key=YOUR_KEY to fetch data from darksky.net.");
         ctx.orderlyShutDown(-3);
     }
 
@@ -184,8 +198,8 @@ void main(string[] args)
 
 void generateOutput(Json result)
 {
-
-    T convertTemperature(T)(const T temp)
+    // C to F when --tempUnit=F was specified
+    const T convertTemperature(T)(const T temp)
     {
         if(cfg.tempUnit == "F") {
             return (temp * 9/5) + 32;
@@ -194,12 +208,15 @@ void generateOutput(Json result)
         }
     }
 
+    // km > miles
     float convertVis(const float vis)
     {
         return cfg.visUnit == "miles" ? vis / 1.609 : vis;
     }
 
-    float convertWindspeed(const float speed)
+    // windspeed, API always returns m/s, we convert to km/h, mph or knots
+    // on user's request.
+    float convertWindspeed(float speed)
     {
         switch(cfg.windUnit) {
             case "km":
@@ -217,18 +234,27 @@ void generateOutput(Json result)
             }
     }
 
+    // hPa > InHg
     float convertPressure(float hPa)
     {
         return cfg.pressureUnit == "inhg" ? hPa / 33.863886666667 : hPa;
     }
 
-    void outputTemperature(const Json val, const bool addUnit = false, const string format = "%.1f%s\n")
+    // values for temperature, pressure, windspeed etc. can be either
+    // float or int in the Json. We always want float.
+    const float getFloatValue(const Json val)
     {
         try {
-            writef(format, convertTemperature(val.get!float), addUnit ? "°" ~ cfg.tempUnit : "");
-        } catch (JSONException e) {
-            writef("%d%s\n", convertTemperature(val.get!int), addUnit ? "°" ~ cfg.tempUnit : "");
+            return val.get!float;
+        } catch(JSONException e) {
+            return cast(float)val.get!int;
         }
+    }
+    // output a single temperature value, assume float, but
+    // the Json can also return int.
+    void outputTemperature(const Json val, const bool addUnit = false, const string format = "%.1f%s\n")
+    {
+        writef(format, convertTemperature(getFloatValue(val)), addUnit ? "°" ~ cfg.tempUnit : "");
     }
 
     /++
@@ -257,7 +283,7 @@ void generateOutput(Json result)
 
     const SysTime now = Clock.currTime;
 
-    // show the day icon after sunrise and before sunset
+    // determine icon type (day or night). 
     if (now > sunrise && now < sunset) {
         if(currently["icon"].get!string in daytimeCodes) {
             writeln(daytimeCodes[currently["icon"].get!string]);
@@ -280,15 +306,15 @@ void generateOutput(Json result)
     outputTemperature(currently["temperature"], true);
     outputTemperature(currently["dewPoint"], true);
     writef("Humidity: %d\n", cast(int)(currently["humidity"].get!float * 100));
-    writef(cfg.pressureUnit == "hpa" ? "%.2f hPa\n" : "%.2f InHg\n", convertPressure(currently["pressure"].get!float));
-    writef("%.1f %s\n", convertWindspeed(currently["windSpeed"].get!float), cfg.windSpeed);
+    writef(cfg.pressureUnit == "hpa" ? "%.1f hPa\n" : "%.2f InHg\n", convertPressure(getFloatValue(currently["pressure"])));
+    writef("%.1f %s\n", convertWindspeed(getFloatValue(currently["windSpeed"])), cfg.windSpeed);
     writef("UV: %d\n", currently["uvIndex"].get!int);
-    writef("%.1f %s\n", convertVis(currently["visibility"].get!float), cfg.visUnit);
+    writef("%.1f %s\n", convertVis(getFloatValue(currently["visibility"])), cfg.visUnit);
 
     writef("%02d:%02d\n", sunrise.hour, sunrise.minute);
     writef("%02d:%02d\n", sunset.hour, sunset.minute);                  // 23
 
-    writeln(degToBearing(currently["windBearing"].get!int));            // 24
+    writeln((currently["windBearing"].get!int).degToBearing());         // 24
 
     SysTime time = SysTime.fromUnixTime(currently["time"].get!int);     // 25
     writef("%02d:%02d\n", time.hour, time.minute);                      // 26
