@@ -31,7 +31,7 @@ private:
 		@optional @name("firstrun") 	SysTime		firstRun;
 		@optional @name("lastrun")		SysTime		lastRun;
 		@optional @name("datadir") 		string		dataDir;
-		@optional @name("is_portable")	bool		isPortable = true;
+		@optional @name("is_portable")	bool		isPortable = false;
 		@optional @name("last_fetched") SysTime		lastFetched;
 		@optional @name("num_updates")	uint		numUpdates = 0;
 		@optional @name("location")		string		location = "48.2082,16.3738";
@@ -71,7 +71,7 @@ private:
 	__gshared 		GlobalContext instance_;
 	string      	homeDir;
 	bool        	isInitialized = false;
-	bool        	isPortable = true;
+	bool        	isPortable = false;
 	string      	portableDir;
 	string      	exePath;
 	string      	configFilePath, logfilePath;
@@ -107,7 +107,7 @@ public:
 		this.isInitialized = true;
 
 		if(this.isPortable && this.portableDir.length == 0)
-			this.portableDir = "_data";
+			this.portableDir = ".darksky-d.data";
 
 		if(this.portableDir.length > 0) {
 			this.isPortable = true;

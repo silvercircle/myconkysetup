@@ -52,8 +52,8 @@ conky.config = {
     -- alignment bottom_left
     alignment = "bottom_right",
 
-    gap_x = 30,
-    gap_y = 50,
+    gap_x = 0,
+    gap_y = 60,
 
     -- Subtract file system buffers from used memory?
     no_buffers = yes,
@@ -84,8 +84,8 @@ ${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -
 # ${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU1: ${cpu cpu1}% ${alignr}${cpubar cpu1 8,60}
 # ${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU2: ${cpu cpu2}% ${alignr}${cpubar cpu2 8,60}
 # ${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU3: ${cpu cpu3}% ${alignr}${cpubar cpu3 8,60}
-# ${voffset 5}${font StyleBats:size=16}${color cc5050}g${color}${font} ${voffset -3}RAM: $mem ${alignr}${membar 8,60}
-# ${voffset 5}${font StyleBats:size=16}${color cc5050}j${color}${font} ${voffset -3}SWAP: $swap ${alignr}${swapbar 8,60}
+${voffset 5}${font StyleBats:size=16}${color cc5050}g${color}${font} ${voffset -3}RAM: $mem ${alignr}${membar 8,60}
+${voffset 5}${font StyleBats:size=16}${color cc5050}j${color}${font} ${voffset -3}SWAP: $swap ${alignr}${swapbar 8,60}
 ${voffset 5}${font StyleBats:size=16}${color cc5050}q${color}${font} ${voffset -3}Uptime: ${alignr}${uptime_short}
 ${voffset 5}${font StyleBats:size=16}${color cc5050}K${color}${font} ${voffset -3}CPU temp: ${alignr}${hwmon 0 temp 1}°
 ${voffset 5}${font StyleBats:size=16}${color cc5050}K${color}${font} ${voffset -3}GPU temp: ${alignr}${hwmon 1 temp 1}°

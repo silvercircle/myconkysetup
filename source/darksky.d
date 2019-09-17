@@ -19,7 +19,7 @@ import context;
 struct Config {
     string  key = "";
     bool    fUseCached = false;
-    char    tempUnit = 'C';
+    string  tempUnit = "C";
     string  windUnit = "ms";
     string  visUnit = "km";
     string  windSpeed;
@@ -34,9 +34,10 @@ string[] _bearings = ["N","NNE","NE","ENE","E","ESE", "SE", "SSE","S","SSW","SW"
  +/
 void print_usage()
 {  
-	writeln("\nUSAGE:");
-	writef(q"[darksky-d --key=YOUR_API_KEY --useCached=true|false --loc=lat,lon --tempUnit=C|F --windUnit=ms|km|knots|mph
-                        --visUnit = km|miles
+	writeln("\n    USAGE:");
+	writef(q"[    darksky-d --key=YOUR_API_KEY --useCached=true|false --loc=lat,lon --tempUnit=C|F --windUnit=ms|km|knots|mph
+                --visUnit = km|miles
+
     key:        Your darksky API key. Mandatory.
     useCached:  When true, use cached JSON. If none is found, print a notice and exit. Otherwise fetch
                 fresh data from the darksky API.
@@ -85,7 +86,7 @@ void main(string[] args)
             result = 0;
             return j;
         } catch(FileException e) {
-            writeln("Error loading json data from cachefile.");
+            writeln("Error loading json data from cachefile. Please run once without --useCached.");
             result = -2;
             return returnError(-2);
         }
@@ -174,22 +175,21 @@ static this()
 void generateOutput(Json result)
 {
 
-    T convertTemperature(T)(T temp)
+    T convertTemperature(T)(const T temp)
     {
-        if(cfg.tempUnit == 'F') {
-            temp = (temp * 9/5) + 32;
-            return temp;
+        if(cfg.tempUnit == "F") {
+            return (temp * 9/5) + 32;
         } else {
             return temp;
         }
     }
 
-    float convertVis(float vis)
+    float convertVis(const float vis)
     {
         return cfg.visUnit == "miles" ? vis / 1.609 : vis;
     }
 
-    float convertWindspeed(float speed)
+    float convertWindspeed(const float speed)
     {
         switch(cfg.windUnit) {
             case "km":
@@ -206,6 +206,16 @@ void generateOutput(Json result)
                 return speed;
             }
     }
+
+    void outputTemperature(const Json val, const bool addUnit = false, const string format = "%.1f%s\n")
+    {
+        try {
+            writef(format, convertTemperature(val.get!float), addUnit ? "°" ~ cfg.tempUnit : "");
+        } catch (JSONException e) {
+            writef("%d%s\n", convertTemperature(val.get!int), addUnit ? "°" ~ cfg.tempUnit : "");
+        }
+    }
+
     /++
      + output low/high temperature and condition "icon" for one day in the
      + forecast
@@ -217,22 +227,14 @@ void generateOutput(Json result)
         } else {
             writeln("a");
         }
-        try {
-            writef("%.0f\n", convertTemperature(day["apparentTemperatureLow"].get!float));
-        } catch (JSONException e) {
-            writef("%d\n", convertTemperature(day["apparentTemperatureLow"].get!int));
-        }
-        try {
-            writef("%.0f\n", convertTemperature(day["apparentTemperatureHigh"].get!float));
-        } catch (JSONException e) {
-            writef("%d\n", convertTemperature(day["apparentTemperatureHigh"].get!int));
-        }
+        outputTemperature(day["apparentTemperatureLow"], false, "%.0f%s\n");
+        outputTemperature(day["apparentTemperatureHigh"], false, "%.0f%s\n");
         const SysTime t = SysTime.fromUnixTime(day["time"].get!int);
         string dow = t.dayOfWeek.to!string;
         writeln(capitalize(cast(string)dow));
     }
 
-    writeln();          // for compatibility with the PHP script, unknown reason
+    writeln("** begin data **");
     Json currently = result["currently"];
     const SysTime timestamp = SysTime.fromUnixTime(currently["time"].get!int);
 
@@ -257,26 +259,13 @@ void generateOutput(Json result)
             writeln("a");
         }
     }
-    try {
-        writef("%.1f°%c\n", convertTemperature(currently["apparentTemperature"].get!float), cfg.tempUnit);
-    } catch (JSONException e) {
-        writef("%d°%c\n", convertTemperature(currently["apparentTemperature"].get!int), cfg.tempUnit);
-    }
+    outputTemperature(currently["apparentTemperature"], true);
     outputForecast(result["daily"]["data"][1]);
     outputForecast(result["daily"]["data"][2]);
     outputForecast(result["daily"]["data"][3]);
+    outputTemperature(currently["temperature"], true);
+    outputTemperature(currently["dewPoint"], true);
 
-    try {
-        writef("%.1f°%c\n", convertTemperature(currently["temperature"].get!float), cfg.tempUnit);
-    } catch (JSONException e) {
-        writef("%d°%c\n", convertTemperature(currently["temperature"].get!int), cfg.tempUnit);
-    }
-
-    try {
-        writef("Dew point: %.1f°%c\n", convertTemperature(currently["dewPoint"].get!float), cfg.tempUnit);
-    } catch (JSONException e) {
-        writef("Dew point: %d°%c\n", convertTemperature(currently["dewPoint"].get!int), cfg.tempUnit);
-    }
     writef("Humidity: %d\n", cast(int)(currently["humidity"].get!float * 100));
     writeln(cast(int)currently["pressure"].get!float);
     writef("%.1f %s\n", convertWindspeed(currently["windSpeed"].get!float), cfg.windSpeed);
@@ -292,4 +281,6 @@ void generateOutput(Json result)
     writef("%02d:%02d\n", time.hour, time.minute);                      // 26
     writeln(currently["summary"].get!string);                           // 27
     writeln(result["timezone"].get!string);                             // 28
+
+    writeln("** end data **");
 }
