@@ -4,10 +4,11 @@ This is my personal conky configuration  It is largely based on the work of othe
 remake](https://github.com/rsheasby/Conky-Lililo-2018) of a fairly popular conky setup. I changed 
 quite a few things though.
 
-The PHP script is gone and replaced with an compiled D version. The executable `darksky-d` should run
-on any modern 64bit Linux as there are no dependencies other than standard libraries. Use
-`darksky-d --help` to see the options. Make sure, you specify at least the API key. By
-default, darksky-d outputs to stdout so redirect to >weather
+The PHP script is gone and replaced with an compiled D version. The executable `darksky-d` should run 
+on any modern 64bit Linux as there are no dependencies other than standard libraries. If it does not, 
+you will have to build it yourself from source. Use `darksky-d --help` to see the options. Make sure, 
+you specify at least the API key. By default, darksky-d outputs to stdout so redirect to >weather. 
+Also by default, it uses metric (si) units, but there are options to output imperial units.
 
 ## How does it look?
 
@@ -63,10 +64,9 @@ Ubuntu-based distros, this is just a matter of installing `conky-all`and you sho
 * The [OpenLogos Font](https://www.dafont.com/openlogos.font) 
 * The [Style Bats Font](https://www.dafont.com/style-bats.font) 
 * The [Conkyweather Font](https://github.com/altinukshini/conky_blue/blob/master/fonts/conkyweather.ttf) 
-* The [Hack font](https://github.com/source-foundry/Hack), which should be available for most distros 
-via package management.
+* The [Weather Icons Font](https://aur.archlinux.org/packages/ttf-weather-icons/)
 
-## Tweaking
+## Customization
 
 There are quite a few things to change, 
 

@@ -1,12 +1,12 @@
 /++
- + darksky.d
- +
- + fetch weather from darksky and crete conky-readable format
- +
- + (C) 2019, Alex Vie <silvercircle@gmail.com>
+ + darksky-d fetches weather data from darksky.net and builds 
+ + a plain text file which conky will read to construct a nice weather 
+ + widget. 
+ + + 
+ + © 2019, Alex Vie <silvercircle@gmail.com>
  + License: MIT
  +/
-
+ 
 module darksky;
 
 import std.stdio, std.getopt, core.stdc.stdlib: exit;
@@ -22,30 +22,64 @@ struct Config {
     string  tempUnit = "C";
     string  windUnit = "ms";
     string  visUnit = "km";
+    string  pressureUnit = "hpa";
     string  windSpeed;
     string  vis;
 }
+Config cfg = Config();
 
 string[] _bearings = ["N","NNE","NE","ENE","E","ESE", "SE", "SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
 
+string[string] daytimeCodes, nighttimeCodes;
+/++
+ + this is a module constructor, it runs before main()
+ +/
+static this()
+{
+    /+ 
+     + these arrays translate condition strings to a single letter icon code which
+     + directly corresponds to the character in the weather symbol font
+     +
+     + since there are different weather icons for day and night, 2 arrays are
+     + needed
+     +/
+    daytimeCodes = [ "clear-day": "a", "clear-night": "a", "rain": "g",
+        "snow": "o", "sleet": "x", "wind": "9", "fog": "7", "cloudy": "e",
+        "partly-cloudy-day": "c", "partly-cloudy-night": "a"];
+
+
+    nighttimeCodes = [ "clear-day": "A", "clear-night": "A", "rain": "G",
+        "snow": "O", "sleet": "x", "wind": "9", "fog": "7", "cloudy": "f",
+        "partly-cloudy-day": "C", "partly-cloudy-night": "C"];
+}
 
 /++
  + print usage and exit
  +/
 void print_usage()
 {  
-	writeln("\n    USAGE:");
-	writef(q"[    darksky-d --key=YOUR_API_KEY --useCached=true|false --loc=lat,lon --tempUnit=C|F --windUnit=ms|km|knots|mph
-                --visUnit = km|miles
+	writeln("\n    darksky-d   Version 0.1 USAGE:");
+	writef(q"[
+    darksky-d   --key=YOUR_API_KEY --useCached=true|false --loc=lat,lon
+                --tempUnit=C|F --windUnit=ms|km|knots|mph --visUnit = km|miles
+                --pressureUnit=hpa|inhg
 
-    key:        Your darksky API key. Mandatory.
-    useCached:  When true, use cached JSON. If none is found, print a notice and exit. Otherwise fetch
-                fresh data from the darksky API.
-    loc:        Your location, see darksky API docs. Must be in the format latitude,longitude
-                Example: --loc=48.2082,16.3738. This will be saved in the config until you specify
-                a different location.
-    tempUnit:   C or F, default is C
-    windUnit:   Unit for the wind speed. ms (m/s), km (km/h) knots, or mph are available. Defaults to m/s
+    key:          Your darksky API key. Mandatory.
+    useCached:    When true, use cached JSON. If none is found, print a notice 
+                  and exit. Otherwise fetch fresh data from the darksky API.
+    loc:          Your location, see darksky API docs. Must be in the format 
+                  latitude,longitude.
+                  Example: --loc=48.2082,16.3738. This will be saved in the
+                  config until you specify different location.
+    tempUnit:     C or F, default is C
+    windUnit:     Unit for the wind speed. ms (m/s), km (km/h) knots, or 
+                  mph are available. Defaults to m/s
+    visUnit:      Unit for visibility. Either km or miles, defaults to km.
+    pressureUnit: Unit for pressure, either hpa or inhg. Defaults to hpa.
+    
+    Output will go to stdout to verify basic functionality.
+    (C) 2019 by silvercircle@gmail.com
+    License: MIT
 ]");
 }
 
@@ -61,8 +95,6 @@ string degToBearing(uint wind_bearing)
     const int val = cast(int)((wind_bearing / 22.5) + .5);
     return _bearings[val % 16];
 }
-
-Config cfg = Config();
 
 /++
  + returns 0 on success, any other value means failure and a possibly incomplete
@@ -86,7 +118,7 @@ void main(string[] args)
             result = 0;
             return j;
         } catch(FileException e) {
-            writeln("Error loading json data from cachefile. Please run once without --useCached.");
+            writeln("Error loading json data from cachefile.\nPlease run once without --useCached.");
             result = -2;
             return returnError(-2);
         }
@@ -109,7 +141,8 @@ void main(string[] args)
     }
 
 	const GetoptResult stdargs = getopt(args, "key", &cfg.key, "useCached", &cfg.fUseCached,
-                                        "tempUnit", &cfg.tempUnit, "windUnit", &cfg.windUnit, "visUnit", &cfg.visUnit);
+                                        "tempUnit", &cfg.tempUnit, "windUnit", &cfg.windUnit,
+                                         "visUnit", &cfg.visUnit, "pressureUnit", &cfg.pressureUnit);
 	if(stdargs.helpWanted) {
         print_usage();
         ctx.orderlyShutDown(-1);
@@ -149,29 +182,6 @@ void main(string[] args)
     ctx.orderlyShutDown(-1);
 }
 
-string[string] daytimeCodes, nighttimeCodes;
-/++
- + this is a module constructor, it runs before main()
- +/
-static this()
-{
-    /+ 
-     + these arrays translate condition strings to a single letter icon code which
-     + directly corresponds to the character in the weather symbol font
-     +
-     + since there are different weather icons for day and night, 2 arrays are
-     + needed
-     +/
-    daytimeCodes = [ "clear-day": "a", "clear-night": "a", "rain": "g",
-        "snow": "o", "sleet": "x", "wind": "9", "fog": "7", "cloudy": "e",
-        "partly-cloudy-day": "c", "partly-cloudy-night": "a"];
-
-
-    nighttimeCodes = [ "clear-day": "A", "clear-night": "A", "rain": "G",
-        "snow": "O", "sleet": "x", "wind": "9", "fog": "7", "cloudy": "f",
-        "partly-cloudy-day": "C", "partly-cloudy-night": "C"];
-}
-
 void generateOutput(Json result)
 {
 
@@ -207,6 +217,11 @@ void generateOutput(Json result)
             }
     }
 
+    float convertPressure(float hPa)
+    {
+        return cfg.pressureUnit == "inhg" ? hPa / 33.863886666667 : hPa;
+    }
+
     void outputTemperature(const Json val, const bool addUnit = false, const string format = "%.1f%s\n")
     {
         try {
@@ -230,8 +245,7 @@ void generateOutput(Json result)
         outputTemperature(day["apparentTemperatureLow"], false, "%.0f%s\n");
         outputTemperature(day["apparentTemperatureHigh"], false, "%.0f%s\n");
         const SysTime t = SysTime.fromUnixTime(day["time"].get!int);
-        string dow = t.dayOfWeek.to!string;
-        writeln(capitalize(cast(string)dow));
+        writeln(capitalize(cast(string)t.dayOfWeek.to!string));
     }
 
     writeln("** begin data **");
@@ -243,15 +257,14 @@ void generateOutput(Json result)
 
     const SysTime now = Clock.currTime;
 
-    /+
-     + show the day icon after sunrise and before sunset
-     +/
+    // show the day icon after sunrise and before sunset
     if (now > sunrise && now < sunset) {
         if(currently["icon"].get!string in daytimeCodes) {
             writeln(daytimeCodes[currently["icon"].get!string]);
         } else {
             writeln("a");
         }
+    // otherwise, it's night. Show the night icon.
     } else {
         if(currently["icon"].get!string in nighttimeCodes) {
             writeln(nighttimeCodes[currently["icon"].get!string]);
@@ -260,14 +273,14 @@ void generateOutput(Json result)
         }
     }
     outputTemperature(currently["apparentTemperature"], true);
+    // 3 days of forecast
     outputForecast(result["daily"]["data"][1]);
     outputForecast(result["daily"]["data"][2]);
     outputForecast(result["daily"]["data"][3]);
     outputTemperature(currently["temperature"], true);
     outputTemperature(currently["dewPoint"], true);
-
     writef("Humidity: %d\n", cast(int)(currently["humidity"].get!float * 100));
-    writeln(cast(int)currently["pressure"].get!float);
+    writef(cfg.pressureUnit == "hpa" ? "%.2f hPa\n" : "%.2f InHg\n", convertPressure(currently["pressure"].get!float));
     writef("%.1f %s\n", convertWindspeed(currently["windSpeed"].get!float), cfg.windSpeed);
     writef("UV: %d\n", currently["uvIndex"].get!int);
     writef("%.1f %s\n", convertVis(currently["visibility"].get!float), cfg.visUnit);

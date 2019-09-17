@@ -1,7 +1,8 @@
 /++
- + Gtk-D sample. Provide a WinMain() and link with Subsystem:Windows to eliminate the
- + windows console from a Gtk-D GUI application.
- + 
+ + darksky-d fetches weather data from darksky.net and builds 
+ + a plain text file which conky will read to construct a nice weather 
+ + widget. 
+ + + 
  + © 2019, Alex Vie <silvercircle@gmail.com>
  + License: MIT
  +/

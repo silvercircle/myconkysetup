@@ -87,8 +87,8 @@ ${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -
 ${voffset 5}${font StyleBats:size=16}${color cc5050}g${color}${font} ${voffset -3}RAM: $mem ${alignr}${membar 8,60}
 ${voffset 5}${font StyleBats:size=16}${color cc5050}j${color}${font} ${voffset -3}SWAP: $swap ${alignr}${swapbar 8,60}
 ${voffset 5}${font StyleBats:size=16}${color cc5050}q${color}${font} ${voffset -3}Uptime: ${alignr}${uptime_short}
-${voffset 5}${font StyleBats:size=16}${color cc5050}K${color}${font} ${voffset -3}CPU temp: ${alignr}${hwmon 0 temp 1}°
-${voffset 5}${font StyleBats:size=16}${color cc5050}K${color}${font} ${voffset -3}GPU temp: ${alignr}${hwmon 1 temp 1}°
+${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}CPU temp: ${alignr}${hwmon 0 temp 1}°
+${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}GPU temp: ${alignr}${hwmon 1 temp 1}°
 
 ${voffset -7}DATE ${hr 2}
 ${color 80b0c0}${voffset -20}
@@ -112,10 +112,10 @@ ${voffset -55}${alignr}${font Noto Sans:bold:size=9}${voffset 20}Feels like: ${e
 ${voffset -2}${alignr}${execpi 120 sed -n '27p' ${template0}}
 ${voffset -60}${font conkyweather:size=50}${execpi 120 sed -n '2p' ${template0}}${font}
 ${font Noto Sans:size=9}
-${voffset -20}${execpi 120 sed -n '17p' ${template0}}${alignr}${execpi 120 sed -n '21p' ${template0}}
-${execpi 120 sed -n '18p' ${template0}}%${alignr}${execpi 120 sed -n '19p' ${template0}} hPa
+${voffset -20}Dew point: ${execpi 120 sed -n '17p' ${template0}}${alignr}${execpi 120 sed -n '21p' ${template0}}
+${execpi 120 sed -n '18p' ${template0}}%${alignr}${execpi 120 sed -n '19p' ${template0}}
 Wind: ${execpi 120 sed -n '25p' ${template0}} at ${execpi 120 sed -n '20p' ${template0}}${alignr}${execpi 120 sed -n '22p' ${template0}}
-${voffset -3}${font Hack:bold:size=12}⬈${font Noto Sans:size=9} ${execpi 120 sed -n '23p' ${template0}}${alignr}${execpi 120 sed -n '24p' ${template0}} ${font Hack:bold:size=12}⬊${font Noto Sans:size=9}
+${voffset -3}${font Weather Icons:bold:size=10}${font Noto Sans:size=9} ${execpi 120 sed -n '23p' ${template0}}${alignr}${execpi 120 sed -n '24p' ${template0}} ${font Weather Icons:bold:size=10}${font Noto Sans:size=9}
 ${voffset -10}${hr 1}
 ${voffset -25}${font conkyweather:size=30}${voffset 20}${goto 15}${execpi 120 sed -n '4p' ${template0}}${goto 90}${execpi 120 sed -n '8p' ${template0}}${goto 165}${execpi 120 sed -n '12p' ${template0}}${voffset 12}${goto 15}${font Noto Sans:bold:size=10}${execpi 120 sed -n '5p' ${template0}}°/${execpi 120 sed -n '6p' ${template0}}°${goto 85}${execpi 120 sed -n '9p' ${template0}}°/${execpi 120 sed -n '10p' ${template0}}°${goto 160}${execpi 120 sed -n '13p' ${template0}}°/${execpi 120 sed -n '14p' ${template0}}°${voffset 12}${goto 25}${font Noto Sans:bold:size=10}${execpi 120 sed -n '7p' ${template0}}${goto 95}${execpi 120 sed -n '11p' ${template0}}${goto 170}${execpi 120 sed -n '15p' ${template0}}${font}
 ${voffset -5}
