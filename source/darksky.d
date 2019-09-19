@@ -48,8 +48,10 @@ string[string] daytimeCodes, nighttimeCodes;
 /++
  + this is a module constructor, it runs before any other code in this module 
  + is executed. 
+ +  
+ + shared means, it runs only once (in the main thread) 
  +/
-static this()
+shared static this()
 {
     /+ 
      + these arrays translate condition strings to a single letter icon code which
@@ -137,7 +139,6 @@ void main(string[] args)
             return returnError(-2);
         }
     }
-
     void fetchFromApi()
     {
         const string url = "https://api.darksky.net/forecast/" ~ cfg.key ~ "/" ~ ctx.cfg.location ~ "?units=si";
@@ -156,8 +157,8 @@ void main(string[] args)
 
 	const GetoptResult stdargs = getopt(args, "key", &cfg.key, "useCached", &cfg.fUseCached,
                                         "tempUnit", &cfg.tempUnit, "windUnit", &cfg.windUnit,
-                                         "visUnit", &cfg.visUnit, "pressureUnit", &cfg.pressureUnit);
-	if(stdargs.helpWanted) {
+                                        "visUnit", &cfg.visUnit, "pressureUnit", &cfg.pressureUnit);
+    if(stdargs.helpWanted) {
         print_usage();
         ctx.orderlyShutDown(-1);
     }
@@ -298,28 +299,31 @@ void generateOutput(Json result)
             writeln("a");
         }
     }
+    
     outputTemperature(currently["apparentTemperature"], true);
     // 3 days of forecast
     outputForecast(result["daily"]["data"][1]);
     outputForecast(result["daily"]["data"][2]);
     outputForecast(result["daily"]["data"][3]);
-    outputTemperature(currently["temperature"], true);
-    outputTemperature(currently["dewPoint"], true);
-    writef("Humidity: %d\n", cast(int)(currently["humidity"].get!float * 100));
-    writef(cfg.pressureUnit == "hpa" ? "%.1f hPa\n" : "%.2f InHg\n", convertPressure(getFloatValue(currently["pressure"])));
-    writef("%.1f %s\n", convertWindspeed(getFloatValue(currently["windSpeed"])), cfg.windSpeed);
-    writef("UV: %d\n", currently["uvIndex"].get!int);
-    writef("%.1f %s\n", convertVis(getFloatValue(currently["visibility"])), cfg.visUnit);
+                                                                        // these comments are the
+                                                                        // line numbers in the weather
+                                                                        // file.
+    outputTemperature(currently["temperature"], true);                  // 16
+    outputTemperature(currently["dewPoint"], true);                     // 17
+    writef("Humidity: %d\n", cast(int)(currently["humidity"].get!float * 100));  // 18
+    writef(cfg.pressureUnit == "hpa" ? "%.1f hPa\n" : "%.2f InHg\n", convertPressure(getFloatValue(currently["pressure"])));  // 19
+    writef("%.1f %s\n", convertWindspeed(getFloatValue(currently["windSpeed"])), cfg.windSpeed); // 20
+    writef("UV: %d\n", currently["uvIndex"].get!int);                   // 21
+    writef("%.1f %s\n", convertVis(getFloatValue(currently["visibility"])), cfg.visUnit); // 22
 
-    writef("%02d:%02d\n", sunrise.hour, sunrise.minute);
-    writef("%02d:%02d\n", sunset.hour, sunset.minute);                  // 23
+    writef("%02d:%02d\n", sunrise.hour, sunrise.minute);                // 23
+    writef("%02d:%02d\n", sunset.hour, sunset.minute);                  // 24
 
-    writeln((currently["windBearing"].get!int).degToBearing());         // 24
+    writeln((currently["windBearing"].get!int).degToBearing());         // 25
 
-    SysTime time = SysTime.fromUnixTime(currently["time"].get!int);     // 25
+    SysTime time = SysTime.fromUnixTime(currently["time"].get!int);  
     writef("%02d:%02d\n", time.hour, time.minute);                      // 26
     writeln(currently["summary"].get!string);                           // 27
     writeln(result["timezone"].get!string);                             // 28
-
-    writeln("** end data **");
+    writeln("** end data **");                                          // 29
 }

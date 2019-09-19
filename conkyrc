@@ -88,7 +88,8 @@ ${voffset 5}${font StyleBats:size=16}${color cc5050}g${color}${font} ${voffset -
 ${voffset 5}${font StyleBats:size=16}${color cc5050}j${color}${font} ${voffset -3}SWAP: $swap ${alignr}${swapbar 8,60}
 ${voffset 5}${font StyleBats:size=16}${color cc5050}q${color}${font} ${voffset -3}Uptime: ${alignr}${uptime_short}
 ${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}CPU temp: ${alignr}${hwmon 0 temp 1}°
-${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}GPU temp: ${alignr}${hwmon 1 temp 1}°
+# ${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}GPU temp: ${alignr}${hwmon 1 temp 1}°
+${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}GPU temp: ${alignr}${nvidia temp}°
 
 ${voffset -7}DATE ${hr 2}
 ${color 80b0c0}${voffset -20}
@@ -117,7 +118,7 @@ ${execpi 120 sed -n '18p' ${template0}}%${alignr}${execpi 120 sed -n '19p' ${tem
 Wind: ${execpi 120 sed -n '25p' ${template0}} at ${execpi 120 sed -n '20p' ${template0}}${alignr}${execpi 120 sed -n '22p' ${template0}}
 ${voffset -3}${font Weather Icons:bold:size=10}${font Noto Sans:size=9} ${execpi 120 sed -n '23p' ${template0}}${alignr}${execpi 120 sed -n '24p' ${template0}} ${font Weather Icons:bold:size=10}${font Noto Sans:size=9}
 ${voffset -10}${hr 1}
-${voffset -25}${font conkyweather:size=30}${voffset 20}${goto 15}${execpi 120 sed -n '4p' ${template0}}${goto 90}${execpi 120 sed -n '8p' ${template0}}${goto 165}${execpi 120 sed -n '12p' ${template0}}${voffset 12}${goto 15}${font Noto Sans:bold:size=10}${execpi 120 sed -n '5p' ${template0}}°/${execpi 120 sed -n '6p' ${template0}}°${goto 85}${execpi 120 sed -n '9p' ${template0}}°/${execpi 120 sed -n '10p' ${template0}}°${goto 160}${execpi 120 sed -n '13p' ${template0}}°/${execpi 120 sed -n '14p' ${template0}}°${voffset 12}${goto 25}${font Noto Sans:bold:size=10}${execpi 120 sed -n '7p' ${template0}}${goto 95}${execpi 120 sed -n '11p' ${template0}}${goto 170}${execpi 120 sed -n '15p' ${template0}}${font}
+${voffset -25}${font conkyweather:size=30}${voffset 20}${goto 15}${execpi 120 sed -n '4p' ${template0}}${goto 90}${execpi 120 sed -n '8p' ${template0}}${goto 165}${execpi 120 sed -n '12p' ${template0}}${voffset 12}${goto 15}${font Noto Sans:size=10}${execpi 120 sed -n '5p' ${template0}}°/${execpi 120 sed -n '6p' ${template0}}°${goto 85}${execpi 120 sed -n '9p' ${template0}}°/${execpi 120 sed -n '10p' ${template0}}°${goto 160}${execpi 120 sed -n '13p' ${template0}}°/${execpi 120 sed -n '14p' ${template0}}°${voffset 14}${goto 25}${execpi 120 sed -n '7p' ${template0}}${goto 95}${execpi 120 sed -n '11p' ${template0}}${goto 170}${execpi 120 sed -n '15p' ${template0}}${font}
 ${voffset -5}
 ${color}
 ${font}
@@ -134,7 +135,7 @@ PLAYING ${hr 2}
 ${voffset -12}
 ${if_empty ${mpd_artist}}${mpd_name}${else}${mpd_artist}${endif}
 ${font Noto Sans:size=9}${if_empty ${mpd_title}}Unknown/Missing tag${else}${mpd_title}${endif}
-${mpd_bar 9, 120}${alignr}${mpd_elapsed} / ${mpd_length}
+${voffset 2}${mpd_bar 7, 100}${voffset -1}${alignr}${mpd_elapsed} / ${mpd_length}
 ${else}
 ${endif}
 ${voffset -180}

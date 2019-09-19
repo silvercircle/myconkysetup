@@ -46,15 +46,23 @@ private:
 		}
 		else {
 			this.homeDir = std.process.environment["HOME"];
+            this.configDir = buildPath(this.homeDir, ".config/darksky-d");
 			this.homeDir = buildPath(this.homeDir, ".local/share/darksky-d");
 		}       
-		try {
+
+        try {
 			std.file.isDir(this.homeDir);
 		}
 		catch (FileException e) {
 			std.file.mkdirRecurse(this.homeDir);
 		}
 
+        try {
+            std.file.isDir(this.configDir);
+        }
+        catch (FileException e) {
+            std.file.mkdirRecurse(this.configDir);
+        }
 		if(args != null && !this.isInitialized) 
 			this.initContext(args);	
 	}
@@ -69,6 +77,7 @@ private:
 	// "True" global
 	__gshared 		GlobalContext instance_;
 	string      	homeDir;
+    string          configDir;
 	bool        	isInitialized = false;
 	bool        	isPortable = false;
 	string      	portableDir;
@@ -122,7 +131,7 @@ public:
 			}
 			
 		}
-		this.configFilePath = buildPath(this.homeDir, "config.json");
+		this.configFilePath = buildPath(this.configDir, "config.json");
 		try {
 			std.file.isFile(this.configFilePath);
 			string rawJson = std.file.readText(this.configFilePath);
@@ -153,7 +162,6 @@ public:
 		exit(code);
 	}
 
-
 	/**
 	 * save configuration
 	 */
@@ -173,6 +181,7 @@ public:
 	 * the data directory
 	 */
 	@property homedir() const { return this.homeDir; }
+    @property configdir() const { return this.configDir; }
 	@property cachefile() const { return this.cacheFileName; }
     @property prettycachefile() const { return this.prettyCacheFileName; }
 }
