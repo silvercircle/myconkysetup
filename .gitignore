@@ -5,4 +5,5 @@ dub.selections.json
 .vscode/sftp.json
 *.vp*
 *.vtg
-
+darksky-d
+darksky-d.exe
