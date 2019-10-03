@@ -1,5 +1,7 @@
 name "darksky-d"
+dependency "d2sqlite3" version="~>0.18.3"
+dependency "vibe-d:data" version=">=0.8.6-beta.1 <0.9.0-0"
 targetType "executable"
 sourcePaths "."
-dependency "vibe-d:data" version="~>0.8.6-beta.1"
 versions "VibeManualMemoryManagement"
+subConfiguration "d2sqlite3" "all-included"

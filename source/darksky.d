@@ -23,7 +23,7 @@ import std.net.curl, std.path, std.file, std.conv;
 import std.datetime, std.string;
 import vibe.data.json;
 
-import context;
+import context, db;
 
 struct Config {
     string  key = "";               // darksky api key. Mandatory, the application
@@ -111,7 +111,11 @@ string degToBearing(uint wind_direction)
     const int val = cast(int)((wind_direction / 22.5) + .5);
     return _windDirections[val % 16];
 }
-
+@safe nothrow unittest
+{
+    assert(degToBearing(45) == "NE");
+    assert(degToBearing(400) == "N");
+}
 /++
  + returns 0 on success, any other value means failure and a possibly incomplete
  + output
@@ -169,6 +173,8 @@ void main(string[] args)
     }
 
     if(cfg.fUseCached == false) {
+        DB db = DB.getInstance();
+
         int resultcode = 0;
         fetchFromApi();
         Json result = readFromCache(resultcode);
@@ -184,6 +190,7 @@ void main(string[] args)
             ctx.orderlyShutDown(resultcode);
         }
         generateOutput(result);
+        db.addDataPoint(result);
         ctx.orderlyShutDown(0);
     } else {
         int resultcode = 0;
@@ -241,16 +248,6 @@ void generateOutput(Json result)
         return cfg.pressureUnit == "inhg" ? hPa / 33.863886666667 : hPa;
     }
 
-    // values for temperature, pressure, windspeed etc. can be either
-    // float or int in the Json. We always want float.
-    const float getFloatValue(const Json val)
-    {
-        try {
-            return val.get!float;
-        } catch(JSONException e) {
-            return cast(float)val.get!int;
-        }
-    }
     // output a single temperature value, assume float, but
     // the Json can also return int.
     void outputTemperature(const Json val, const bool addUnit = false, const string format = "%.1f%s\n")

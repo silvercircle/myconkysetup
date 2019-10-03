@@ -11,6 +11,7 @@ module context;
 
 import std.process, std.path, std.stdio, std.file, std.string, std.conv, core.stdc.stdlib: exit;
 import vibe.data.json, vibe.data.serialization, std.datetime :Clock, SysTime;
+import db;
 
 /**
  * app configuration class
@@ -71,8 +72,7 @@ private:
 	{
 		this.saveConfig();
 	}
-
-	// TLS flag, each thread has its own
+    // TLS flag, each thread has its own
 	static bool 	isInstantiated = false;
 	// "True" global
 	__gshared 		GlobalContext instance_;
@@ -83,7 +83,7 @@ private:
 	string      	portableDir;
 	string      	exePath;
 	string      	configFilePath;
-	string			cacheFileName, prettyCacheFileName;
+	string			cacheFileName, prettyCacheFileName, dbFileName;
 public:
 	/**
 	 * the configuration object
@@ -152,6 +152,9 @@ public:
 		cfg.dataDir = this.homeDir;
 		this.cacheFileName = buildPath(this.homeDir, "darksky_response.json");
         this.prettyCacheFileName = buildPath(this.homeDir, "darksky_pretty_response.json");
+        this.dbFileName = buildPath(this.homedir, "history.sqlite3");
+
+        DB db = DB.getInstance(this.dbFileName);
 	}
 
 	/**
