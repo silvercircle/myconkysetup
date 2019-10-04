@@ -2,25 +2,19 @@
  + darksky-d fetches weather data from darksky.net and builds 
  + a plain text file which conky will read to construct a nice weather 
  + widget. 
- + + 
+ +  
+ + This module handles sqlite3 access to build a history of recorded 
+ + weather data. 
+ +  
  + © 2019, Alex Vie <silvercircle@gmail.com>
- + License: MIT 
- +  
- + How to build: 
- +  
- + install DMD (D Compiler) from http://dlang.org 
- +  
- + > dub build --build=release --compiler=dmd --arch=x86_64 
- +  
- + replace release with debug to get a debug build, arch with x86 for 
- + a 32bit build.  
+ + License: MIT
  +/
 
-module db;
+module darkskyd.database;
 import d2sqlite3.database, d2sqlite3.statement;
 import std.stdio, std.path;
 import vibe.data.json;
-import context;
+import darkskyd.context;
 
 // values for temperature, pressure, windspeed etc. can be either
 // float or int in the Json. We always want float.
@@ -39,28 +33,29 @@ final class DB
     {
         if(dbname != null) {
             this.db = d2sqlite3.database.Database(dbname);
-            this.db.run(q"[CREATE TABLE IF NOT EXISTS history 
-                            (
-                                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                timestamp INTEGER,
-                                summary TEXT NOT NULL DEFAULT 'unknown',
-                                icon TEXT NOT NULL DEFAULT 'unknown',
-                                temperature REAL NOT NULL DEFAULT 0.0,
-                                feelslike REAL NOT NULL DEFAULT 0.0,
-                                dewpoint REAL DEFAULT 0.0,
-                                windbearing INTEGER DEFAULT 0,
-                                windspeed REAL DEFAULT 0.0,
-                                windgust REAL DEFAULT 0.0,
-                                humidity REAL DEFAULT 0.0,
-                                visibility REAL DEFAULT 0.0,
-                                pressure REAL DEFAULT 1013.0,
-                                precip_probability REAL DEFAULT 0.0,
-                                precip_intensity REAL DEFAULT 0.0,
-                                precip_type TEXT DEFAULT 'none',
-                                uvindex INTEGER DEFAULT 0,
-                                sunrise INTEGER DEFAULT 0,
-                                sunset INTEGER DEFAULT 0
-                            )]");
+            this.db.run(q"[
+                CREATE TABLE IF NOT EXISTS history 
+                    (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        timestamp INTEGER DEFAULT 0,
+                        summary TEXT NOT NULL DEFAULT 'unknown',
+                        icon TEXT NOT NULL DEFAULT 'unknown',
+                        temperature REAL NOT NULL DEFAULT 0.0,
+                        feelslike REAL NOT NULL DEFAULT 0.0,
+                        dewpoint REAL DEFAULT 0.0,
+                        windbearing INTEGER DEFAULT 0,
+                        windspeed REAL DEFAULT 0.0,
+                        windgust REAL DEFAULT 0.0,
+                        humidity REAL DEFAULT 0.0,
+                        visibility REAL DEFAULT 0.0,
+                        pressure REAL DEFAULT 1013.0,
+                        precip_probability REAL DEFAULT 0.0,
+                        precip_intensity REAL DEFAULT 0.0,
+                        precip_type TEXT DEFAULT 'none',
+                        uvindex INTEGER DEFAULT 0,
+                        sunrise INTEGER DEFAULT 0,
+                        sunset INTEGER DEFAULT 0
+                    )]");
         }
     }
 
@@ -68,30 +63,23 @@ final class DB
     {
         Json currently = data["currently"];
 
-        Statement st = this.db.prepare(q"[INSERT INTO history
-                                            (
-                                                timestamp, summary,
-                                                icon, temperature,
-                                                feelslike, dewpoint,
-                                                windbearing, windspeed,
-                                                windgust, humidity,
-                                                visibility, pressure,
-                                                precip_probability, precip_intensity,
-                                                precip_type, uvindex,
-                                                sunrise, sunset
-                                            ) 
-                                          VALUES
-                                            (
-                                                :timestamp, :summary,
-                                                :icon, :temperature,
-                                                :feelslike, :dewpoint,
-                                                :windbearing, :windspeed,
-                                                :windgust, :humidity,
-                                                :visibility, :pressure,
-                                                :precip_probability, :precip_intensity,
-                                                :precip_type, :uvindex,
-                                                :sunrise, :sunset
-                                          )]");
+        Statement st = this.db.prepare(q"[
+                    INSERT INTO history
+                        (
+                            timestamp, summary, icon, temperature,
+                            feelslike, dewpoint, windbearing, windspeed,
+                            windgust, humidity, visibility, pressure,
+                            precip_probability, precip_intensity, precip_type,
+                            uvindex, sunrise, sunset
+                        ) 
+                      VALUES
+                        (
+                            :timestamp, :summary, :icon, :temperature,
+                            :feelslike, :dewpoint, :windbearing, :windspeed,
+                            :windgust, :humidity, :visibility, :pressure,
+                            :precip_probability, :precip_intensity, :precip_type,
+                            :uvindex, :sunrise, :sunset
+                        )]");
 
         st.bind(":timestamp", currently["time"].get!int);
         st.bind(":summary", currently["summary"].get!string);
@@ -105,9 +93,9 @@ final class DB
         st.bind(":humidity", currently["humidity"].get!float);
         st.bind(":visibility", currently["visibility"].get!float);
         st.bind(":pressure", currently["pressure"].get!float);
-        st.bind(":precip_probability", currently["precipProbability"].getFloatValue());
         st.bind(":precip_intensity", currently["precipIntensity"].getFloatValue());
-        st.bind(":precip_type", currently["precipType"].get!string);
+        st.bind(":precip_probability", currently["precipProbability"].getFloatValue());
+        st.bind(":precip_type", "precipType" in currently ? currently["precipType"].get!string : "none");
         st.bind(":uvindex", currently["uvIndex"].get!int);
 
         st.bind(":sunrise", data["daily"]["data"][0]["sunriseTime"].get!int);

@@ -7,11 +7,11 @@
  + License: MIT
  +/
  
-module context;
+module darkskyd.context;
 
 import std.process, std.path, std.stdio, std.file, std.string, std.conv, core.stdc.stdlib: exit;
 import vibe.data.json, vibe.data.serialization, std.datetime :Clock, SysTime;
-import db;
+import darkskyd.database;
 
 /**
  * app configuration class

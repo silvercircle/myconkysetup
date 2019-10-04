@@ -16,14 +16,14 @@
  + a 32bit build.  
  +/
  
-module darksky;
+module darkskyd.main;
 
 import std.stdio, std.getopt, core.stdc.stdlib: exit;
 import std.net.curl, std.path, std.file, std.conv;
 import std.datetime, std.string;
 import vibe.data.json;
 
-import context, db;
+import darkskyd.context, darkskyd.database;
 
 struct Config {
     string  key = "";               // darksky api key. Mandatory, the application
