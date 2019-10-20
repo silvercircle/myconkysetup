@@ -1,4 +1,3 @@
-
 conky.config = {
     use_xft = true,
     font = "DejaVu Sans:bold:size=9",
@@ -10,15 +9,15 @@ conky.config = {
     total_run_times = 0,
 
     own_window = true,
-    own_window_transparent = false,
+    own_window_transparent = true,
     -- own_window_type override,
     -- own_window_type dock,
     -- own_window_type desktop,
-    own_window_type = override,
+    own_window_type = normal,
     border_inner_margin = 10,
 
     own_window_argb_visual = true,
-    own_window_argb_value = 170,
+    own_window_argb_value = 150,
 
     -- If own_window is yes, these window manager hints may be used
     own_window_hints = "undecorated,below,sticky,skip_taskbar,skip_pager",
@@ -78,7 +77,7 @@ conky.config = {
 
 conky.text = [[
 ${font DejaVu Sans:bold:size=9}SYSTEM ${hr 2}
-${voffset -5}${font Noto Sans:bold:size=18}${alignr}${nodename}${font}
+${voffset -5}${font Lato:bold:size=18}${alignr}${nodename}${font}
 # ${voffset 5}${font OpenLogos:size=16}${color cc5050}B${color}${font} ${voffset -5}Kernel: ${alignr}${kernel}
 ${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU: ${cpu cpu0}% ${alignr}${cpubar cpu0 8,60}
 # ${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU1: ${cpu cpu1}% ${alignr}${cpubar cpu1 8,60}
@@ -92,13 +91,13 @@ ${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${v
 ${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}GPU temp: ${alignr}${nvidia temp}°
 
 ${voffset -7}DATE ${hr 2}
-${color 80b0c0}${voffset -20}
-${font Noto Sans:bold:size=30}${time %H:%M}${alignr}${font Noto Sans:bold:size=12}${time %Z}
-${voffset -40}${alignr}Week ${time %U}${font}
-${voffset 17}${alignc}${font Noto Sans:bold:size=9}${time %A, %d %B %Y}${font}
+${color 80b0c0}${voffset -22}
+${font Ubuntu:bold:size=28}${time %H:%M}${alignr}${font Ubuntu:bold:size=12}${time %Z}
+${voffset -36}${alignr}Week ${time %U}${font}
+${voffset 19}${alignc}${font Ubuntu:bold:size=10}${time %A, %d %B %Y}${font}
 ${voffset -5}${hr 1}
-${font Noto Sans:size=9}
-${voffset -20}GMT: ${alignr}${tztime GMT %H:%M}
+${font Cronos Pro:size=11}
+${voffset -18}GMT: ${alignr}${tztime GMT %H:%M}
 Eastern: ${alignr}${tztime US/Eastern %H:%M}
 # Central: ${alignr}${tztime US/Central %H:%M}
 West: ${alignr}${tztime US/Pacific %H:%M}
@@ -108,17 +107,17 @@ ${color}
 ${voffset -25}${execpi 120 sed -n '28p' ${template0}} (${execpi 120 sed -n '26p' ${template0}}) ${hr 2}
 ${color aaaa40}
 ${voffset -20}
-${font Noto Sans:bold:size=28}${alignr}${voffset -15}${execpi 120 sed -n '16p' ${template0}}
-${voffset -55}${alignr}${font Noto Sans:bold:size=9}${voffset 20}Feels like: ${execpi 120 sed -n '3p' ${template0}}
+${font Ubuntu:bold:size=28}${alignr}${voffset -15}${execpi 120 sed -n '16p' ${template0}}
+${voffset -48}${alignr}${font Ubuntu Condensed:size=10}${voffset 20}Feels like: ${execpi 120 sed -n '3p' ${template0}}
 ${voffset -2}${alignr}${execpi 120 sed -n '27p' ${template0}}
 ${voffset -60}${font conkyweather:size=50}${execpi 120 sed -n '2p' ${template0}}${font}
-${font Noto Sans:size=9}
+${font DejaVu Sans:size=9}
 ${voffset -20}Dew point: ${execpi 120 sed -n '17p' ${template0}}${alignr}${execpi 120 sed -n '21p' ${template0}}
 ${execpi 120 sed -n '18p' ${template0}}%${alignr}${execpi 120 sed -n '19p' ${template0}}
 Wind: ${execpi 120 sed -n '25p' ${template0}} at ${execpi 120 sed -n '20p' ${template0}}${alignr}${execpi 120 sed -n '22p' ${template0}}
-${voffset -3}${font Weather Icons:bold:size=10}${font Noto Sans:size=9} ${execpi 120 sed -n '23p' ${template0}}${alignr}${execpi 120 sed -n '24p' ${template0}} ${font Weather Icons:bold:size=10}${font Noto Sans:size=9}
+${voffset -3}${font Weather Icons:bold:size=10}${font Ubuntu:size=9} ${execpi 120 sed -n '23p' ${template0}}${alignr}${execpi 120 sed -n '24p' ${template0}} ${font Weather Icons:bold:size=10}${font Ubuntu:size=9}
 ${voffset -8}${hr 1}
-${voffset -23}${font conkyweather:size=30}${voffset 20}${goto 15}${execpi 120 sed -n '4p' ${template0}}${goto 90}${execpi 120 sed -n '8p' ${template0}}${goto 165}${execpi 120 sed -n '12p' ${template0}}${voffset 12}${goto 15}${font Noto Sans:size=10}${execpi 120 sed -n '5p' ${template0}}°/${execpi 120 sed -n '6p' ${template0}}°${goto 85}${execpi 120 sed -n '9p' ${template0}}°/${execpi 120 sed -n '10p' ${template0}}°${goto 160}${execpi 120 sed -n '13p' ${template0}}°/${execpi 120 sed -n '14p' ${template0}}°${voffset 14}${goto 25}${execpi 120 sed -n '7p' ${template0}}${goto 95}${execpi 120 sed -n '11p' ${template0}}${goto 170}${execpi 120 sed -n '15p' ${template0}}${font}
+${voffset -23}${font conkyweather:size=30}${voffset 20}${goto 15}${execpi 120 sed -n '4p' ${template0}}${goto 90}${execpi 120 sed -n '8p' ${template0}}${goto 165}${execpi 120 sed -n '12p' ${template0}}${voffset 12}${goto 15}${font Ubuntu:size=10}${execpi 120 sed -n '5p' ${template0}}°/${execpi 120 sed -n '6p' ${template0}}°${goto 85}${execpi 120 sed -n '9p' ${template0}}°/${execpi 120 sed -n '10p' ${template0}}°${goto 160}${execpi 120 sed -n '13p' ${template0}}°/${execpi 120 sed -n '14p' ${template0}}°${voffset 14}${goto 25}${execpi 120 sed -n '7p' ${template0}}${goto 95}${execpi 120 sed -n '11p' ${template0}}${goto 170}${execpi 120 sed -n '15p' ${template0}}${font}
 ${voffset -5}
 ${color}
 ${font}
@@ -134,7 +133,7 @@ ${if_mpd_playing}
 PLAYING ${hr 2}
 ${voffset -12}
 ${if_empty ${mpd_artist}}${mpd_name}${else}${mpd_artist}${endif}
-${font Noto Sans:size=9}${if_empty ${mpd_title}}Unknown/Missing tag${else}${mpd_title}${endif}
+${font Ubuntu:size=9}${if_empty ${mpd_title}}Unknown/Missing tag${else}${mpd_title}${endif}
 ${voffset 2}${mpd_bar 7, 100}${voffset -1}${alignr}${mpd_elapsed} / ${mpd_length}
 ${else}
 ${endif}

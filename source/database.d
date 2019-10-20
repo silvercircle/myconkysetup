@@ -11,6 +11,7 @@
  +/
 
 module darkskyd.database;
+
 import d2sqlite3.database, d2sqlite3.statement;
 import std.stdio, std.path;
 import vibe.data.json;
@@ -31,55 +32,63 @@ final class DB
 {
     this(const string dbname = null)
     {
-        if(dbname != null) {
-            this.db = d2sqlite3.database.Database(dbname);
-            this.db.run(q"[
-                CREATE TABLE IF NOT EXISTS history 
-                    (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        timestamp INTEGER DEFAULT 0,
-                        summary TEXT NOT NULL DEFAULT 'unknown',
-                        icon TEXT NOT NULL DEFAULT 'unknown',
-                        temperature REAL NOT NULL DEFAULT 0.0,
-                        feelslike REAL NOT NULL DEFAULT 0.0,
-                        dewpoint REAL DEFAULT 0.0,
-                        windbearing INTEGER DEFAULT 0,
-                        windspeed REAL DEFAULT 0.0,
-                        windgust REAL DEFAULT 0.0,
-                        humidity REAL DEFAULT 0.0,
-                        visibility REAL DEFAULT 0.0,
-                        pressure REAL DEFAULT 1013.0,
-                        precip_probability REAL DEFAULT 0.0,
-                        precip_intensity REAL DEFAULT 0.0,
-                        precip_type TEXT DEFAULT 'none',
-                        uvindex INTEGER DEFAULT 0,
-                        sunrise INTEGER DEFAULT 0,
-                        sunset INTEGER DEFAULT 0
-                    )]");
+        try {
+            if(dbname != null) {
+                this.db = d2sqlite3.database.Database(dbname);
+                this.db.run(q"[
+                    CREATE TABLE IF NOT EXISTS history 
+                        (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            timestamp INTEGER DEFAULT 0,
+                            summary TEXT NOT NULL DEFAULT 'unknown',
+                            icon TEXT NOT NULL DEFAULT 'unknown',
+                            temperature REAL NOT NULL DEFAULT 0.0,
+                            feelslike REAL NOT NULL DEFAULT 0.0,
+                            dewpoint REAL DEFAULT 0.0,
+                            windbearing INTEGER DEFAULT 0,
+                            windspeed REAL DEFAULT 0.0,
+                            windgust REAL DEFAULT 0.0,
+                            humidity REAL DEFAULT 0.0,
+                            visibility REAL DEFAULT 0.0,
+                            pressure REAL DEFAULT 1013.0,
+                            precip_probability REAL DEFAULT 0.0,
+                            precip_intensity REAL DEFAULT 0.0,
+                            precip_type TEXT DEFAULT 'none',
+                            uvindex INTEGER DEFAULT 0,
+                            sunrise INTEGER DEFAULT 0,
+                            sunset INTEGER DEFAULT 0
+                        )]");
+                this.valid = true;
+            }
+        } catch(SqliteException e) {
+            this.valid = false;
         }
     }
 
     void addDataPoint(ref Json data)
     {
+        if(this.valid == false) {
+            return;
+        }
         Json currently = data["currently"];
 
         Statement st = this.db.prepare(q"[
-                    INSERT INTO history
-                        (
-                            timestamp, summary, icon, temperature,
-                            feelslike, dewpoint, windbearing, windspeed,
-                            windgust, humidity, visibility, pressure,
-                            precip_probability, precip_intensity, precip_type,
-                            uvindex, sunrise, sunset
-                        ) 
-                      VALUES
-                        (
-                            :timestamp, :summary, :icon, :temperature,
-                            :feelslike, :dewpoint, :windbearing, :windspeed,
-                            :windgust, :humidity, :visibility, :pressure,
-                            :precip_probability, :precip_intensity, :precip_type,
-                            :uvindex, :sunrise, :sunset
-                        )]");
+                INSERT INTO history
+                    (
+                        timestamp, summary, icon, temperature,
+                        feelslike, dewpoint, windbearing, windspeed,
+                        windgust, humidity, visibility, pressure,
+                        precip_probability, precip_intensity, precip_type,
+                        uvindex, sunrise, sunset
+                    ) 
+                  VALUES
+                    (
+                        :timestamp, :summary, :icon, :temperature,
+                        :feelslike, :dewpoint, :windbearing, :windspeed,
+                        :windgust, :humidity, :visibility, :pressure,
+                        :precip_probability, :precip_intensity, :precip_type,
+                        :uvindex, :sunrise, :sunset
+            )]");
 
         st.bind(":timestamp", currently["time"].get!int);
         st.bind(":summary", currently["summary"].get!string);
@@ -91,7 +100,7 @@ final class DB
         st.bind(":windspeed", currently["windSpeed"].getFloatValue());
         st.bind(":windgust", currently["windGust"].getFloatValue());
         st.bind(":humidity", currently["humidity"].get!float);
-        st.bind(":visibility", currently["visibility"].get!float);
+        st.bind(":visibility", currently["visibility"].getFloatValue());
         st.bind(":pressure", currently["pressure"].get!float);
         st.bind(":precip_intensity", currently["precipIntensity"].getFloatValue());
         st.bind(":precip_probability", currently["precipProbability"].getFloatValue());
@@ -129,6 +138,7 @@ private:
     static bool isInstantiated = 0;
     __gshared DB instance_;
     d2sqlite3.database.Database db;
+    bool valid = false;
 }
 
 static ~this()

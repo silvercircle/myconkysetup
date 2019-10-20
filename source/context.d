@@ -6,7 +6,7 @@
  + © 2019, Alex Vie <silvercircle@gmail.com>
  + License: MIT
  +/
- 
+  
 module darkskyd.context;
 
 import std.process, std.path, std.stdio, std.file, std.string, std.conv, core.stdc.stdlib: exit;

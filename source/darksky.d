@@ -35,6 +35,7 @@ struct Config {
     string  visUnit = "km";         // km or miles
     string  pressureUnit = "hpa";   // hpa or inhg
     string  windSpeed;              // temporary save wind unit 
+    bool    noHistory = false;      // don't record fetched data in database
 }
 
 Config cfg = Config();
@@ -78,7 +79,7 @@ void print_usage()
 	writef(q"[
     darksky-d   --key=YOUR_API_KEY --useCached=true|false --loc=lat,lon
                 --tempUnit=C|F --windUnit=ms|km|knots|mph --visUnit = km|miles
-                --pressureUnit=hpa|inhg
+                --pressureUnit=hpa|inhg --noHistory
 
     key:          Your darksky API key. Mandatory.
     useCached:    When true, use cached JSON. If none is found, print a notice 
@@ -92,7 +93,9 @@ void print_usage()
                   mph are available. Defaults to m/s
     visUnit:      Unit for visibility. Either km or miles, defaults to km.
     pressureUnit: Unit for pressure, either hpa or inhg. Defaults to hpa.
-    
+    noHistory:    Set to true if you don't want the fetched data be written
+                  to the database.
+
     Output will go to stdout to verify basic functionality.
     (C) 2019 by silvercircle@gmail.com
     License: MIT
@@ -161,7 +164,8 @@ void main(string[] args)
 
 	const GetoptResult stdargs = getopt(args, "key", &cfg.key, "useCached", &cfg.fUseCached,
                                         "tempUnit", &cfg.tempUnit, "windUnit", &cfg.windUnit,
-                                        "visUnit", &cfg.visUnit, "pressureUnit", &cfg.pressureUnit);
+                                        "visUnit", &cfg.visUnit, "pressureUnit", &cfg.pressureUnit,
+                                        "noHistory", &cfg.noHistory);
     if(stdargs.helpWanted) {
         print_usage();
         ctx.orderlyShutDown(-1);
@@ -190,7 +194,9 @@ void main(string[] args)
             ctx.orderlyShutDown(resultcode);
         }
         generateOutput(result);
-        db.addDataPoint(result);
+        if(cfg.noHistory == false) {
+            db.addDataPoint(result);
+        }
         ctx.orderlyShutDown(0);
     } else {
         int resultcode = 0;
