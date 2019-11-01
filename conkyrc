@@ -88,7 +88,7 @@ ${voffset 5}${font StyleBats:size=16}${color cc5050}j${color}${font} ${voffset -
 ${voffset 5}${font StyleBats:size=16}${color cc5050}q${color}${font} ${voffset -3}Uptime: ${alignr}${uptime_short}
 ${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}CPU temp: ${alignr}${hwmon 0 temp 1}°
 # ${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}GPU temp: ${alignr}${hwmon 1 temp 1}°
-${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}GPU temp: ${alignr}${nvidia temp}°
+# ${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}GPU temp: ${alignr}${nvidia temp}°
 
 ${voffset -7}DATE ${hr 2}
 ${color 80b0c0}${voffset -22}

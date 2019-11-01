@@ -89,7 +89,7 @@ public:
 	 * the configuration object
 	 */
 	Config      		cfg;
-	char[]				apiJson;
+	char[]   			apiJson;
 
 	static GlobalContext getInstance(string[] args = null)
 	{
@@ -113,12 +113,11 @@ public:
 			return;
 
 		this.isInitialized = true;
-
 		if(this.isPortable && this.portableDir.length == 0)
 			this.portableDir = ".darksky-d.data";
 
 		if(this.portableDir.length > 0) {
-			this.isPortable = true;
+			this.isPortable = true;	
 			if(!std.path.isAbsolute(this.portableDir))
 				this.homeDir = buildPath(this.exePath, this.portableDir);
 			else
@@ -131,23 +130,26 @@ public:
 			}
 			
 		}
-		this.configFilePath = buildPath(this.configDir, "config.json");
+
+        this.configFilePath = buildPath(this.configDir, "config.json");
 		try {
 			std.file.isFile(this.configFilePath);
 			string rawJson = std.file.readText(this.configFilePath);
 			try
 				this.cfg = deserializeJson!Config(rawJson);
-			catch (Throwable e) {
+			catch (JSONException e) {
 				writef("exception while deserialize\n%s\n", e);
 			}
 		} catch(FileException e) {
 			File f = File(this.configFilePath, "w");
-			this.cfg = Config();
-			this.cfg.firstRun = Clock.currTime();
-			Json s = cfg.serializeToJson();
+            this.cfg = Config();
+            this.cfg.firstRun = Clock.currTime();
+            Json s = this.cfg.serializeToJson();
+            writeln("serialize done...");
+            writeln(s.toPrettyString());
 			f.write(s.toPrettyString());
 			f.close();
-			destroy(s);
+            destroy(s);
 		}   
 		cfg.dataDir = this.homeDir;
 		this.cacheFileName = buildPath(this.homeDir, "darksky_response.json");
@@ -176,8 +178,7 @@ public:
 			File f = File(this.configFilePath, "w");
 			f.write(s.toPrettyString());
 			f.close();
-		} catch (FileException e) {
-		}
+		} catch (FileException e) {}
 	}
 
 	/**

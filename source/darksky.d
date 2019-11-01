@@ -13,7 +13,11 @@
  + > dub build --build=release --compiler=dmd --arch=x86_64 
  +  
  + replace release with debug to get a debug build, arch with x86 for 
- + a 32bit build.  
+ + a 32bit build. 
+ +  
+ + IMPORTANT NOTE: 
+ + On 32bit Linux (at least, debian-based distributions) make sure to link 
+ + with ld.gold or else you'll run into troubles including crashes. 
  +/
  
 module darkskyd.main;
@@ -313,7 +317,7 @@ void generateOutput(Json result)
                                                                         // file.
     outputTemperature(currently["temperature"], true);                  // 16
     outputTemperature(currently["dewPoint"], true);                     // 17
-    writef("Humidity: %d\n", cast(int)(currently["humidity"].get!float * 100));  // 18
+    writef("Humidity: %d\n", cast(int)(currently["humidity"].getFloatValue() * 100));  // 18
     writef(cfg.pressureUnit == "hpa" ? "%.1f hPa\n" : "%.2f InHg\n", convertPressure(getFloatValue(currently["pressure"])));  // 19
     writef("%.1f %s\n", convertWindspeed(getFloatValue(currently["windSpeed"])), cfg.windSpeed); // 20
     writef("UV: %d\n", currently["uvIndex"].get!int);                   // 21
