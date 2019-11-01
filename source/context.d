@@ -35,7 +35,7 @@ private:
 		@optional @name("last_fetched") SysTime		lastFetched;
 		@optional @name("num_updates")	uint		numUpdates = 0;
 		@optional @name("location")		string		location = "48.2082,16.3738";
-        @optional @name("units")        string      units = "si";
+		@optional @name("units")        string      units = "si";
 	}
 
 	this(ref string[] args)
@@ -47,23 +47,23 @@ private:
 		}
 		else {
 			this.homeDir = std.process.environment["HOME"];
-            this.configDir = buildPath(this.homeDir, ".config/darksky-d");
+			this.configDir = buildPath(this.homeDir, ".config/darksky-d");
 			this.homeDir = buildPath(this.homeDir, ".local/share/darksky-d");
 		}       
 
-        try {
+		try {
 			std.file.isDir(this.homeDir);
 		}
 		catch (FileException e) {
 			std.file.mkdirRecurse(this.homeDir);
 		}
 
-        try {
-            std.file.isDir(this.configDir);
-        }
-        catch (FileException e) {
-            std.file.mkdirRecurse(this.configDir);
-        }
+		try {
+			std.file.isDir(this.configDir);
+		}
+		catch (FileException e) {
+			std.file.mkdirRecurse(this.configDir);
+		}
 		if(args != null && !this.isInitialized) 
 			this.initContext(args);	
 	}
@@ -72,12 +72,12 @@ private:
 	{
 		this.saveConfig();
 	}
-    // TLS flag, each thread has its own
+	// TLS flag, each thread has its own
 	static bool 	isInstantiated = false;
 	// "True" global
 	__gshared 		GlobalContext instance_;
 	string      	homeDir;
-    string          configDir;
+	string          configDir;
 	bool        	isInitialized = false;
 	bool        	isPortable = false;
 	string      	portableDir;
@@ -131,7 +131,7 @@ public:
 			
 		}
 
-        this.configFilePath = buildPath(this.configDir, "config.json");
+		this.configFilePath = buildPath(this.configDir, "config.json");
 		try {
 			std.file.isFile(this.configFilePath);
 			string rawJson = std.file.readText(this.configFilePath);
@@ -142,21 +142,21 @@ public:
 			}
 		} catch(FileException e) {
 			File f = File(this.configFilePath, "w");
-            this.cfg = Config();
-            this.cfg.firstRun = Clock.currTime();
-            Json s = this.cfg.serializeToJson();
-            writeln("serialize done...");
-            writeln(s.toPrettyString());
+			this.cfg = Config();
+			this.cfg.firstRun = Clock.currTime();
+			Json s = this.cfg.serializeToJson();
+			writeln("serialize done...");
+			writeln(s.toPrettyString());
 			f.write(s.toPrettyString());
 			f.close();
-            destroy(s);
+			destroy(s);
 		}   
 		cfg.dataDir = this.homeDir;
 		this.cacheFileName = buildPath(this.homeDir, "darksky_response.json");
-        this.prettyCacheFileName = buildPath(this.homeDir, "darksky_pretty_response.json");
-        this.dbFileName = buildPath(this.homedir, "history.sqlite3");
+		this.prettyCacheFileName = buildPath(this.homeDir, "darksky_pretty_response.json");
+		this.dbFileName = buildPath(this.homedir, "history.sqlite3");
 
-        DB db = DB.getInstance(this.dbFileName);
+		DB db = DB.getInstance(this.dbFileName);
 	}
 
 	/**
@@ -185,7 +185,7 @@ public:
 	 * the data directory
 	 */
 	@property homedir() const { return this.homeDir; }
-    @property configdir() const { return this.configDir; }
+	@property configdir() const { return this.configDir; }
 	@property cachefile() const { return this.cacheFileName; }
-    @property prettycachefile() const { return this.prettyCacheFileName; }
+	@property prettycachefile() const { return this.prettyCacheFileName; }
 }
