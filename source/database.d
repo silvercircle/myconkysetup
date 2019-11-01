@@ -99,7 +99,7 @@ final class DB
         st.bind(":windbearing", currently["windBearing"].get!int);
         st.bind(":windspeed", currently["windSpeed"].getFloatValue());
         st.bind(":windgust", currently["windGust"].getFloatValue());
-        st.bind(":humidity", currently["humidity"].get!float);
+        st.bind(":humidity", currently["humidity"].getFloatValue());
         st.bind(":visibility", currently["visibility"].getFloatValue());
         st.bind(":pressure", currently["pressure"].get!float);
         st.bind(":precip_intensity", currently["precipIntensity"].getFloatValue());

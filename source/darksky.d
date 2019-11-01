@@ -313,7 +313,7 @@ void generateOutput(Json result)
                                                                         // file.
     outputTemperature(currently["temperature"], true);                  // 16
     outputTemperature(currently["dewPoint"], true);                     // 17
-    writef("Humidity: %d\n", cast(int)(currently["humidity"].get!float * 100));  // 18
+    writef("Humidity: %d\n", cast(int)(currently["humidity"].getFloatValue() * 100));  // 18
     writef(cfg.pressureUnit == "hpa" ? "%.1f hPa\n" : "%.2f InHg\n", convertPressure(getFloatValue(currently["pressure"])));  // 19
     writef("%.1f %s\n", convertWindspeed(getFloatValue(currently["windSpeed"])), cfg.windSpeed); // 20
     writef("UV: %d\n", currently["uvIndex"].get!int);                   // 21

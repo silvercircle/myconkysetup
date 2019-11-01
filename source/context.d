@@ -113,12 +113,11 @@ public:
 			return;
 
 		this.isInitialized = true;
-
 		if(this.isPortable && this.portableDir.length == 0)
 			this.portableDir = ".darksky-d.data";
 
 		if(this.portableDir.length > 0) {
-			this.isPortable = true;
+			this.isPortable = true;	
 			if(!std.path.isAbsolute(this.portableDir))
 				this.homeDir = buildPath(this.exePath, this.portableDir);
 			else
@@ -176,8 +175,7 @@ public:
 			File f = File(this.configFilePath, "w");
 			f.write(s.toPrettyString());
 			f.close();
-		} catch (FileException e) {
-		}
+		} catch (FileException e) {}
 	}
 
 	/**
