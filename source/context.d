@@ -7,11 +7,11 @@
  + License: MIT
  +/
   
-module darkskyd.context;
+module context;
 
 import std.process, std.path, std.stdio, std.file, std.string, std.conv, core.stdc.stdlib: exit;
 import vibe.data.json, vibe.data.serialization, std.datetime :Clock, SysTime;
-import darkskyd.database;
+import database;
 
 /**
  * app configuration class
@@ -156,11 +156,13 @@ public:
 		this.prettyCacheFileName = buildPath(this.homeDir, "darksky_pretty_response.json");
 		this.dbFileName = buildPath(this.homedir, "history.sqlite3");
 
-		DB db = DB.getInstance(this.dbFileName);
+		const DB db = DB.getInstance(this.dbFileName);
+		db.connect();
 	}
 
 	/**
-	 * preshutdown
+	 * shut down the application, save config
+	 * exit with error code
 	 */
 	void orderlyShutDown(const int code = 0) {
 		this.saveConfig();

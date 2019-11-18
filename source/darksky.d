@@ -17,17 +17,17 @@
  +  
  + IMPORTANT NOTE: 
  + On 32bit Linux (at least, debian-based distributions) make sure to link 
- + with ld.gold or else you'll run into troubles including crashes. 
+ + with ld.gold or else you'll run into troubles including crashes.
  +/
  
-module darkskyd.main;
+module main;
 
 import std.stdio, std.getopt, core.stdc.stdlib: exit;
 import std.net.curl, std.path, std.file, std.conv;
 import std.datetime, std.string;
 import vibe.data.json;
 
-import darkskyd.context, darkskyd.database;
+import context, database;
 
 struct Config {
 	string  key = "";               // darksky api key. Mandatory, the application
@@ -130,7 +130,6 @@ string degToBearing(uint wind_direction)
 void main(string[] args)
 {
 	GlobalContext ctx = GlobalContext.getInstance(args);
-
 	Json returnError(uint code = 0)
 	{
 		return Json(["success": Json("FAIL"), "code": Json(code)]);
@@ -174,7 +173,6 @@ void main(string[] args)
 		print_usage();
 		ctx.orderlyShutDown(-1);
 	}
-
 	if(cfg.key.length < 10) {
 		writeln("You did not specify a valid API KEY.\nThis is mandatory, use --key=YOUR_KEY to fetch data from darksky.net.");
 		ctx.orderlyShutDown(-3);
@@ -217,13 +215,16 @@ void main(string[] args)
 void generateOutput(Json result)
 {
 	// C to F when --tempUnit=F was specified
-	const T convertTemperature(T)(const T temp)
+	T convertTemperature(T)(const T temp) const
 	{
+		return cfg.tempUnit == "F" ? ((temp * 9/5) + 32) : temp;
+		/*
 		if(cfg.tempUnit == "F") {
 			return (temp * 9/5) + 32;
 		} else {
 			return temp;
 		}
+		*/
 	}
 
 	// km > miles
@@ -234,7 +235,7 @@ void generateOutput(Json result)
 
 	// windspeed, API always returns m/s, we convert to km/h, mph or knots
 	// on user's request.
-	float convertWindspeed(float speed)
+	float convertWindspeed(float speed) const
 	{
 		switch(cfg.windUnit) {
 			case "km":
@@ -318,7 +319,7 @@ void generateOutput(Json result)
 	outputTemperature(currently["temperature"], true);                  // 16
 	outputTemperature(currently["dewPoint"], true);                     // 17
 	writef("Humidity: %d\n", cast(int)(currently["humidity"].getFloatValue() * 100));  // 18
-	writef(cfg.pressureUnit == "hpa" ? "%.1f hPa\n" : "%.2f InHg\n", convertPressure(getFloatValue(currently["pressure"])));  // 19
+	writef(cfg.pressureUnit == "hpa" ? "%.1f hPa\n" : "%.2f InHg\n", convertPressure(getFloatValue(currently["pressure"])));
 	writef("%.1f %s\n", convertWindspeed(getFloatValue(currently["windSpeed"])), cfg.windSpeed); // 20
 	writef("UV: %d\n", currently["uvIndex"].get!int);                   // 21
 	writef("%.1f %s\n", convertVis(getFloatValue(currently["visibility"])), cfg.visUnit); // 22

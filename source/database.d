@@ -10,12 +10,12 @@
  + License: MIT
  +/
 
-module darkskyd.database;
+module database;
 
 import d2sqlite3.database, d2sqlite3.statement;
 import std.stdio, std.path;
 import vibe.data.json;
-import darkskyd.context;
+import context;
 
 // values for temperature, pressure, windspeed etc. can be either
 // float or int in the Json. We always want float.
@@ -65,6 +65,11 @@ final class DB
 		}
 	}
 
+	void connect()
+	{
+		// TODO
+	}
+	
 	void addDataPoint(ref Json data)
 	{
 		if(this.valid == false) {
