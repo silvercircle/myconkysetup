@@ -122,6 +122,7 @@ string degToBearing(uint wind_direction)
 {
 	assert(degToBearing(45) == "NE");
 	assert(degToBearing(400) == "N");
+	assert(degToBearing(-45) == "N");
 }
 /++
  + returns 0 on success, any other value means failure and a possibly incomplete
@@ -285,7 +286,6 @@ void generateOutput(Json result)
 
 	writeln("** begin data **");
 	Json currently = result["currently"];
-	const SysTime timestamp = SysTime.fromUnixTime(currently["time"].get!int);
 
 	SysTime sunrise = SysTime.fromUnixTime(result["daily"]["data"][0]["sunriseTime"].get!int);
 	SysTime sunset = SysTime.fromUnixTime(result["daily"]["data"][0]["sunsetTime"].get!int);
@@ -333,5 +333,7 @@ void generateOutput(Json result)
 	writef("%02d:%02d\n", time.hour, time.minute);                      // 26
 	writeln(currently["summary"].get!string);                           // 27
 	writeln(result["timezone"].get!string);                             // 28
-	writeln("** end data **");                                          // 29
+	outputTemperature(result["daily"]["data"][0]["temperatureLow"], true);		// 29
+	outputTemperature(result["daily"]["data"][0]["temperatureHigh"], true);		// 30
+	writeln("** end data **");                                          		// 31
 }

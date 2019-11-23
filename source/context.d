@@ -157,7 +157,6 @@ public:
 		this.dbFileName = buildPath(this.homedir, "history.sqlite3");
 
 		const DB db = DB.getInstance(this.dbFileName);
-		db.connect();
 	}
 
 	/**

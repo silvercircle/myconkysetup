@@ -107,12 +107,14 @@ ${color}
 ${voffset -25}${execpi 120 sed -n '28p' ${template0}} (${execpi 120 sed -n '26p' ${template0}}) ${hr 2}
 ${color aaaa40}
 ${voffset -20}
-${font Ubuntu:bold:size=28}${alignr}${voffset -15}${execpi 120 sed -n '16p' ${template0}}
-${voffset -48}${alignr}${font Ubuntu Condensed:size=10}${voffset 20}Feels like: ${execpi 120 sed -n '3p' ${template0}}
+${font Ubuntu Condensed:bold:size=28}${alignr}${voffset -15}${execpi 120 sed -n '16p' ${template0}}
+${font Ubuntu Condensed:size=10}${voffset -60}${goto 70}${execpi 120 sed -n '29p' ${template0}}
+${goto 70}${execpi 120 sed -n '30p' ${template0}}
+${voffset -20}${alignr}${font Ubuntu Condensed:size=10}${voffset 20}Feels like: ${execpi 120 sed -n '3p' ${template0}}
 ${voffset -2}${alignr}${execpi 120 sed -n '27p' ${template0}}
-${voffset -60}${font conkyweather:size=50}${execpi 120 sed -n '2p' ${template0}}${font}
-${font DejaVu Sans:size=9}
-${voffset -20}Dew point: ${execpi 120 sed -n '17p' ${template0}}${alignr}${execpi 120 sed -n '21p' ${template0}}
+${voffset -65}${font conkyweather:size=50}${execpi 120 sed -n '2p' ${template0}}${font}
+${font Ubuntu Condensed:size=11}
+${voffset -18}Dew point: ${execpi 120 sed -n '17p' ${template0}}${alignr}${execpi 120 sed -n '21p' ${template0}}
 ${execpi 120 sed -n '18p' ${template0}}%${alignr}${execpi 120 sed -n '19p' ${template0}}
 Wind: ${execpi 120 sed -n '25p' ${template0}} at ${execpi 120 sed -n '20p' ${template0}}${alignr}${execpi 120 sed -n '22p' ${template0}}
 ${voffset -3}${font Weather Icons:bold:size=10}${font Ubuntu:size=9} ${execpi 120 sed -n '23p' ${template0}}${alignr}${execpi 120 sed -n '24p' ${template0}} ${font Weather Icons:bold:size=10}${font Ubuntu:size=9}
