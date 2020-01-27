@@ -86,9 +86,10 @@ ${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -
 ${voffset 5}${font StyleBats:size=16}${color cc5050}g${color}${font} ${voffset -3}RAM: $mem ${alignr}${membar 8,60}
 ${voffset 5}${font StyleBats:size=16}${color cc5050}j${color}${font} ${voffset -3}SWAP: $swap ${alignr}${swapbar 8,60}
 ${voffset 5}${font StyleBats:size=16}${color cc5050}q${color}${font} ${voffset -3}Uptime: ${alignr}${uptime_short}
-${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}CPU temp: ${alignr}${hwmon 0 temp 1}°
-# ${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}GPU temp: ${alignr}${hwmon 1 temp 1}°
-${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}GPU temp: ${alignr}${nvidia temp}°
+${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}CPU temp: ${alignr}${hwmon 0 temp 1}°C
+${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}GPU temp: ${alignr}${hwmon 1 temp 1}°C
+${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}Disk hda/hdb: ${alignr}${execpi 30 sudo hddtemp /dev/sda | awk '{print $NF}'} / ${execpi 30 sudo hddtemp /dev/sdb | awk '{print $NF}'}
+# ${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}GPU temp: ${alignr}${nvidia temp}°
 
 ${voffset -7}DATE ${hr 2}
 ${color 80b0c0}${voffset -22}
@@ -106,13 +107,13 @@ ${color}
 
 ${voffset -25}${execpi 120 sed -n '28p' ${template0}} (${execpi 120 sed -n '26p' ${template0}}) ${hr 2}
 ${color aaaa40}
-${voffset -20}
-${font Ubuntu Condensed:bold:size=28}${alignr}${voffset -15}${execpi 120 sed -n '16p' ${template0}}
-${font Ubuntu Condensed:size=10}${voffset -60}${goto 70}${execpi 120 sed -n '29p' ${template0}}
-${goto 70}${execpi 120 sed -n '30p' ${template0}}
+${voffset -15}
+${font Ubuntu:bold:size=20}${alignr}${voffset -15}${execpi 120 sed -n '16p' ${template0}}
+${font Ubuntu:size=10}${voffset -40}${goto 85}${execpi 120 sed -n '29p' ${template0}}
+${goto 85}${execpi 120 sed -n '30p' ${template0}}
 ${voffset -20}${alignr}${font Ubuntu Condensed:size=10}${voffset 20}Feels like: ${execpi 120 sed -n '3p' ${template0}}
 ${voffset -2}${alignr}${execpi 120 sed -n '27p' ${template0}}
-${voffset -65}${font conkyweather:size=50}${execpi 120 sed -n '2p' ${template0}}${font}
+${voffset -60}${font conkyweather:size=50}${execpi 120 sed -n '2p' ${template0}}${font}
 ${font Ubuntu Condensed:size=11}
 ${voffset -18}Dew point: ${execpi 120 sed -n '17p' ${template0}}${alignr}${execpi 120 sed -n '21p' ${template0}}
 ${execpi 120 sed -n '18p' ${template0}}%${alignr}${execpi 120 sed -n '19p' ${template0}}
@@ -131,13 +132,13 @@ ${voffset 4}${font PizzaDude Bullets:size=14}N${font} Total Upload: ${alignr}${t
 ${voffset 4}${font PizzaDude Bullets:size=14}T${font} Total Download: ${alignr}${totaldown enp0s7}
 ${endif}
 ${voffset -40}
-${if_mpd_playing}
-PLAYING ${hr 2}
-${voffset -12}
-${if_empty ${mpd_artist}}${mpd_name}${else}${mpd_artist}${endif}
-${font Ubuntu:size=9}${if_empty ${mpd_title}}Unknown/Missing tag${else}${mpd_title}${endif}
-${voffset 2}${mpd_bar 7, 100}${voffset -1}${alignr}${mpd_elapsed} / ${mpd_length}
-${else}
-${endif}
-${voffset -180}
+#${if_mpd_playing}
+#PLAYING ${hr 2}
+#${voffset -12}
+#${if_empty ${mpd_artist}}${mpd_name}${else}${mpd_artist}${endif}
+#${font Ubuntu:size=9}${if_empty ${mpd_title}}Unknown/Missing tag${else}${mpd_title}${endif}
+#${voffset 2}${mpd_bar 7, 100}${voffset -1}${alignr}${mpd_elapsed} / ${mpd_length}
+#${else}
+#${endif}
+${voffset -140}
 ]]

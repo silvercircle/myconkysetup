@@ -4,61 +4,61 @@ This is my personal conky configuration  It is largely based on the work of othe
 remake](https://github.com/rsheasby/Conky-Lililo-2018) of a fairly popular conky setup. I changed 
 quite a few things though.
 
-The PHP script to fetch the weather is gone and replaced with an compiled 
-D version with more features. The executable `darksky-d` (available from 
-the releases page) should run on any modern 64bit Linux as there are no 
-dependencies other than standard libraries. If it does not, you will have 
-to build it yourself from source.
+The PHP  script to  fetch the weather  is gone  and replaced  with an compiled  D version  with more
+features. The  executable `darksky-d` (available  from the releases page)  should run on  any modern
+64bit Linux  as there are no  dependencies other than standard  libraries. If it does  not, you will
+have to build it yourself from source.
 
-Use `darksky-d --help` to see the options. Make sure, you specify at least the API key. By default, 
-darksky-d outputs to stdout so redirect to >weather. Also by default, it uses metric (si) units, but 
-there are options to output imperial units. 
+Use `darksky-d --help` to see the options. Make sure, you specify at least the API key. By default,
+darksky-d outputs to stdout so redirect to >weather. Also by default, it uses metric (si) units, but
+there are options to output imperial units.
 
 ## How does it look?
 
-Note the shot shows the version I use, it's compact, some lines are missing but you can easily add 
-memory and swap information by un-commenting them in `conkyrc`. Same is true for "per CPU" load 
+Note the shot shows the version I use, it's compact, some lines are missing but you can easily add
+memory and swap information by un-commenting them in `conkyrc`. Same is true for "per CPU" load
 values.
 
 ![Screenshot](screenshot.png)
 
 ## Default directory
 
-Everything is supposed to live in `$HOME/.weather`. You can change this, but then you have to edit  
-conkyrc and change the line `template0 = "$HOME/.weather/weather"`accordingly. The file `weather` 
-must be available for conky to pick up the data. To generate this file run **darksky-d** 
-periodically via a cronjob. Conky itself does NOT fetch anything from the net, it just reads 
+Everything is supposed to live in `$HOME/.weather`. You can change this, but then you have to edit
+conkyrc and change the line `template0 = "$HOME/.weather/weather"`accordingly. The file `weather`
+must be available for conky to pick up the data.  To generate this file run **darksky-d**
+periodically via a cronjob. Conky itself does NOT fetch anything from the net, it just reads
 `$HOME/.weather/weather` and displays no weather when this file is missing or not readable.
  
 Make sure, `darksky-d` has write access to `$HOME/.weather` (or the directory you put it into)
 
 ## Location for weather data
 
-You must tell `darksky-d` the latitude and longitude of your current position. Use the `--loc` 
-parameter for this and `--help` will give you an example. Obtaining the location from geoclue2 is 
-currently a TODO item. This is saved in the configuration file in `$HOME/.config 
-/darksky-d/config.json` until a different location is given. 
+You must tell `darksky-d` the latitude and longitude of your current position. Use the `--loc`
+parameter for this and `--help` will give you an example. Obtaining the location from geoclue2 is
+currently a TODO item. This is saved in the configuration file in `$HOME/.config
+/darksky-d/config.json` until a different location is given.
 
 ## So what's in?
 
-* Generic system overview (CPU, RAM, swap, uptime, temperatures) * Time and date, including week 
-number and local timezone * 3 lines of world time. You can easily change the zones you want to 
-display, check the relevant section in conkyrc around line 100. * A fairly comprehensive weather 
-report, including dew point, pressure, wind, visibility, a three day forecast and sunrise/sunset 
-times. You need a darksky API key to fetch the data. Darksky is free for 
-1000 requests per day, which should be enough if you update the weather 
-every 30 minutes or even more often. * A program written in D to fetch 
-data and do some conversions when asked to do so. By default, it always 
-fetches in si units (Celsius, m/s, km and so on), but you can instruct it 
-to convert into imperial units. Run `darksky-d --help` to see usage 
-information. 
+* Generic system overview (CPU, RAM, swap, uptime, temperatures)
+
+* Time and date, including week number and local timezone
+
+* 3 lines of world time. You can easily change the zones you want to display, check the relevant
+section in conkyrc around line 100. * A fairly comprehensive weather report, including dew point,
+pressure, wind, visibility, a three day forecast and sunrise/sunset times. You need a darksky API
+key to fetch the data. Darksky is free for 1000 requests per day, which should be enough if you
+update the weather every 30 minutes or even more often.
+
+* A program written in D to fetch data and do some conversions when asked to do so. By default, it
+always fetches in si units (Celsius, m/s, km and so on), but you can instruct it to convert into
+imperial units. Run `darksky-d --help` to see usage information.
 
 ## Requirements
 
 * A D Compiler to compile the darksky client. I recommend DMD or LDC, but both are ok.
-* A darksky account and an API key. Free, but you have only 1000 API 
-requests per day in freebie mode, which should be sufficient to update the 
-weather every couple of minutes.
+* A darksky account and an API key. Free, but you have only 1000 API requests per day in freebie
+mode, which should be sufficient to update the weather every couple of minutes.
 
 ### Conky
 
@@ -76,7 +76,7 @@ Ubuntu-based distros, this is just a matter of installing `conky-all`and you sho
 
 There are quite a few things to change, 
 
-* In the system section you may want to comment out the individual CPU load graphs. Since I do not 
+* In the system section you may want to comment out the individual CPU load graphs. Since I do not
 care about these, I prefer to have only one load bar.
 
 * Also, I have commented out the Kernel version, I usually know which kernel I'm running :)

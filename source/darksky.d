@@ -164,8 +164,7 @@ void main(string[] args)
 		}
 		ctx.cfg.lastFetched = Clock.currTime;
 		ctx.cfg.numUpdates++;
-	}
-
+	}   												
 	const GetoptResult stdargs = getopt(args, "key", &cfg.key, "useCached", &cfg.fUseCached,
 										"tempUnit", &cfg.tempUnit, "windUnit", &cfg.windUnit,
 										"visUnit", &cfg.visUnit, "pressureUnit", &cfg.pressureUnit,
@@ -180,8 +179,7 @@ void main(string[] args)
 	}
 
 	if(cfg.fUseCached == false) {
-		DB db = DB.getInstance();
-
+		DB db = DB.getInstance(); 
 		int resultcode = 0;
 		fetchFromApi();
 		Json result = readFromCache(resultcode);
@@ -291,8 +289,7 @@ void generateOutput(Json result)
 	SysTime sunset = SysTime.fromUnixTime(result["daily"]["data"][0]["sunsetTime"].get!int);
 
 	const SysTime now = Clock.currTime;
-
-	// determine icon type (day or night). 
+	// determine icon type (day or night).
 	if (now > sunrise && now < sunset) {
 		if(currently["icon"].get!string in daytimeCodes) {
 			writeln(daytimeCodes[currently["icon"].get!string]);

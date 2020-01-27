@@ -43,7 +43,8 @@ private:
 		this.exePath = std.path.dirName(std.file.thisExePath());
 		version(Windows) {
 			this.homeDir = std.process.environment["APPDATA"];
-			homeDir = buildPath(this.homeDir, "darksky-d");
+			this.homeDir = buildPath(this.homeDir, "darksky-d");
+			this.configDir = this.homeDir;
 		}
 		else {
 			this.homeDir = std.process.environment["HOME"];
@@ -68,8 +69,7 @@ private:
 			this.initContext(args);	
 	}
 
-	~this()
-	{
+	~this()	{
 		this.saveConfig();
 	}
 	// TLS flag, each thread has its own
