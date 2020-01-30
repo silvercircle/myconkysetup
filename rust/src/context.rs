@@ -2,6 +2,8 @@ extern crate app_dirs;
 pub mod database;
 pub mod datahandler;
 
+pub mod database;
+
 use std::sync::Once;
 use std::mem;
 use std::path::{PathBuf, Path};
@@ -30,8 +32,12 @@ pub struct Context {
     pub _cfg: Config,
     pub _use_count: i32,
     pub _exe_path: PathBuf,
+<<<<<<< HEAD
     _db: database::DB,
     pub _data: datahandler::DataHandler
+=======
+    _db: database::DB
+>>>>>>> a573a099c10390c597dac9755329c8a5902252f2
 }
 
 impl Context {
@@ -43,6 +49,10 @@ impl Context {
 
         log::info!("Context::init(): Log file created at {}", log_file_name);
         debug_assert_ne!(config_file_name.len(), 0);
+<<<<<<< HEAD
+=======
+
+>>>>>>> a573a099c10390c597dac9755329c8a5902252f2
         if Path::new(config_file_name.as_str()).exists() {
             log::info!("Context::init(): Found a config file at {} and using it", config_file_name);
             let mut _file = File::open(config_file_name)?;
@@ -100,7 +110,10 @@ impl Context {
  *
  * It is very similar to the Singleton pattern in other languages and can be used
  * for application-wide objects that only must exist once.
+<<<<<<< HEAD
  * https://stackoverflow.com/questions/27791532/how-do-i-create-a-global-mutable-singleton
+=======
+>>>>>>> a573a099c10390c597dac9755329c8a5902252f2
  */
 
 pub fn get_instance() -> &'static mut Context {
