@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /*
 + darksky-r fetches weather data from darksky.net and builds
 + a plain text file which conky will read to construct a nice weather
@@ -23,8 +22,6 @@ extern crate serde_json;
 extern crate serde;
 #[macro_use]
 extern crate lazy_static;
-extern crate log;
-extern crate simplelog;
 
 mod context;
 use chrono::{DateTime, Local};
