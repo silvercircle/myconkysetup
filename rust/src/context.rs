@@ -1,5 +1,6 @@
 extern crate app_dirs;
 pub mod database;
+pub mod datahandler;
 
 use std::sync::Once;
 use std::mem;
@@ -29,7 +30,8 @@ pub struct Context {
     pub _cfg: Config,
     pub _use_count: i32,
     pub _exe_path: PathBuf,
-    _db: database::DB
+    _db: database::DB,
+    pub _data: datahandler::DataHandler
 }
 
 impl Context {
@@ -41,7 +43,6 @@ impl Context {
 
         log::info!("Context::init(): Log file created at {}", log_file_name);
         debug_assert_ne!(config_file_name.len(), 0);
-
         if Path::new(config_file_name.as_str()).exists() {
             log::info!("Context::init(): Found a config file at {} and using it", config_file_name);
             let mut _file = File::open(config_file_name)?;
@@ -75,7 +76,6 @@ impl Context {
         let _config_file_name = self.get_config_filename();
         let mut _file = File::create(_config_file_name)?;
         let _l = serde_json::to_string_pretty(&self._cfg).unwrap();
-        println!("JSON final:\n{}", _l);
         _file.write_all(_l.as_bytes())?;
         _file.flush()?;
         Ok(())
@@ -113,6 +113,7 @@ pub fn get_instance() -> &'static mut Context {
                 _use_count: 0,
                 _db: database::DB::default(),
                 _exe_path: std::env::current_exe().unwrap(),
+                _data: datahandler::DataHandler::new(),
                 _cfg: Config {
                     _lastrun: chrono::Local::now().to_rfc3339(),
                     _is_intialiazed: false,
@@ -122,7 +123,7 @@ pub fn get_instance() -> &'static mut Context {
                     _config_dir: get_app_dir(AppDataType::UserConfig, &APP_INFO, "").unwrap(),
                     _data_dir: data_dir.clone(),
                     _log_file_name: [ data_dir.clone(), PathBuf::from("log.log") ].iter().collect(),
-                    _cache_file_name: [ data_dir.clone(), PathBuf::from("cache.json") ].iter().collect()
+                    _cache_file_name: [ data_dir.clone(), PathBuf::from("cache.json") ].iter().collect(),
                 }
             };
             CTX = mem::transmute(Box::new(context));
