@@ -123,13 +123,12 @@ fn main() {
             .long("cached")
             .value_name("CACHED")
             .validator(|_val| {
-                if _val != "yes" && _val != "no" {
-                    return Err(format!("{} is invalid. Allowed are yes or no", _val));
-                }
-                else {
+                return if _val != "yes" && _val != "no" {
+                    Err(format!("{} is invalid. Allowed are yes or no", _val))
+                } else {
                     let _myctx = context::get_instance();
-                    _myctx._data.history = if _val == "yes" { true } else { false };
-                    return Ok(());
+                    _myctx._data.cached = if _val == "yes" { true } else { false };
+                    Ok(())
                 }
             })
             .help("Use cached Json result, if there is none, fetch from API nonetheless."))
@@ -142,7 +141,13 @@ fn main() {
     ctx._cfg._lastrun = _foo.to_rfc3339();
     let _url = format!("https://api.darksky.net/forecast/{}/{}{}", ctx._cfg._apikey, ctx._cfg._loc, "?units=si");
     log::info!("Requesting from: {}", _url);
-    //let _rsp = fetch(&_url);
+
+    if !ctx._data.cached {
+        log::info!("Using cache json disabled, fetching new data");
+        let _rsp = fetch(&_url);
+    } else {                        // try using cache
+
+    }
     ctx.inc_use_count();
     let _c = &ctx._data;
     println!("Wind from 42 is {}", _c.deg_to_bearing(42));
