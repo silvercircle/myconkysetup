@@ -54,23 +54,38 @@ impl DataHandler {
             wind_directions: ["N","NNE","NE","ENE","E","ESE", "SE", "SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"]
         }
     }
-    pub fn deg_to_bearing(&self, mut wind_direction: i32) -> &'static str {
+    /// Convert wind bearing in degrees to a
+    /// returns a tuple (speed, unit)
+    ///
+    /// [`convert_windspeed`]: #method.convert_windspeed
+    ///
+    /// # Examples
+    /// assert_eq!(deg_to_bearing(45), "NE")
+    /// ```
+    pub fn deg_to_bearing(&self, mut wind_direction: i64) -> &'static str {
         wind_direction = if wind_direction < 0 || wind_direction > 360 { 0 } else { wind_direction };
         let val = (wind_direction as f64 / 22.5) + 0.5;
         self.wind_directions[(val as usize) % 16]
     }
 
     #[inline]
-    pub fn convert_temperature(&self, temp: f32, _unit: Option<char>) -> f32 {
-        let unit = if _unit == None { self.tempunit } else { _unit.unwrap() };
-        if unit == 'F' { ((temp * (9/5) as f32) + 32.0) } else { temp }
+    pub fn convert_temperature(&self, temp: f64, _unit: Option<char>) -> (f64, &'static str) {
+        let unit = _unit.unwrap_or('C');
+        // return a tuple, (temp, unit)
+        (
+            if unit == 'F' { ((temp * (9/5) as f64) + 32.0) } else { temp },
+            if unit == 'C' { "°C" } else { "°F" }
+        )
     }
 
     // km > miles
     #[inline]
-    pub fn convert_vis(&self, vis: f64) -> f64
-    {
-        if self.visunit == 'm' { vis / 1.609 } else { vis }
+    pub fn convert_vis(&self, vis: f64, _unit: Option<char>) -> (f64, &'static str) {
+        let unit = _unit.unwrap_or('k');
+        (
+            if unit == 'm' { vis / 1.609 } else { vis },
+            if unit == 'm' { "miles" } else { "km" }
+        )
     }
 
     pub fn get_condition(&self, _cond: &str, _night: bool) -> char {
@@ -80,16 +95,22 @@ impl DataHandler {
             if DAYTIME_CODES.contains_key(_cond) { *DAYTIME_CODES.get(_cond).unwrap() } else { 'c' }
         }
     }
-    // windspeed, API always returns m/s, we convert to km/h, mph or knots
-    // on user's request.
-    pub fn convert_windspeed(&self, speed: f64, _unit: Option<char>) -> (&'static str, f64) {
+    /// Convert wind speed
+    /// returns a tuple (speed, unit)
+    ///
+    /// [`convert_windspeed`]: #method.convert_windspeed
+    ///
+    /// # Examples
+    ///
+    /// ```
+    pub fn convert_windspeed(&self, speed: f64, _unit: Option<char>) -> (f64, &'static str) {
         let unit = if _unit == None { self.windunit } else { _unit.unwrap() };
 
         return match unit {
-            'k' => { ("km/h", speed * 3.6) }            // km/h
-            'm' => { ("mph", speed * 2.237) }           // mph
-            'n' => { ("knots", speed * 1.944) }         // knots
-            _ => { ("m/s", speed) }
+            'k' => { (speed * 3.6, "km/h")  }            // km/h
+            'm' => { (speed * 2.237, "mph" ) }           // mph
+            'n' => { (speed * 1.944, "knots") }         // knots
+            _   => { (speed, "m/s") }
         }
     }
 

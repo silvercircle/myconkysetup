@@ -31,7 +31,8 @@ pub struct Context {
     pub _use_count: i32,
     pub _exe_path: PathBuf,
     _db: database::DB,
-    pub _data: datahandler::DataHandler
+    pub _data: datahandler::DataHandler,
+    pub _json_valid: bool
 }
 
 impl Context {
@@ -67,10 +68,6 @@ impl Context {
 
     pub fn cleanup(&mut self) {
         let _r = self.write_config();
-    }
-
-    pub fn inc_use_count(&mut self) {
-        self._use_count = self._use_count + 1;
     }
 
     pub fn write_config(&self) -> std::io::Result<()> {
@@ -118,6 +115,7 @@ pub fn get_instance() -> &'static mut Context {
                 _db: database::DB::default(),
                 _exe_path: std::env::current_exe().unwrap(),
                 _data: datahandler::DataHandler::new(),
+                _json_valid: false,
                 _cfg: Config {
                     _lastrun: chrono::Local::now().to_rfc3339(),
                     _is_intialiazed: false,
@@ -137,6 +135,6 @@ pub fn get_instance() -> &'static mut Context {
             ctx._cfg._is_intialiazed = true;
         });
         (*CTX)._use_count = (*CTX)._use_count + 1;
-        &mut*CTX
+        &mut*CTX                                    // return mutable reference to the object
     }
 }
