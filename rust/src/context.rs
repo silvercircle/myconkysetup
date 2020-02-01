@@ -30,7 +30,7 @@ pub struct Context {
     pub _cfg: Config,
     pub _use_count: i32,
     pub _exe_path: PathBuf,
-    _db: database::DB,
+    pub _db: database::DB,
     pub _data: datahandler::DataHandler,
     pub _json_valid: bool
 }
@@ -60,13 +60,14 @@ impl Context {
         }
 
         let mut database_filename = self._cfg._data_dir.clone();
-        database_filename.push("darksky-r.sqlite");
+        database_filename.push("history.sqlite3");
         let _dbresult = self._db.connect(database_filename.to_str().unwrap());
         log::info!("Context::init(): Created the database at {}", database_filename.to_str().unwrap());
         Ok(())
     }
 
     pub fn cleanup(&mut self) {
+        self._db.close();
         let _r = self.write_config();
     }
 
