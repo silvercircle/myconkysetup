@@ -13,25 +13,25 @@
 + > cargo build --release
 */
 
-extern crate log;
-extern crate simplelog;
-extern crate clap;
 extern crate chrono;
-extern crate reqwest;
-extern crate serde_json;
-extern crate serde;
+extern crate clap;
 extern crate handlebars;
+extern crate log;
+extern crate reqwest;
+extern crate serde;
+extern crate serde_json;
+extern crate simplelog;
 
 #[macro_use]
 extern crate lazy_static;
 
 mod context;
-use chrono::{DateTime, Local, NaiveDateTime, TimeZone, Datelike, Timelike};
-use std::fs::{File};
-use std::path::Path;
-use std::io::prelude::*;
-use serde_json::json;
+use chrono::{DateTime, Datelike, Local, NaiveDateTime, TimeZone, Timelike};
 use context::Context;
+use serde_json::json;
+use std::fs::File;
+use std::io::prelude::*;
+use std::path::Path;
 
 fn main() {
     let ctx = context::get_instance();
@@ -143,30 +143,46 @@ fn main() {
             .help("Use cached Json result, if there is none, fetch from API nonetheless."))
         .get_matches();
 
-    ctx._cfg._apikey = String::from(_matches.value_of("apikey").unwrap_or(ctx._cfg._apikey.as_str()));
+    ctx._cfg._apikey = String::from(
+        _matches
+            .value_of("apikey")
+            .unwrap_or(ctx._cfg._apikey.as_str()),
+    );
     ctx._cfg._loc = String::from(_matches.value_of("loc").unwrap_or(ctx._cfg._loc.as_str()));
-    let _url = format!("https://api.darksky.net/forecast/{}/{}{}", ctx._cfg._apikey, ctx._cfg._loc, "?units=si");
+    let _url = format!(
+        "https://api.darksky.net/forecast/{}/{}{}",
+        ctx._cfg._apikey, ctx._cfg._loc, "?units=si"
+    );
 
     if !ctx._data.cached {
         log::info!("Using cached json disabled, fetching new data");
         log::info!("Requesting from: {}", _url);
         let stringresult = fetch_from_api(&_url);
         if stringresult.as_str() != "ERROR" {
-            jsonresult = serde_json::from_str(stringresult.as_str()).unwrap_or(json!( {"result": "error"} ));
+            jsonresult =
+                serde_json::from_str(stringresult.as_str()).unwrap_or(json!( {"result": "error"} ));
             if !jsonresult["currently"]["time"].is_null() {
                 ctx._json_valid = true;
-                log::info!("Successfully fetched from API, timestamp = {}", jsonresult["currently"]["time"]);
+                log::info!(
+                    "Successfully fetched from API, timestamp = {}",
+                    jsonresult["currently"]["time"]
+                );
             }
         }
     }
-    if ctx._data.cached || ctx._json_valid == false {                        // try using cache
+    if ctx._data.cached || ctx._json_valid == false {
+        // try using cache
         log::info!("Trying cached data...");
         if Path::new(&ctx._cfg._cache_file_name.to_str().unwrap()).exists() {
-            log::info!("Trying cache, data found at {}", ctx._cfg._cache_file_name.to_str().unwrap());
+            log::info!(
+                "Trying cache, data found at {}",
+                ctx._cfg._cache_file_name.to_str().unwrap()
+            );
             let mut _file = File::open(&ctx._cfg._cache_file_name).unwrap();
             let mut _raw_json: String = String::new();
             _file.read_to_string(&mut _raw_json).unwrap();
-            jsonresult = serde_json::from_str(_raw_json.as_str()).unwrap_or(json!( {"result": "error"} ));
+            jsonresult =
+                serde_json::from_str(_raw_json.as_str()).unwrap_or(json!( {"result": "error"} ));
         } else {
             log::info!("Trying cached, but cache file not found");
             log::info!("Giving up");
@@ -211,17 +227,28 @@ pub fn output(json: &mut serde_json::Value) {
     ///
     ///
     fn output_temperature_with_template(temp: f64, ctx: &Context, template_name: Option<&str>) {
-        let temp = ctx._data.convert_temperature(temp, Some(ctx._data.tempunit));
+        let temp = ctx
+            ._data
+            .convert_temperature(temp, Some(ctx._data.tempunit));
         let template = template_name.unwrap_or("one_decimal_and_unit");
 
-        println!("{}", ctx._templates.render(template, &serde_json::json!( {"value": temp.0, "unit": temp.1} )).unwrap());
+        println!(
+            "{}",
+            ctx._templates
+                .render(
+                    template,
+                    &serde_json::json!( {"value": temp.0, "unit": temp.1} )
+                )
+                .unwrap()
+        );
     }
 
     #[inline]
     fn output_temperature(temp: f64, ctx: &Context, print_unit: bool) {
-        let temp = ctx._data.convert_temperature(temp, Some(ctx._data.tempunit));
+        let temp = ctx
+            ._data
+            .convert_temperature(temp, Some(ctx._data.tempunit));
         if print_unit {
-
             println!("{:.1}{}", temp.0, temp.1);
         } else {
             println!("{:.1}", temp.0);
@@ -229,69 +256,138 @@ pub fn output(json: &mut serde_json::Value) {
     }
 
     fn output_forecast(day: &serde_json::Value, ctx: &context::Context) {
-        println!("{}", ctx._data.get_condition(day["icon"].as_str().unwrap_or("clear"), false));
+        println!(
+            "{}",
+            ctx._data
+                .get_condition(day["icon"].as_str().unwrap_or("clear"), false)
+        );
 
-        output_temperature_with_template(day["apparentTemperatureLow"].as_f64().unwrap_or(0.0),
-                                         &ctx, Some("zero_decimal_no_unit"));
+        output_temperature_with_template(
+            day["apparentTemperatureLow"].as_f64().unwrap_or(0.0),
+            &ctx,
+            Some("zero_decimal_no_unit"),
+        );
 
-        output_temperature_with_template(day["apparentTemperatureHigh"].as_f64().unwrap_or(0.0),
-                                         &ctx, Some("zero_decimal_no_unit"));
-        
-        let _time = Local.from_utc_datetime(&NaiveDateTime::from_timestamp(day["time"].as_i64().unwrap_or(0), 0));
+        output_temperature_with_template(
+            day["apparentTemperatureHigh"].as_f64().unwrap_or(0.0),
+            &ctx,
+            Some("zero_decimal_no_unit"),
+        );
+
+        let _time = Local.from_utc_datetime(&NaiveDateTime::from_timestamp(
+            day["time"].as_i64().unwrap_or(0),
+            0,
+        ));
         println!("{}", _time.weekday());
     }
 
     println!("** begin data **");
     let currently = &json["currently"];
 
-    let _local = Local.from_utc_datetime(&NaiveDateTime::from_timestamp(json["currently"]["time"].as_i64().unwrap_or(0), 0));
-    let _sunrise = Local.from_utc_datetime(&NaiveDateTime::from_timestamp(json["daily"]["data"][0]["sunriseTime"].as_i64().unwrap_or(0), 0));
-    let _sunset = Local.from_utc_datetime(&NaiveDateTime::from_timestamp(json["daily"]["data"][0]["sunsetTime"].as_i64().unwrap_or(0), 0));
+    let _local = Local.from_utc_datetime(&NaiveDateTime::from_timestamp(
+        json["currently"]["time"].as_i64().unwrap_or(0),
+        0,
+    ));
+    let _sunrise = Local.from_utc_datetime(&NaiveDateTime::from_timestamp(
+        json["daily"]["data"][0]["sunriseTime"]
+            .as_i64()
+            .unwrap_or(0),
+        0,
+    ));
+    let _sunset = Local.from_utc_datetime(&NaiveDateTime::from_timestamp(
+        json["daily"]["data"][0]["sunsetTime"].as_i64().unwrap_or(0),
+        0,
+    ));
 
     if _now > _sunrise && _now < _sunset {
-        println!("{}", _dh.get_condition(currently["icon"].as_str().unwrap_or("clear"), false));
+        println!(
+            "{}",
+            _dh.get_condition(currently["icon"].as_str().unwrap_or("clear"), false)
+        );
     } else {
-        println!("{}", _dh.get_condition(currently["icon"].as_str().unwrap_or("clear"), true));
+        println!(
+            "{}",
+            _dh.get_condition(currently["icon"].as_str().unwrap_or("clear"), true)
+        );
     }
 
-    let mut _t = _dh.convert_temperature(currently["apparentTemperature"].as_f64().unwrap(), Some(_dh.tempunit));
+    let mut _t = _dh.convert_temperature(
+        currently["apparentTemperature"].as_f64().unwrap(),
+        Some(_dh.tempunit),
+    );
     println!("{:.1}{}", _t.0, _t.1);
     output_forecast(&json["daily"]["data"][1], &ctx);
     output_forecast(&json["daily"]["data"][2], &ctx);
     output_forecast(&json["daily"]["data"][3], &ctx);
 
-                                                                                    // these comments are the
-                                                                                    // line numbers in the weather
-                                                                                    // file.
-    output_temperature(currently["temperature"].as_f64().unwrap_or(0.0), &ctx, true);       // 16
-    output_temperature(currently["dewPoint"].as_f64().unwrap_or(0.0), &ctx, true);          // 17
+    // these comments are the
+    // line numbers in the weather
+    // file.
+    output_temperature(currently["temperature"].as_f64().unwrap_or(0.0), &ctx, true); // 16
+    output_temperature(currently["dewPoint"].as_f64().unwrap_or(0.0), &ctx, true); // 17
 
-    println!("Humidity: {:.0}", currently["humidity"].as_f64().unwrap_or(0.0) * 100.0);     // 18
-                                                                                            // 19
+    println!(
+        "Humidity: {:.0}",
+        currently["humidity"].as_f64().unwrap_or(0.0) * 100.0
+    ); // 18
+       // 19
     if _dh.pressunit == 'h' {
-        println!("{:.1} hPa", _dh.convert_pressure(currently["pressure"].as_f64().unwrap_or(0.0), Some(_dh.pressunit)));
+        println!(
+            "{:.1} hPa",
+            _dh.convert_pressure(
+                currently["pressure"].as_f64().unwrap_or(0.0),
+                Some(_dh.pressunit)
+            )
+        );
     } else {
-        println!("{:.2} InHg", _dh.convert_pressure(currently["pressure"].as_f64().unwrap_or(0.0), Some(_dh.pressunit)));
+        println!(
+            "{:.2} InHg",
+            _dh.convert_pressure(
+                currently["pressure"].as_f64().unwrap_or(0.0),
+                Some(_dh.pressunit)
+            )
+        );
     }
 
-    let wind = _dh.convert_windspeed(currently["windSpeed"].as_f64().unwrap_or(0.0), Some(_dh.windunit));
-    println!("{:.1} {}", wind.0, wind.1);                                               // 20
-    println!("UV: {}", currently["uvIndex"].as_i64().unwrap_or(0));                     // 21
-    let vis = _dh.convert_vis(currently["visibility"].as_f64().unwrap_or(0.0), Some(_dh.visunit));
-    println!("{:.1} {}", vis.0, vis.1);                                                 // 22
+    let wind = _dh.convert_windspeed(
+        currently["windSpeed"].as_f64().unwrap_or(0.0),
+        Some(_dh.windunit),
+    );
+    println!("{:.1} {}", wind.0, wind.1); // 20
+    println!("UV: {}", currently["uvIndex"].as_i64().unwrap_or(0)); // 21
+    let vis = _dh.convert_vis(
+        currently["visibility"].as_f64().unwrap_or(0.0),
+        Some(_dh.visunit),
+    );
+    println!("{:.1} {}", vis.0, vis.1); // 22
 
-    println!("{:02}:{:02}", _sunrise.hour(), _sunrise.minute());                        // 23
-    println!("{:02}:{:02}", _sunset.hour(), _sunset.minute());                          // 24
+    println!("{:02}:{:02}", _sunrise.hour(), _sunrise.minute()); // 23
+    println!("{:02}:{:02}", _sunset.hour(), _sunset.minute()); // 24
 
-    println!("{}", _dh.deg_to_bearing(currently["windBearing"].as_i64().unwrap_or(0))); // 25
+    println!(
+        "{}",
+        _dh.deg_to_bearing(currently["windBearing"].as_i64().unwrap_or(0))
+    ); // 25
 
-    println!("{:02}:{:02}", _local.hour(), _local.minute());                            // 26
+    println!("{:02}:{:02}", _local.hour(), _local.minute()); // 26
 
-    println!("{}", currently["summary"].as_str().unwrap_or(""));                        // 27
+    println!("{}", currently["summary"].as_str().unwrap_or("")); // 27
 
-    println!("{}", json["timezone"].as_str().unwrap_or(""));                            // 28
-    output_temperature(json["daily"]["data"][0]["temperatureLow"].as_f64().unwrap_or(0.0), &ctx, true);  // 29
-    output_temperature(json["daily"]["data"][0]["temperatureHigh"].as_f64().unwrap_or(0.0), &ctx, true); // 30
-    println!("** end data **");                                          		// 31
+    println!("{}", json["timezone"].as_str().unwrap_or("")); // 28
+    output_temperature(
+        json["daily"]["data"][0]["temperatureLow"]
+            .as_f64()
+            .unwrap_or(0.0),
+        &ctx,
+        true,
+    ); // 29
+    output_temperature(
+        json["daily"]["data"][0]["temperatureHigh"]
+            .as_f64()
+            .unwrap_or(0.0),
+        &ctx,
+        true,
+    ); // 30
+    println!("** end data **"); // 31
     log::info!("output(): End");
 }
