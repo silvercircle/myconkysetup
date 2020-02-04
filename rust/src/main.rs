@@ -205,6 +205,11 @@ pub fn output(json: &mut serde_json::Value) {
     let _dh = &ctx._data;
     log::info!("output(): Begin");
 
+    /// Output a temperature value using a handlebars template
+    ///
+    /// [`output_temperature_with_template`]: #output_temperature_with_template
+    ///
+    ///
     fn output_temperature_with_template(temp: f64, ctx: &Context, template_name: Option<&str>) {
         let temp = ctx._data.convert_temperature(temp, Some(ctx._data.tempunit));
         let template = template_name.unwrap_or("one_decimal_and_unit");

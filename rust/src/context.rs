@@ -2,18 +2,21 @@ extern crate app_dirs;
 pub mod database;
 pub mod datahandler;
 
-use std::sync::Once;
-use std::mem;
-use std::path::{PathBuf, Path};
 use app_dirs::*;
-use std::fs::{File, create_dir_all};
-use std::io::prelude::*;
-use simplelog::{WriteLogger, LevelFilter, Config as LogConfig};
 use serde::{Deserialize, Serialize};
+use simplelog::{Config as LogConfig, LevelFilter, WriteLogger};
+use std::fs::{create_dir_all, File};
+use std::io::prelude::*;
+use std::mem;
+use std::path::{Path, PathBuf};
+use std::sync::Once;
 
-use handlebars::{Handlebars, handlebars_helper};
+use handlebars::{handlebars_helper, Handlebars};
 
-const APP_INFO: AppInfo = AppInfo{name: "darksky-r", author: "alex"};
+const APP_INFO: AppInfo = AppInfo {
+    name: "darksky-r",
+    author: "alex",
+};
 
 #[derive(Serialize, Deserialize)]
 pub struct Config {
@@ -25,7 +28,7 @@ pub struct Config {
     pub _loc: String,
     pub _is_intialiazed: bool,
     pub _updated_from_api: u32,
-    pub _lastrun: String
+    pub _lastrun: String,
 }
 
 pub struct Context {
@@ -35,7 +38,7 @@ pub struct Context {
     pub _db: database::DB,
     pub _data: datahandler::DataHandler,
     pub _json_valid: bool,
-    pub _templates: Handlebars<'static>
+    pub _templates: Handlebars<'static>,
 }
 
 impl Context {
@@ -43,20 +46,30 @@ impl Context {
         create_dir_all(&self._cfg._config_dir)?;
         let config_file_name = self.get_config_filename();
         let log_file_name = self.get_log_filename();
-        let _logresult = WriteLogger::init(LevelFilter::Info, LogConfig::default(), File::create(log_file_name.clone())?);
+        let _logresult = WriteLogger::init(
+            LevelFilter::Info,
+            LogConfig::default(),
+            File::create(log_file_name.clone())?,
+        );
 
         log::info!("Context::init(): Log file created at {}", log_file_name);
         debug_assert_ne!(config_file_name.len(), 0);
 
         if Path::new(config_file_name.as_str()).exists() {
-            log::info!("Context::init(): Found a config file at {} and using it", config_file_name);
+            log::info!(
+                "Context::init(): Found a config file at {} and using it",
+                config_file_name
+            );
             let mut _file = File::open(config_file_name)?;
             let mut _raw_json: String = String::new();
 
             _file.read_to_string(&mut _raw_json)?;
             self._cfg = serde_json::from_str(_raw_json.as_str())?;
         } else {
-            log::info!("Context::init(): The config file did not exist. Creating at {}", config_file_name);
+            log::info!(
+                "Context::init(): The config file did not exist. Creating at {}",
+                config_file_name
+            );
             let _l = serde_json::to_string_pretty(&self._cfg).unwrap();
             let mut _file = File::create(config_file_name)?;
             _file.write_all(_l.as_bytes())?;
@@ -65,18 +78,31 @@ impl Context {
         let mut database_filename = self._cfg._data_dir.clone();
         database_filename.push("history.sqlite3");
         let _dbresult = self._db.connect(database_filename.to_str().unwrap());
-        log::info!("Context::init(): Created the database at {}", database_filename.to_str().unwrap());
+        log::info!(
+            "Context::init(): Created the database at {}",
+            database_filename.to_str().unwrap()
+        );
 
         handlebars::handlebars_helper!(onedecimal: |v: f64| format!("{:.1}", v));
         handlebars::handlebars_helper!(nodecimal: |v: f64| format!("{:.0}", v));
 
-        self._templates.register_helper("onedecimal", Box::new(onedecimal));
-        self._templates.register_helper("nodecimal", Box::new(nodecimal));
+        self._templates
+            .register_helper("onedecimal", Box::new(onedecimal));
+        self._templates
+            .register_helper("nodecimal", Box::new(nodecimal));
 
-        self._templates.register_template_string("one_decimal_and_unit", "{{onedecimal value}}{{unit}}").unwrap();
-        self._templates.register_template_string("zero_decimal_and_unit", "{{nodecimal value}}{{unit}}").unwrap();
-        self._templates.register_template_string("one_decimal_no_unit", "{{onedecimal value}}").unwrap();
-        self._templates.register_template_string("zero_decimal_no_unit", "{{nodecimal value}}").unwrap();
+        self._templates
+            .register_template_string("one_decimal_and_unit", "{{onedecimal value}}{{unit}}")
+            .unwrap();
+        self._templates
+            .register_template_string("zero_decimal_and_unit", "{{nodecimal value}}{{unit}}")
+            .unwrap();
+        self._templates
+            .register_template_string("one_decimal_no_unit", "{{onedecimal value}}")
+            .unwrap();
+        self._templates
+            .register_template_string("zero_decimal_no_unit", "{{nodecimal value}}")
+            .unwrap();
 
         Ok(())
     }
@@ -139,17 +165,21 @@ pub fn get_instance() -> &'static mut Context {
                     _loc: "0000".to_string(),
                     _config_dir: get_app_dir(AppDataType::UserConfig, &APP_INFO, "").unwrap(),
                     _data_dir: data_dir.clone(),
-                    _log_file_name: [ data_dir.clone(), PathBuf::from("log.log") ].iter().collect(),
-                    _cache_file_name: [ data_dir.clone(), PathBuf::from("cache.json") ].iter().collect(),
-                }
+                    _log_file_name: [data_dir.clone(), PathBuf::from("log.log")]
+                        .iter()
+                        .collect(),
+                    _cache_file_name: [data_dir.clone(), PathBuf::from("cache.json")]
+                        .iter()
+                        .collect(),
+                },
             };
             CTX = mem::transmute(Box::new(context));
 
             let ctx = &mut *CTX;
-            let _result = ctx.init();  // (*CTX).init(); does the same
+            let _result = ctx.init(); // (*CTX).init(); does the same
             ctx._cfg._is_intialiazed = true;
         });
         (*CTX)._use_count = (*CTX)._use_count + 1;
-        &mut*CTX                                    // return mutable reference to the object
+        &mut *CTX // return mutable reference to the object
     }
 }
