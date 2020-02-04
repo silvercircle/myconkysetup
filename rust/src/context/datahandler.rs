@@ -46,7 +46,7 @@ impl DataHandler {
         Self {
             history:    true,
             tempunit:   'C',
-            cached:     true,
+            cached:     false,
             visunit:    'k',
             windunit:   'm',
             pressunit:  'h',
@@ -78,7 +78,12 @@ impl DataHandler {
         )
     }
 
-    // km > miles
+    /// Convert visibility
+    /// returns a tuple (vis, unit)
+    ///
+    /// [`convert_vis`]: #method.convert_vis
+    ///
+    /// ```
     #[inline]
     pub fn convert_vis(&self, vis: f64, _unit: Option<char>) -> (f64, &'static str) {
         let unit = _unit.unwrap_or('k');
@@ -99,8 +104,6 @@ impl DataHandler {
     /// returns a tuple (speed, unit)
     ///
     /// [`convert_windspeed`]: #method.convert_windspeed
-    ///
-    /// # Examples
     ///
     /// ```
     pub fn convert_windspeed(&self, speed: f64, _unit: Option<char>) -> (f64, &'static str) {

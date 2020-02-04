@@ -81,7 +81,6 @@ impl DB {
 		        ":precip_probability": currently["precipProbability"].as_f64().unwrap_or(0.0),
 		        ":precip_type": currently["precipType"].as_str().unwrap_or("none"),
 		        ":uvindex": currently["uvIndex"].as_i64().unwrap_or(0),
-
 		        ":sunrise": _data["daily"]["data"][0]["sunriseTime"].as_i64().unwrap_or(0),
 		        ":sunset": _data["daily"]["data"][0]["sunsetTime"].as_i64().unwrap_or(0),
 			}

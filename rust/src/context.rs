@@ -11,6 +11,8 @@ use std::io::prelude::*;
 use simplelog::{WriteLogger, LevelFilter, Config as LogConfig};
 use serde::{Deserialize, Serialize};
 
+use handlebars::{Handlebars, handlebars_helper};
+
 const APP_INFO: AppInfo = AppInfo{name: "darksky-r", author: "alex"};
 
 #[derive(Serialize, Deserialize)]
@@ -32,7 +34,8 @@ pub struct Context {
     pub _exe_path: PathBuf,
     pub _db: database::DB,
     pub _data: datahandler::DataHandler,
-    pub _json_valid: bool
+    pub _json_valid: bool,
+    pub _templates: Handlebars<'static>
 }
 
 impl Context {
@@ -63,6 +66,18 @@ impl Context {
         database_filename.push("history.sqlite3");
         let _dbresult = self._db.connect(database_filename.to_str().unwrap());
         log::info!("Context::init(): Created the database at {}", database_filename.to_str().unwrap());
+
+        handlebars::handlebars_helper!(onedecimal: |v: f64| format!("{:.1}", v));
+        handlebars::handlebars_helper!(nodecimal: |v: f64| format!("{:.0}", v));
+
+        self._templates.register_helper("onedecimal", Box::new(onedecimal));
+        self._templates.register_helper("nodecimal", Box::new(nodecimal));
+
+        self._templates.register_template_string("one_decimal_and_unit", "{{onedecimal value}}{{unit}}").unwrap();
+        self._templates.register_template_string("zero_decimal_and_unit", "{{nodecimal value}}{{unit}}").unwrap();
+        self._templates.register_template_string("one_decimal_no_unit", "{{onedecimal value}}").unwrap();
+        self._templates.register_template_string("zero_decimal_no_unit", "{{nodecimal value}}").unwrap();
+
         Ok(())
     }
 
@@ -99,10 +114,8 @@ impl Context {
  *
  * It is very similar to the Singleton pattern in other languages and can be used
  * for application-wide objects that only must exist once.
-<<<<<<< HEAD
+ *
  * https://stackoverflow.com/questions/27791532/how-do-i-create-a-global-mutable-singleton
-=======
->>>>>>> a573a099c10390c597dac9755329c8a5902252f2
  */
 
 pub fn get_instance() -> &'static mut Context {
@@ -117,6 +130,7 @@ pub fn get_instance() -> &'static mut Context {
                 _exe_path: std::env::current_exe().unwrap(),
                 _data: datahandler::DataHandler::new(),
                 _json_valid: false,
+                _templates: Handlebars::new(),
                 _cfg: Config {
                     _lastrun: chrono::Local::now().to_rfc3339(),
                     _is_intialiazed: false,

@@ -33,8 +33,6 @@ use std::io::prelude::*;
 use serde_json::json;
 use context::Context;
 
-use handlebars::{Handlebars, handlebars_helper};
-
 fn main() {
     let ctx = context::get_instance();
     let _var: String;
@@ -154,7 +152,7 @@ fn main() {
         log::info!("Requesting from: {}", _url);
         let stringresult = fetch_from_api(&_url);
         if stringresult.as_str() != "ERROR" {
-            jsonresult = serde_json::from_str(stringresult.as_str()).unwrap_or(json!({}));
+            jsonresult = serde_json::from_str(stringresult.as_str()).unwrap_or(json!( {"result": "error"} ));
             if !jsonresult["currently"]["time"].is_null() {
                 ctx._json_valid = true;
                 log::info!("Successfully fetched from API, timestamp = {}", jsonresult["currently"]["time"]);
@@ -168,8 +166,7 @@ fn main() {
             let mut _file = File::open(&ctx._cfg._cache_file_name).unwrap();
             let mut _raw_json: String = String::new();
             _file.read_to_string(&mut _raw_json).unwrap();
-            jsonresult = serde_json::from_str(_raw_json.as_str()).unwrap();
-            println!("Current time: {}", jsonresult["currently"]["time"]);
+            jsonresult = serde_json::from_str(_raw_json.as_str()).unwrap_or(json!( {"result": "error"} ));
         } else {
             log::info!("Trying cached, but cache file not found");
             log::info!("Giving up");
@@ -182,7 +179,7 @@ fn main() {
     //println!("Config:\n{}", _data_json);
     output(&mut jsonresult);
     if ctx._data.history {
-        let result = ctx._db.insert_data_point(&jsonresult);
+        let _result = ctx._db.insert_data_point(&jsonresult);
     }
     ctx.cleanup();
     std::process::exit(0);
@@ -202,29 +199,17 @@ pub fn fetch_from_api(url: &String) -> String {
 }
 
 pub fn output(json: &mut serde_json::Value) {
-    let mut template = handlebars::Handlebars::new();
-
-    handlebars::handlebars_helper!(onedecimal: |v: f64| format!("{:.1}", v));
-    handlebars::handlebars_helper!(nodecimal: |v: f64| format!("{:.0}", v));
-
-    template.register_helper("onedecimal", Box::new(onedecimal));
-    template.register_helper("nodecimal", Box::new(nodecimal));
-
-    template.register_template_string("one_decimal_and_unit", "{{onedecimal value}}{{unit}}").unwrap();
-    template.register_template_string("zero_decimal_and_unit", "{{nodecimal value}}{{unit}}").unwrap();
-    template.register_template_string("one_decimal_no_unit", "{{onedecimal value}}").unwrap();
-    template.register_template_string("zero_decimal_no_unit", "{{nodecimal value}}").unwrap();
-
     let ctx = context::get_instance();
     let _now: DateTime<Local> = Local::now();
     ctx._cfg._lastrun = _now.to_rfc3339();
     let _dh = &ctx._data;
+    log::info!("output(): Begin");
 
-    fn output_temperature_with_template(temp: f64, ctx: &Context, _reg: &Handlebars, template_name: Option<&str>) {
+    fn output_temperature_with_template(temp: f64, ctx: &Context, template_name: Option<&str>) {
         let temp = ctx._data.convert_temperature(temp, Some(ctx._data.tempunit));
         let template = template_name.unwrap_or("one_decimal_and_unit");
 
-        println!("{}", _reg.render(template, &serde_json::json!( {"value": temp.0, "unit": temp.1} )).unwrap());
+        println!("{}", ctx._templates.render(template, &serde_json::json!( {"value": temp.0, "unit": temp.1} )).unwrap());
     }
 
     #[inline]
@@ -238,14 +223,14 @@ pub fn output(json: &mut serde_json::Value) {
         }
     }
 
-    fn output_forecast(day: &serde_json::Value, ctx: &context::Context, _reg: &Handlebars) {
+    fn output_forecast(day: &serde_json::Value, ctx: &context::Context) {
         println!("{}", ctx._data.get_condition(day["icon"].as_str().unwrap_or("clear"), false));
 
         output_temperature_with_template(day["apparentTemperatureLow"].as_f64().unwrap_or(0.0),
-                                         &ctx, &_reg, Some("zero_decimal_no_unit"));
+                                         &ctx, Some("zero_decimal_no_unit"));
 
         output_temperature_with_template(day["apparentTemperatureHigh"].as_f64().unwrap_or(0.0),
-                                         &ctx, &_reg, Some("zero_decimal_no_unit"));
+                                         &ctx, Some("zero_decimal_no_unit"));
         
         let _time = Local.from_utc_datetime(&NaiveDateTime::from_timestamp(day["time"].as_i64().unwrap_or(0), 0));
         println!("{}", _time.weekday());
@@ -266,9 +251,9 @@ pub fn output(json: &mut serde_json::Value) {
 
     let mut _t = _dh.convert_temperature(currently["apparentTemperature"].as_f64().unwrap(), Some(_dh.tempunit));
     println!("{:.1}{}", _t.0, _t.1);
-    output_forecast(&json["daily"]["data"][1], &ctx, &template);
-    output_forecast(&json["daily"]["data"][2], &ctx, &template);
-    output_forecast(&json["daily"]["data"][3], &ctx, &template);
+    output_forecast(&json["daily"]["data"][1], &ctx);
+    output_forecast(&json["daily"]["data"][2], &ctx);
+    output_forecast(&json["daily"]["data"][3], &ctx);
 
                                                                                     // these comments are the
                                                                                     // line numbers in the weather
@@ -303,5 +288,5 @@ pub fn output(json: &mut serde_json::Value) {
     output_temperature(json["daily"]["data"][0]["temperatureLow"].as_f64().unwrap_or(0.0), &ctx, true);  // 29
     output_temperature(json["daily"]["data"][0]["temperatureHigh"].as_f64().unwrap_or(0.0), &ctx, true); // 30
     println!("** end data **");                                          		// 31
-
+    log::info!("output(): End");
 }
