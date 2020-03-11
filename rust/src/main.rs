@@ -243,6 +243,12 @@ pub fn output(json: &mut serde_json::Value) {
         );
     }
 
+    /// Output a temperature with exactly one decimal digit and with or
+    /// without the unit.
+    ///
+    /// [`output_temperature`]: #output_temperature
+    ///
+    ///
     #[inline]
     fn output_temperature(temp: f64, ctx: &Context, print_unit: bool) {
         let temp = ctx
@@ -255,6 +261,13 @@ pub fn output(json: &mut serde_json::Value) {
         }
     }
 
+    /// Output short forecast for one day.
+    /// prints the condition symbol, low and high temps to expect for a
+    /// single day.
+    ///
+    /// [`output_forecast`]: #output_forecast
+    ///
+    ///
     fn output_forecast(day: &serde_json::Value, ctx: &context::Context) {
         println!(
             "{}",
@@ -370,7 +383,6 @@ pub fn output(json: &mut serde_json::Value) {
     ); // 25
 
     println!("{:02}:{:02}", _local.hour(), _local.minute()); // 26
-
     println!("{}", currently["summary"].as_str().unwrap_or("")); // 27
 
     println!("{}", json["timezone"].as_str().unwrap_or("")); // 28

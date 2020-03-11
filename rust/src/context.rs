@@ -90,7 +90,6 @@ impl Context {
             .register_helper("onedecimal", Box::new(onedecimal));
         self._templates
             .register_helper("nodecimal", Box::new(nodecimal));
-
         self._templates
             .register_template_string("one_decimal_and_unit", "{{onedecimal value}}{{unit}}")
             .unwrap();
@@ -140,6 +139,8 @@ impl Context {
  *
  * It is very similar to the Singleton pattern in other languages and can be used
  * for application-wide objects that only must exist once.
+ *
+ * only one instance can exist per scope.
  *
  * https://stackoverflow.com/questions/27791532/how-do-i-create-a-global-mutable-singleton
  */
