@@ -175,7 +175,6 @@ pub fn get_instance() -> &'static mut Context {
                 },
             };
             CTX = mem::transmute(Box::new(context));
-
             let ctx = &mut *CTX;
             let _result = ctx.init(); // (*CTX).init(); does the same
             ctx._cfg._is_intialiazed = true;

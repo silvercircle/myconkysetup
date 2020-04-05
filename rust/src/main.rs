@@ -37,7 +37,6 @@ fn main() {
     let ctx = context::get_instance();
     let _var: String;
     let mut jsonresult: serde_json::Value = json!({});
-
     let _matches = clap::App::new("darksky-r")
         .version("0.1")
         .arg(clap::Arg::with_name("apikey")

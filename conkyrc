@@ -1,6 +1,6 @@
 conky.config = {
     use_xft = true,
-    font = "DejaVu Sans:bold:size=9",
+    font = "Lucida Grande:bold:size=9",
     xftalpha = 1,
     text_buffer_size = 2048,
     lua_load = "$HOME/.weather/conky-draw_bg.lua",
@@ -10,9 +10,6 @@ conky.config = {
 
     own_window = true,
     own_window_transparent = true,
-    -- own_window_type override,
-    -- own_window_type dock,
-    -- own_window_type desktop,
     own_window_type = normal,
     border_inner_margin = 10,
 
@@ -95,9 +92,9 @@ ${voffset -7}DATE ${hr 2}
 ${color 80b0c0}${voffset -22}
 ${font Ubuntu:bold:size=28}${time %H:%M}${alignr}${font Ubuntu:bold:size=12}${time %Z}
 ${voffset -36}${alignr}Week ${time %U}${font}
-${voffset 19}${alignc}${font Ubuntu:bold:size=10}${time %A, %d %B %Y}${font}
+${voffset 19}${alignc}${font Lucida Grande:bold:size=10}${time %A, %d %B %Y}${font}
 ${voffset -5}${hr 1}
-${font Cronos Pro:size=11}
+${font Lucida Grande:size=10}
 ${voffset -18}GMT: ${alignr}${tztime GMT %H:%M}
 Eastern: ${alignr}${tztime US/Eastern %H:%M}
 # Central: ${alignr}${tztime US/Central %H:%M}

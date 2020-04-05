@@ -36,7 +36,7 @@ impl DB {
                 windbearing INTEGER DEFAULT 0,
                 windspeed REAL DEFAULT 0.0,
                 windgust REAL DEFAULT 0.0,
-                humidity REAL DEFAULT 0.0,
+                humidity REAL DEFAULT 0.0ping,
                 visibility REAL DEFAULT 0.0,
                 pressure REAL DEFAULT 1013.0,
                 precip_probability REAL DEFAULT 0.0,
