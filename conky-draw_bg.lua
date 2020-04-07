@@ -39,7 +39,7 @@ Changelog:
 --	local bg_colour = 0x000000
 --	local bg_alpha = 0.50
 
-	local bg_colour = 0x202020
+	local bg_colour = 0x202040
 	local bg_alpha = 0.6
 
 -- Tweaks the height of your background, in pixels. If you don't need to adjust the height, use 0.

@@ -10,7 +10,7 @@ conky.config = {
 
     own_window = true,
     own_window_transparent = true,
-    own_window_type = normal,
+    own_window_type = "desktop",
     border_inner_margin = 10,
 
     own_window_argb_visual = true,
@@ -41,15 +41,15 @@ conky.config = {
     default_color = "bbbbcc",
     -- default_shade_color black,
     -- default_outline_color grey,
-    own_window_colour = "101010",
+    own_window_colour = "101030",
 
     -- alignment top_left
     -- alignment top_right
     -- alignment bottom_left
     alignment = "bottom_right",
 
-    gap_x = 0,
-    gap_y = 60,
+    gap_x = 10,
+    gap_y = 44,
 
     -- Subtract file system buffers from used memory?
     no_buffers = yes,

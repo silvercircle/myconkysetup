@@ -51,10 +51,8 @@ impl Context {
             LogConfig::default(),
             File::create(log_file_name.clone())?,
         );
-
         log::info!("Context::init(): Log file created at {}", log_file_name);
         debug_assert_ne!(config_file_name.len(), 0);
-
         if Path::new(config_file_name.as_str()).exists() {
             log::info!(
                 "Context::init(): Found a config file at {} and using it",

@@ -65,7 +65,7 @@ impl DataHandler {
     /// Convert wind bearing in degrees to a
     /// returns a tuple (speed, unit)
     ///
-    /// [`convert_windspeed`]: #method.convert_windspeed
+    /// [`convert_wind speed`]: #method.convert_wind speed
     ///
     /// # Examples
     /// assert_eq!(deg_to_bearing(45), "NE")
