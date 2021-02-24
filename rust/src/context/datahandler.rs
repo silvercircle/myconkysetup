@@ -86,7 +86,7 @@ impl DataHandler {
         // return a tuple, (temp, unit)
         (
             if unit == 'F' {
-                ((temp * (9 / 5) as f64) + 32.0)
+                (temp * (9 / 5) as f64) + 32.0
             } else {
                 temp
             },

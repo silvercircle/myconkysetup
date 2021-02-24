@@ -123,6 +123,7 @@ string degToBearing(uint wind_direction)
 	assert(degToBearing(45) == "NE");
 	assert(degToBearing(400) == "N");
 	assert(degToBearing(-45) == "N");
+	assert(degToBearing(171) == "SSE");
 }
 /++
  + returns 0 on success, any other value means failure and a possibly incomplete

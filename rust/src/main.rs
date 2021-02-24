@@ -295,7 +295,6 @@ pub fn output(json: &mut serde_json::Value) {
 
     println!("** begin data **");
     let currently = &json["currently"];
-
     let _local = Local.from_utc_datetime(&NaiveDateTime::from_timestamp(
         json["currently"]["time"].as_i64().unwrap_or(0),
         0,
