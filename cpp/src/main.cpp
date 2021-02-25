@@ -22,13 +22,10 @@
  * SOFTWARE.
  */
 
-namespace fs = std::filesystem;
-using namespace nlohmann;
-
 int main(int argc, char **argv)
 {
-    std::error_code ec;
-
+    loguru::g_stderr_verbosity = loguru::Verbosity_OFF;
+    loguru::init(argc, argv);
     ProgramOptions &opt = ProgramOptions::getInstance();
     auto result = opt.parse(argc, argv);
     std::cout << "The result was " << result << std::endl;
@@ -41,26 +38,22 @@ int main(int argc, char **argv)
         exit(0);
     }
 
-    std::cout << "Config file: " << opt.getConfig().config_file_path << std::endl;
-    std::cout << "Data dir:" << opt.getConfig().data_dir_path << std::endl;
-    std::cout << "APIKEY:" << opt.getConfig().apikey << std::endl;
+    LOG_F(INFO, "Config file: %s", opt.getConfig().config_file_path.c_str());
+    LOG_F(INFO, "Data dir : %s", opt.getConfig().data_dir_path.c_str());
+    LOG_F(INFO, "Log file : %s", opt.getLogFilePath().c_str());
 
     DataHandler dh;
 
-    std::string _foo("{ \"happy\": true, \"pi\": 3.141 }");
-    json j = json::parse(_foo);
+    std::string path(opt.getConfig().data_dir_path);
+    path.append("/cache/cache.json");
+    std::cout << "The path to cache: " << path << std::endl;
+    std::ifstream f(path);
+    std::stringstream buffer;
+    buffer << f.rdbuf();
+    buffer.seekg(0, std::ios::end);
+    std::cout << "The length of the buffer is: " << buffer.str().length() << std::endl;
 
-    fs::path p(opt.getConfig().data_dir_path.append("/climacell/cache"));
-
-    if (bool res = fs::create_directories(p, ec)) {
-        std::cout << "the error code was: " << ec << std::endl;
-        if (0 == ec.value()) {
-            fs::permissions(p, fs::perms::owner_all, fs::perm_options::replace);
-            fs::permissions(p.parent_path(), fs::perms::owner_all, fs::perm_options::replace);
-        }
-    } else {
-        std::cout << "The data dir already exists, error code: " << ec << std::endl;
-    }
-    
-    std::cout << j["happy"] << std::endl;
+    json j = json::parse(buffer.str());
+    std::cout << j["timezone"].get<std::string>() << std::endl;
+    std::cout << j["currently"] << std::endl;
 }

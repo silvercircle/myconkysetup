@@ -70,9 +70,26 @@ int ProgramOptions::parse(int argc, char **argv)
     tmp.append("/objctest/config.toml");
     this->m_config.config_file_path.assign(tmp);
     this->m_config.data_dir_path.assign(datadir);
+    this->m_config.data_dir_path.append("/climacell");
 
-    std::cout << "Versoin option count is: " << this->m_oCommand.get_option("--version")->count() << std::endl;
-    std::cout << "Config dir path: " << this->m_config.config_dir_path << std::endl;
+    this->logfile_path.assign(this->m_config.data_dir_path);
+    this->logfile_path.append("/log.log");
+    loguru::add_file(this->logfile_path.c_str(), loguru::Append, loguru::Verbosity_MAX);
+
+    std::string p(this->getConfig().data_dir_path);
+    p.append("/cache");
+    fs::path path(p);
+    std::error_code ec;
+
+    if (bool res = fs::create_directories(path, ec)) {
+        std::cout << "the error code was: " << ec << std::endl;
+        if (0 == ec.value()) {
+            fs::permissions(path, fs::perms::owner_all, fs::perm_options::replace);
+            fs::permissions(path.parent_path(), fs::perms::owner_all, fs::perm_options::replace);
+        }
+    } else {
+        std::cout << "The data dir already exists, error code: " << ec << std::endl;
+    }
 
     return this->m_oCommand.get_option("--version")->count() ? 1 : 2;
 }

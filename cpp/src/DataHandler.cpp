@@ -23,10 +23,22 @@
  */
 
 #include "DataHandler.h"
+#include <sqlite3.h>
+
+static int callback(void *NotUsed, int argc, char **argv, char **azColName) {
+    int i;
+    for(i = 0; i<argc; i++) {
+        printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+    }
+    printf("\n");
+    return 0;
+}
 
 DataHandler::DataHandler() : m_options{ProgramOptions::getInstance()}
 {
-    std::cout << "DataHandler: " << m_options.getConfig().apikey << std::endl;
+    this->db_path.assign(m_options.getConfig().data_dir_path);
+    this->db_path.append("/DB.sqlite3");
+    LOG_F(INFO, "Database path: %s", this->db_path.c_str());
 }
 
 std::pair<std::string, std::string> DataHandler::deg_to_bearing(unsigned int wind_direction)
@@ -51,4 +63,55 @@ std::pair<double, char> DataHandler::convert_temperature(double temp, char unit)
 double DataHandler::convert_vis(const double vis)
 {
     return this->m_options.getConfig().vis_unit == "miles" ? vis / 1.609 : vis;
+}
+
+bool DataHandler::read_from_cache()
+{
+    return false;
+}
+
+void DataHandler::write_to_db()
+{
+    sqlite3 *the_db = 0;
+    char    *err = 0;
+    LOG_F(INFO, "Flushing DB, attemptint to open: %s", this->db_path.c_str());
+    auto rc = sqlite3_open(this->db_path.c_str(), &the_db);
+    if(rc) {
+        LOG_F(INFO, "Unable to open the SQLite Database at %s. The error message was %s.",
+              this->db_path.c_str(), sqlite3_errmsg(the_db));
+        return;
+    }
+    LOG_F(INFO, "Database openend successfully");
+
+    auto sql = R"(CREATE TABLE IF NOT EXISTS history
+      (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          timestamp INTEGER DEFAULT 0,
+          summary TEXT NOT NULL DEFAULT 'unknown',
+          icon TEXT NOT NULL DEFAULT 'unknown',
+          temperature REAL NOT NULL DEFAULT 0.0,
+          feelslike REAL NOT NULL DEFAULT 0.0,
+          dewpoint REAL DEFAULT 0.0,
+          windbearing INTEGER DEFAULT 0,
+          windspeed REAL DEFAULT 0.0,
+          windgust REAL DEFAULT 0.0,
+          humidity REAL DEFAULT 0.0,
+          visibility REAL DEFAULT 0.0,
+          pressure REAL DEFAULT 1013.0,
+          precip_probability REAL DEFAULT 0.0,
+          precip_intensity REAL DEFAULT 0.0,
+          precip_type TEXT DEFAULT 'none',
+          uvindex INTEGER DEFAULT 0,
+          sunrise INTEGER DEFAULT 0,
+          sunset INTEGER DEFAULT 0
+      )
+    )";
+
+    rc = sqlite3_exec(the_db, sql, callback, 0, &err);
+    if(rc != SQLITE_OK) {
+        LOG_F(INFO, "DB error when creating the table: %s", err);
+        sqlite3_free(err);
+    }
+
+    sqlite3_close(the_db);
 }

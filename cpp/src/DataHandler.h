@@ -28,8 +28,9 @@
 class DataHandler {
   public:
     DataHandler();
-    ~DataHandler() = default;
+    ~DataHandler() { write_to_db(); }
 
+    bool read_from_cache();
     /**
      * TODO: fix unit stuff
      */
@@ -49,7 +50,11 @@ class DataHandler {
     static constexpr const char *speed_units[] = {"m/s", "kts", "km/h"};
 
   private:
-    ProgramOptions &m_options;
+    ProgramOptions  &m_options;
+    nlohmann::json  jsonresult;
+    std::string     db_path;
+    
+    void write_to_db();
 };
 
 #endif //OBJCTEST_SRC_DATAHANDLER_H_

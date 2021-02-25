@@ -22,7 +22,7 @@
 
 cmake_minimum_required(VERSION 3.17)
 option(USE_CLANG "build application with clang" ON)
-project(objctest LANGUAGES C CXX)
+project(climacell_fetch LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(JSON_BuildTests OFF CACHE INTERNAL "")
@@ -34,6 +34,7 @@ set(JSON_BuildTests OFF CACHE INTERNAL "")
 #set(Boost_USE_STATIC_RUNTIME OFF)
 
 find_package (PkgConfig REQUIRED)
+find_package (SQLite3 REQUIRED)
 pkg_check_modules (GLIB2 REQUIRED glib-2.0)
 
 #find_package(Boost 1.71.0 COMPONENTS program_options)
@@ -41,11 +42,21 @@ pkg_check_modules (GLIB2 REQUIRED glib-2.0)
 add_compile_options(${GLIB2_CFLAGS_OTHER})
 
 link_directories (${GLIB2_LIBRARY_DIRS})
-include_directories (${GLIB2_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/src)
+include_directories (${GLIB2_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/src ${SQLite3_INCLUDE_DIRS})
 
-add_executable(objctest src/pch.h src/main.cpp
+find_package(Threads REQUIRED)
+
+add_executable(${PROJECT_NAME} src/pch.h src/loguru/loguru.cpp src/main.cpp
         src/conf.h src/smart_pointers.cpp src/smart_pointers.h src/options.h src/options.cpp src/DataHandler.cpp src/DataHandler.h)
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/pch.h)
-target_link_libraries(objctest ${GLIB2_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} -ldl ${GLIB2_LIBRARIES} ${SQLite3_LIBRARIES})
+
+if(THREADS_HAVE_PTHREAD_ARG)
+    target_compile_options(${PROJECT_NAME} PUBLIC "-pthread")
+endif()
+if(CMAKE_THREAD_LIBS_INIT)
+    target_link_libraries(${PROJECT_NAME} "${CMAKE_THREAD_LIBS_INIT}")
+endif()
+
 

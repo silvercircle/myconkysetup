@@ -55,16 +55,19 @@ class ProgramOptions {
     }
     int parse(int argc, char **argv);
     void flush();
-    CFG &getConfig()
+
+    const CFG &getConfig()
     { return m_config; }
+
+    const std::string &getLogFilePath()
+    { return this->logfile_path; }
 
   private:
     CLI::App m_oCommand;
-    //po::options_description m_oCommand, m_oFile;
-    //po::variables_map       m_omap;
     std::string m_name;
     void _init();
     unsigned int counter;
     CFG m_config;
+    std::string logfile_path;
 };
 #endif //OBJCTEST_OPTIONS_H
