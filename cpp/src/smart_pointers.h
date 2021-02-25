@@ -26,32 +26,34 @@
 #define OBJCTEST_SMART_POINTERS_H
 
 class Foo {
-public:
+  public:
     Foo() = default;
     ~Foo() = delete;
 
-    Foo(std::string& name) { this->my_name = name; }
-    void greet() {}
+    Foo(std::string &name)
+    { this->my_name = name; }
+    void greet()
+    {}
 
-private:
+  private:
     std::string my_name;
 };
 
 namespace smp {
-    class Testclass {
+  class Testclass {
     public:
-        Testclass(std::string const&& name);
-        Testclass(std::string const& name);
-        Testclass(std::string const& name, size_t age);
-        ~Testclass();
+      Testclass(std::string const &&name);
+      Testclass(std::string const &name);
+      Testclass(std::string const &name, size_t age);
+      ~Testclass();
 
-        [[maybe_unused]] void greet();
+      [[maybe_unused]] void greet();
 
     private:
-        std::string my_name;
-        size_t      age;
-    };
+      std::string my_name;
+      size_t age;
+  };
 
-    void run();
+  void run();
 }
 #endif //OBJCTEST_SMART_POINTERS_H

@@ -25,10 +25,12 @@
 #define __OPTIONS_INTERNAL
 
 ProgramOptions::ProgramOptions() : m_oCommand(),
-                m_config{.temp_unit = 'C', .config_dir_path = "",
-                         .apikey = "MY_API_KEY", .data_url="http://foobar.org",
-                         .vis_unit = "km", .speed_unit = "km/h",
-                         .output_dir = ""}
+                                   m_config{
+                                     .temp_unit = 'C', .config_dir_path = "",
+                                     .apikey = "MY_API_KEY", .data_url="http://foobar.org",
+                                     .vis_unit = "km", .speed_unit = "km/h",
+                                     .output_dir = ""
+                                   }
 {
     this->_init();
 }

@@ -22,17 +22,22 @@
  * SOFTWARE.
  */
 
+namespace fs = std::filesystem;
+using namespace nlohmann;
+
 int main(int argc, char **argv)
 {
-    ProgramOptions& opt = ProgramOptions::getInstance();
+    std::error_code ec;
+
+    ProgramOptions &opt = ProgramOptions::getInstance();
     auto result = opt.parse(argc, argv);
     std::cout << "The result was " << result << std::endl;
 
     // catch the help
-    if(0 == result)
-      exit(result);
+    if (0 == result)
+        exit(result);
 
-    if(1 == result) {
+    if (1 == result) {
         exit(0);
     }
 
@@ -41,10 +46,21 @@ int main(int argc, char **argv)
     std::cout << "APIKEY:" << opt.getConfig().apikey << std::endl;
 
     DataHandler dh;
-    std::cout << "280 degrees wind is: " << dh.deg_to_bearing(280).first
-              << " wind direction" << std::endl;
 
-    std::cout << "38 degrees Celsius are " << dh.convert_temperature(38.0, 'F').first
-              << " Fahrenheit" << std::endl;
-    //smp::run();
+    std::string _foo("{ \"happy\": true, \"pi\": 3.141 }");
+    json j = json::parse(_foo);
+
+    fs::path p(opt.getConfig().data_dir_path.append("/climacell/cache"));
+
+    if (bool res = fs::create_directories(p, ec)) {
+        std::cout << "the error code was: " << ec << std::endl;
+        if (0 == ec.value()) {
+            fs::permissions(p, fs::perms::owner_all, fs::perm_options::replace);
+            fs::permissions(p.parent_path(), fs::perms::owner_all, fs::perm_options::replace);
+        }
+    } else {
+        std::cout << "The data dir already exists, error code: " << ec << std::endl;
+    }
+    
+    std::cout << j["happy"] << std::endl;
 }

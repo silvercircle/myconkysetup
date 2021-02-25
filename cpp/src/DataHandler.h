@@ -27,29 +27,29 @@
 
 class DataHandler {
   public:
-    DataHandler ();
-    ~DataHandler () = default;
+    DataHandler();
+    ~DataHandler() = default;
 
     /**
      * TODO: fix unit stuff
      */
 
-    std::pair<std::string, std::string> deg_to_bearing (unsigned int wind_direction);
-    std::pair<double, char> convert_temperature (double temp, char unit);
+    std::pair<std::string, std::string> deg_to_bearing(unsigned int wind_direction);
+    std::pair<double, char> convert_temperature(double temp, char unit);
     double convert_vis(const double vis);
 
     static constexpr const char *wind_directions[] =
-        {"N", "NNE", "NE",
-         "ENE", "E", "ESE",
-         "SE", "SSE", "S",
-         "SSW", "SW", "WSW",
-         "W", "WNW", "NW",
-         "NNW"};
+      {"N", "NNE", "NE",
+       "ENE", "E", "ESE",
+       "SE", "SSE", "S",
+       "SSW", "SW", "WSW",
+       "W", "WNW", "NW",
+       "NNW"};
 
     static constexpr const char *speed_units[] = {"m/s", "kts", "km/h"};
 
   private:
-    ProgramOptions& m_options;
+    ProgramOptions &m_options;
 };
 
 #endif //OBJCTEST_SRC_DATAHANDLER_H_

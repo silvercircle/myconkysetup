@@ -30,7 +30,7 @@
 
 typedef struct _cfg {
     int version;
-    char        temp_unit;
+    char temp_unit;
     std::string config_dir_path;
     std::string config_file_path;
     std::string data_dir_path;
@@ -43,19 +43,19 @@ typedef struct _cfg {
 
 class ProgramOptions {
   public:
-    ProgramOptions ();
-    ProgramOptions (const ProgramOptions &) = delete;
-    ProgramOptions &operator= (const ProgramOptions &) = delete;
+    ProgramOptions();
+    ProgramOptions(const ProgramOptions &) = delete;
+    ProgramOptions &operator=(const ProgramOptions &) = delete;
 
-    static ProgramOptions &getInstance ()
+    static ProgramOptions &getInstance()
     {
         static ProgramOptions instance;
         volatile int x{};               // otherwise, -O3 might just optimize this away.
         return instance;
     }
-    int parse (int argc, char **argv);
-    void flush ();
-    CFG &getConfig ()
+    int parse(int argc, char **argv);
+    void flush();
+    CFG &getConfig()
     { return m_config; }
 
   private:
@@ -63,7 +63,7 @@ class ProgramOptions {
     //po::options_description m_oCommand, m_oFile;
     //po::variables_map       m_omap;
     std::string m_name;
-    void _init ();
+    void _init();
     unsigned int counter;
     CFG m_config;
 };

@@ -24,27 +24,28 @@
 
 #include "DataHandler.h"
 
-DataHandler::DataHandler() : m_options{ ProgramOptions::getInstance() }
+DataHandler::DataHandler() : m_options{ProgramOptions::getInstance()}
 {
     std::cout << "DataHandler: " << m_options.getConfig().apikey << std::endl;
 }
 
-std::pair<std::string, std::string> DataHandler::deg_to_bearing (unsigned int wind_direction)
+std::pair<std::string, std::string> DataHandler::deg_to_bearing(unsigned int wind_direction)
 {
     wind_direction = (wind_direction > 360) ? 0 : wind_direction;
-    size_t val = (size_t) (((double) wind_direction / 22.5) + 0.5);
-    std::string retval (DataHandler::wind_directions[val % 16]);
-    return std::pair<std::string, std::string> (retval, std::string (DataHandler::speed_units[0]));
+    size_t _val = (size_t) (((double) wind_direction / 22.5) + 0.5);
+    std::string retval;
+    retval.assign(DataHandler::wind_directions[_val % 16]);
+    return std::pair<std::string, std::string>(retval, std::string(DataHandler::speed_units[0]));
 }
 
-std::pair<double, char> DataHandler::convert_temperature (double temp, char unit)
+std::pair<double, char> DataHandler::convert_temperature(double temp, char unit)
 {
     double converted_temp = temp;
     unit = (unit == 'C' || unit == 'F') ? unit : 'C';
     if (unit == 'F')
         converted_temp = (temp * (9.0 / 5.0)) + 32.0;
 
-    return std::pair<double, char> (converted_temp, unit);
+    return std::pair<double, char>(converted_temp, unit);
 }
 
 double DataHandler::convert_vis(const double vis)
