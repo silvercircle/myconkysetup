@@ -33,6 +33,7 @@ class DataHandler {
     bool read_from_cache();
     bool read_from_api();
     int run();
+    void output();
 
     /**
      * TODO: fix unit stuff
@@ -40,8 +41,11 @@ class DataHandler {
 
     std::pair<std::string, std::string> deg_to_bearing(unsigned int wind_direction);
     std::pair<double, char> convert_temperature(double temp, char unit);
+    double convertWindspeed(double speed);
     double convert_vis(const double vis);
+    double convertPressure(double hPa);
 
+    void outputTemperature(double val, const bool addUnit = false, const char *format = "%.1f%s\n");
     static constexpr const char *wind_directions[] =
       {"N", "NNE", "NE",
        "ENE", "E", "ESE",
@@ -53,9 +57,11 @@ class DataHandler {
     static constexpr const char *speed_units[] = {"m/s", "kts", "km/h"};
 
   private:
-    ProgramOptions  &m_options;
-    nlohmann::json  result_current, result_forecast;
-    std::string     db_path;
+    ProgramOptions                  &m_options;
+    nlohmann::json                  result_current, result_forecast;
+    std::string                     db_path;
+    std::map<int, const char *>     m_conditions;
+    std::map<int, const char *>     m_icons;
     
     void write_to_db();
 };

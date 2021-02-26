@@ -20,29 +20,31 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
+ * DataHandler does the majority of the work. It reads data, builds the json and
+ * generates the formatted output.
  */
 
-int main(int argc, char **argv)
-{
-    loguru::g_stderr_verbosity = loguru::Verbosity_OFF;
-    loguru::init(argc, argv);
-    ProgramOptions &opt = ProgramOptions::getInstance();
-    auto result = opt.parse(argc, argv);
-    LOG_F(INFO, "main(): The result from ProgramOptions::parse() was: %d", result);
-    // catch the help
-    if (0 == result)
-        exit(result);
+#include "utils.h"
 
-    if (1 == result) {
-        // --version or -V parameter was given. Print version information and exit.
-        opt.print_version();
-        exit(0);
-    }
+namespace utils {
 
-    LOG_F(INFO, "Config file: %s", opt.getConfig().config_file_path.c_str());
-    LOG_F(INFO, "Data dir : %s", opt.getConfig().data_dir_path.c_str());
-    LOG_F(INFO, "Log file : %s", opt.getLogFilePath().c_str());
+  time_t IsoToUnixtime(const char *iso_string, GTimeZone *tz)
+  {
+      GDateTime *g = g_date_time_new_from_iso8601(iso_string, tz);
 
-    DataHandler dh;
-    dh.run();
+      time_t _unix = g_date_time_to_unix(g);
+      g_date_time_unref(g);
+      return _unix;
+  }
+
+
+  time_t IsoToUnixtime(const std::string& iso_string, GTimeZone *tz)
+  {
+      GDateTime *g = g_date_time_new_from_iso8601(iso_string.c_str(), tz);
+
+      time_t _unix = g_date_time_to_unix(g);
+      g_date_time_unref(g);
+      return _unix;
+  }
 }

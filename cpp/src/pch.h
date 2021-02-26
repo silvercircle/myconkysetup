@@ -10,7 +10,11 @@
 #include <fstream>
 #include <memory>
 #include <filesystem>
+#include <chrono>
+#include <ctime>
 #include <glib-2.0/glib-unix.h>
+#include <sqlite3.h>
+#include <curl/curl.h>
 #include "CLI/App.hpp"
 #include "CLI/Formatter.hpp"
 #include "CLI/Config.hpp"

@@ -25,8 +25,8 @@
  * generates the formatted output.
  */
 
-#include <sqlite3.h>
-#include <curl/curl.h>
+#include <time.h>
+#include <utils.h>
 
 static int callback(void *NotUsed, int argc, char **argv, char **azColName) {
     int i;
@@ -56,7 +56,43 @@ static size_t curl_callback(void *contents, size_t size, size_t nmemb, std::stri
  * c'tor for DataHandler. Sets up database path and dispatches
  * data reading, either from cache or from the network.
  */
-DataHandler::DataHandler() : m_options{ProgramOptions::getInstance()}
+DataHandler::DataHandler() : m_options{ProgramOptions::getInstance()},
+    /*
+     * map weatherCodes to weather conditions.
+     */
+    m_conditions {
+      {1000, "Clear"},              {1001, "Cloudy"},
+      {1100, "Mostly Clear"},       {1101, "Partly Cloudy"},
+      {1102, "Mostly Cloudy"},      {2000, "Fog"},
+      {2100, "Light Fog"},          {3000, "Light Wind"},
+      {3001, "Wind"},               {3002, "Strong Wind"},
+      {4000, "Drizzle"},            {4001, "Rain"},
+      {4200, "Light Rain"},         {4201, "Heavy Rain"},
+      {5000, "Snow"},               {5001, "Flurries"},
+      {5100, "Light Snow"},         {5101, "Heavy Snow"},
+      {6000, "Freezing Drizzle"},   {6001, "Freezing Rain"},
+      {6200, "Light Freezing Rain"},{6201, "Heavy Freezing Rain"},
+      {7000, "Ice Pellets"},        {7001, "Heavy Ice Pellets"},
+      {7102, "Light Ice Pellets"},  {8000, "Thunderstorm"} },
+   /*
+    * The following table maps weatherCodes from the API to characters used by
+    * the conkyweather font to display weather icons. The string is always 2
+    * characters, the first one for the day icon, the 2nd for the night icon.
+    */
+    m_icons {
+      {1000, "aA"},                 {1001, "ef"},
+      {1100, "bB"},                 {1101, "cC"},
+      {1102, "dD"},                 {2000, "00"},
+      {2100, "77"},                 {3000, "99"},
+      {3001, "99"},                 {3002, "23"},
+      {4000, "xx"},                 {4001, "gG"},
+      {4200, "gg"},                 {4201, "jj"},
+      {5000, "oO"},                 {5001, "xx"},
+      {5100, "oO"},                 {5101, "ww"},
+      {6000, "xx"},                 {6001, "yy"},
+      {6200, "ss"},                 {6201, "yy"},
+      {7000, "uu"},                 {7001, "uu"},
+      {7102, "uu"},                 {8000, "kK"} }
 {
     this->db_path.assign(m_options.getConfig().data_dir_path);
     this->db_path.append("/DB.sqlite3");
@@ -82,11 +118,44 @@ int DataHandler::run()
     }
     if(!this->result_current["data"].empty() && !this->result_forecast["data"].empty()) {
         LOG_F(INFO, "run() - valid data, beginning output");
+        this->output();
         return 1;
     }
     return 0;
 }
 
+void DataHandler::output()
+{
+    using namespace std::chrono;
+
+    std::time_t t = system_clock::to_time_t(system_clock::now());
+    bool ec;
+    time_t _t = time(0);
+
+    std::stringstream foo;
+
+    foo << std::put_time( std::localtime( &t ), "%FT%T%z" );
+
+    std::cout << "Output test at: " << foo.str() << std::endl;
+
+    time_t now = utils::IsoToUnixtime(foo.str().c_str());
+
+    //std::cout << t1 << std::endl;
+
+    nlohmann::json& cur = this->result_current["data"]["timelines"][0]["intervals"][0]["values"];
+    nlohmann::json& forc = result_forecast["data"]["timelines"][0]["intervals"][0]["values"];
+
+    time_t sunset_time = utils::IsoToUnixtime(forc["sunsetTime"].get<std::string>(), 0);
+    time_t sunrise_time = utils::IsoToUnixtime(forc["sunriseTime"].get<std::string>(), 0);
+
+    std::cout << "Sunrise: " << sunrise_time
+        << ", Now: " << now
+        << ", Sunset: " << sunset_time << std::endl;
+
+    std::cout << ((now > sunrise_time && now < sunset_time) ? "day" : "night") << std::endl;
+    std::cout << this->m_conditions[cur["weatherCode"].get<int>()] << std::endl;
+
+}
 /**
  * convert a wind bearing in degrees into a human-readable form (i.e. "SW" for
  * a south-westerly wind).
@@ -125,6 +194,57 @@ double DataHandler::convert_vis(const double vis)
     return this->m_options.getConfig().vis_unit == "miles" ? vis / 1.609 : vis;
 }
 
+double DataHandler::convertWindspeed(double speed)
+{
+    const std::string& _unit = m_options.getConfig().speed_unit;
+    if(_unit == "km")
+        return speed * 3.6;
+    else if(_unit == "mph")
+        return speed * 2.237;
+    else if(_unit == "knots")
+        return speed * 1.944;
+    else
+        return speed;
+}
+
+// hPa > InHg
+double DataHandler::convertPressure(double hPa)
+{
+    return m_options.getConfig().pressure_unit == "inhg" ? hPa / 33.863886666667 : hPa;
+}
+
+// output a single temperature value, assume float, but
+// the Json can also return int.
+void DataHandler::outputTemperature(double val, const bool addUnit, const char *format)
+{
+    auto result = this->convert_temperature(val, this->m_options.getConfig().temp_unit).first;
+
+    std::string _unit("°X");
+    _unit[1] = this->m_options.getConfig().temp_unit;
+
+    printf(format, this->convert_temperature(val, this->m_options.getConfig().temp_unit),
+           addUnit ? _unit.c_str() : "");
+}
+
+/*
+/++
++ output low/high temperature and condition "icon" for one day in the
++ forecast
++/
+void outputForecast(Json day)
+{
+    if(day["icon"].get!string in daytimeCodes) {
+        writeln(daytimeCodes[day["icon"].get!string]);
+    } else {
+        writeln("a");
+    }
+    outputTemperature(day["apparentTemperatureLow"], false, "%.0f%s\n");
+    outputTemperature(day["apparentTemperatureHigh"], false, "%.0f%s\n");
+    const SysTime t = SysTime.fromUnixTime(day["time"].get!int);
+    writeln(capitalize(cast(string)t.dayOfWeek.to!string));
+}
+*/
+
 /**
  * attempt to read current and forecast data from cached JSON
  *
@@ -138,7 +258,7 @@ bool DataHandler::read_from_cache()
     std::ifstream current(path);
     std::stringstream current_buffer, forecast_buffer;
     current_buffer << current.rdbuf();
-    current_buffer.seekg(0, std::ios::end);
+    //current_buffer.seekg(0, std::ios::end);
     current.close();
     this->result_current = json::parse(current_buffer.str().c_str());
 
@@ -148,7 +268,7 @@ bool DataHandler::read_from_cache()
 
     std::ifstream forecast(path);
     forecast_buffer << forecast.rdbuf();
-    forecast_buffer.seekg(0, std::ios::end);
+    //forecast_buffer.seekg(0, std::ios::end);
     forecast.close();
     this->result_forecast = json::parse(forecast_buffer.str());
 
@@ -161,7 +281,7 @@ bool DataHandler::read_from_cache()
 
 /**
  * fetch data from network API and populate the json object
- * unlike darksky, which allowed for a single-call request with all data
+ * unlike darksky, which allowed for a single-call request with all data,
  * ClimaCell does not. We need to perform two requests. One detail request for the
  * current weather, and one forecast request to get data for the next 3-5 days.
  *
@@ -209,7 +329,7 @@ bool DataHandler::read_from_api()
                 LOG_F(INFO, "Current forecast: Skipping cache refresh (--nocache option present)");
             } else {
                 std::string path(m_options.getConfig().data_dir_path);
-                path.append(ProgramOptions::_forecast_cache_file);
+                path.append(ProgramOptions::_current_cache_file);
                 std::ofstream f(path);
                 f.write(response.c_str(), response.length());
                 f.flush();

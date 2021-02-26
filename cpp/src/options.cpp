@@ -28,9 +28,10 @@ ProgramOptions::ProgramOptions() : m_oCommand(),
                                    m_config{
                                      .temp_unit = 'C', .config_dir_path = "",
                                      .apikey = "MY_API_KEY", .data_url="http://foobar.org",
-                                     .vis_unit = "km", .speed_unit = "km/h",
+                                     .vis_unit = "km", .speed_unit = "km/h", .pressure_unit = "hPa",
                                      .output_dir = "", .location="", .timezone="",
-                                     .offline = false, .nocache = false, .skipcache = false
+                                     .offline = false, .nocache = false, .skipcache = false,
+                                     .silent = false
                                    }
 {
     this->_init();
@@ -38,11 +39,18 @@ ProgramOptions::ProgramOptions() : m_oCommand(),
 
 void ProgramOptions::_init()
 {
-    m_oCommand.add_flag("--version,-V", "Show program version");
-    m_oCommand.add_flag("--offline", this->m_config.offline, "No API request, used cached result only");
-    m_oCommand.add_flag("--nocache", this->m_config.nocache, "Do not cache the result");
-    m_oCommand.add_flag("--skipcache", this->m_config.skipcache, "Do not read from cached results, even when online request fails");
-
+    m_oCommand.add_flag("--version,-V", "Show program version and exit.");
+    m_oCommand.add_flag("--offline",
+                        this->m_config.offline, "No API request, used cached result only.");
+    m_oCommand.add_flag("--nocache",
+                        this->m_config.nocache, "Do not refresh the cache with the results.");
+    m_oCommand.add_flag("--skipcache",
+                        this->m_config.skipcache,
+                        "Do not read from cached results, even when online request fails.\n"
+                        "Note that --offline and --skipcache are mutually exclusive");
+    m_oCommand.add_flag("--silent,-s",
+                        this->m_config.silent, "Do not print anything to stdout. "
+                                               "Makes only sense with --output.");
     m_oCommand.add_option("--apikey,-a", this->m_config.apikey, "Set the API key");
 
     // TODO location
@@ -50,10 +58,13 @@ void ProgramOptions::_init()
      * locationi can be either a registered location id or a lat,lon format
      * e.g. 48.1222795,16.3347827
      */
-    m_oCommand.add_option("--loc,-l", this->m_config.location, "Set the location");
-    m_oCommand.add_option("--tz", this->m_config.timezone, "Set the time zone");
+    m_oCommand.add_option("--loc,-l",
+                          this->m_config.location,
+                          "Set the location.\nThis is either a location id from your dashboard\n"
+                          "or a LAT,LON location like 38.1222795,14.3347827.");
+    m_oCommand.add_option("--tz", this->m_config.timezone, "Set the time zone, e.g. Europe/Berlin");
     m_oCommand.add_option("--ouput,-o", this->m_config.output_dir,
-                          R"("Write result to this file instead of stdout. Must have write access)");
+                          "Also write result to this file.");
 }
 
 /**
@@ -110,4 +121,14 @@ int ProgramOptions::parse(int argc, char **argv)
     }
 
     return this->m_oCommand.get_option("--version")->count() ? 1 : 2;
+}
+
+void ProgramOptions::print_version()
+{
+    std::cout << "This is climacell_fetch version " << ProgramOptions::_version_number << std::endl;
+    std::cout << "(C) 2021 by Alex Vie <silvercircle at gmail dot com>" << std::endl << std::endl;
+    std::cout << "This software is free software governed by the MIT License." << std::endl;
+    std::cout << "Please visit https://github.com/silvercircle/myconkysetup/tree/master/cpp" << std::endl;
+    std::cout << "for more information about this software and copyright information." << std::endl;
+
 }

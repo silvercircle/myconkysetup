@@ -20,29 +20,21 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
+ * DataHandler does the majority of the work. It reads data, builds the json and
+ * generates the formatted output.
  */
 
-int main(int argc, char **argv)
-{
-    loguru::g_stderr_verbosity = loguru::Verbosity_OFF;
-    loguru::init(argc, argv);
-    ProgramOptions &opt = ProgramOptions::getInstance();
-    auto result = opt.parse(argc, argv);
-    LOG_F(INFO, "main(): The result from ProgramOptions::parse() was: %d", result);
-    // catch the help
-    if (0 == result)
-        exit(result);
+#ifndef CLIMACELL_FETCH_SRC_UTILS_H_
+#define CLIMACELL_FETCH_SRC_UTILS_H_
 
-    if (1 == result) {
-        // --version or -V parameter was given. Print version information and exit.
-        opt.print_version();
-        exit(0);
-    }
+#include <time.h>
+#include <glib-2.0/glib.h>
+#include <ctime>
 
-    LOG_F(INFO, "Config file: %s", opt.getConfig().config_file_path.c_str());
-    LOG_F(INFO, "Data dir : %s", opt.getConfig().data_dir_path.c_str());
-    LOG_F(INFO, "Log file : %s", opt.getLogFilePath().c_str());
-
-    DataHandler dh;
-    dh.run();
+namespace utils {
+  time_t IsoToUnixtime(const char *iso_string, GTimeZone *tz = 0);
+  time_t IsoToUnixtime(const std::string& s, GTimeZone *tz = 0);
 }
+
+#endif //CLIMACELL_FETCH_SRC_UTILS_H_

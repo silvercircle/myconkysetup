@@ -38,10 +38,11 @@ typedef struct _cfg {
     std::string data_url;
     std::string vis_unit;
     std::string speed_unit;
+    std::string pressure_unit;
     std::string output_dir;
     std::string location;
     std::string timezone;
-    bool offline, nocache, skipcache;
+    bool offline, nocache, skipcache, silent;
 } CFG;
 
 class ProgramOptions {
@@ -58,6 +59,7 @@ class ProgramOptions {
     }
     int parse(int argc, char **argv);
     void flush();
+    void print_version();
 
     const CFG &getConfig()
     { return m_config; }
@@ -71,7 +73,7 @@ class ProgramOptions {
      */
     static inline std::string const _current_cache_file = "/cache/current.json";
     static inline std::string const _forecast_cache_file = "/cache/forecast.json";
-
+    static inline std::string const _version_number = "0.1.1";
   private:
     CLI::App m_oCommand;
     std::string m_name;
