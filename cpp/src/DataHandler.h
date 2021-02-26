@@ -31,6 +31,9 @@ class DataHandler {
     ~DataHandler() { write_to_db(); }
 
     bool read_from_cache();
+    bool read_from_api();
+    int run();
+
     /**
      * TODO: fix unit stuff
      */
@@ -51,7 +54,7 @@ class DataHandler {
 
   private:
     ProgramOptions  &m_options;
-    nlohmann::json  jsonresult;
+    nlohmann::json  result_current, result_forecast;
     std::string     db_path;
     
     void write_to_db();

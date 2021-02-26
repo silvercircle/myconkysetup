@@ -20,10 +20,13 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
+ * DataHandler does the majority of the work. It reads data, builds the json and
+ * generates the formatted output.
  */
 
-#include "DataHandler.h"
 #include <sqlite3.h>
+#include <curl/curl.h>
 
 static int callback(void *NotUsed, int argc, char **argv, char **azColName) {
     int i;
@@ -34,6 +37,25 @@ static int callback(void *NotUsed, int argc, char **argv, char **azColName) {
     return 0;
 }
 
+/**
+ * This callback is used by curl to store the data.
+ *
+ * @param contents  - the data chunk read
+ * @param size      - the length of the chunk
+ * @param nmemb
+ * @param s         - user-supplied data (std::string *)
+ * @return          - the total length of data read
+ */
+static size_t curl_callback(void *contents, size_t size, size_t nmemb, std::string *s)
+{
+    s->append((char *)contents);
+    return s->length();
+}
+
+/**
+ * c'tor for DataHandler. Sets up database path and dispatches
+ * data reading, either from cache or from the network.
+ */
 DataHandler::DataHandler() : m_options{ProgramOptions::getInstance()}
 {
     this->db_path.assign(m_options.getConfig().data_dir_path);
@@ -41,6 +63,37 @@ DataHandler::DataHandler() : m_options{ProgramOptions::getInstance()}
     LOG_F(INFO, "Database path: %s", this->db_path.c_str());
 }
 
+/**
+ * This performs all the work.
+ *
+ * @author alex (25.02.21)
+ */
+int DataHandler::run()
+{
+    if(m_options.getConfig().offline) {
+        LOG_F(INFO, "DataHandler::run(): Attempting to read from cache (--offline option present");
+        if(!this->read_from_cache()) {
+            LOG_F(INFO, "run() Reading from cache failed, giving up.");
+            return -1;
+        }
+    } else {
+        LOG_F(INFO, "DataHandler::run(): --offline not specified, attemptingn to fetch from API");
+        this->read_from_api();
+    }
+    if(!this->result_current["data"].empty() && !this->result_forecast["data"].empty()) {
+        LOG_F(INFO, "run() - valid data, beginning output");
+        return 1;
+    }
+    return 0;
+}
+
+/**
+ * convert a wind bearing in degrees into a human-readable form (i.e. "SW" for
+ * a south-westerly wind).
+ *
+ * @param wind_direction    - wind bearing in degrees
+ * @return                  - wind direction and speed unit as a std::pair
+ */
 std::pair<std::string, std::string> DataHandler::deg_to_bearing(unsigned int wind_direction)
 {
     wind_direction = (wind_direction > 360) ? 0 : wind_direction;
@@ -50,6 +103,13 @@ std::pair<std::string, std::string> DataHandler::deg_to_bearing(unsigned int win
     return std::pair<std::string, std::string>(retval, std::string(DataHandler::speed_units[0]));
 }
 
+/**
+ * Convert a temperature from metric to imperial, depending on the user's preference.
+ *
+ * @param temp      - temperature in Celsius
+ * @param unit      - destination unit (F or C are allowed)
+ * @return          - temperature and its unit as a std::pair
+ */
 std::pair<double, char> DataHandler::convert_temperature(double temp, char unit)
 {
     double converted_temp = temp;
@@ -65,11 +125,137 @@ double DataHandler::convert_vis(const double vis)
     return this->m_options.getConfig().vis_unit == "miles" ? vis / 1.609 : vis;
 }
 
+/**
+ * attempt to read current and forecast data from cached JSON
+ *
+ * @return  true if successful, false otherwise.
+ */
 bool DataHandler::read_from_cache()
 {
+    std::string path(m_options.getConfig().data_dir_path);
+    path.append(ProgramOptions::_current_cache_file);
+    LOG_F(INFO, "Attempting to read current from cache: %s", path.c_str());
+    std::ifstream current(path);
+    std::stringstream current_buffer, forecast_buffer;
+    current_buffer << current.rdbuf();
+    current_buffer.seekg(0, std::ios::end);
+    current.close();
+    this->result_current = json::parse(current_buffer.str().c_str());
+
+    path.assign(m_options.getConfig().data_dir_path);
+    path.append(ProgramOptions::_forecast_cache_file);
+    LOG_F(INFO, "Attempting to read forecast from cache: %s", path.c_str());
+
+    std::ifstream forecast(path);
+    forecast_buffer << forecast.rdbuf();
+    forecast_buffer.seekg(0, std::ios::end);
+    forecast.close();
+    this->result_forecast = json::parse(forecast_buffer.str());
+
+    if(!result_current["data"].empty() && !result_forecast["data"].empty()) {
+        LOG_F(INFO, "Cache read successful.");
+        return true;
+    }
     return false;
 }
 
+/**
+ * fetch data from network API and populate the json object
+ * unlike darksky, which allowed for a single-call request with all data
+ * ClimaCell does not. We need to perform two requests. One detail request for the
+ * current weather, and one forecast request to get data for the next 3-5 days.
+ *
+ * @return      - true if successful.
+ */
+bool DataHandler::read_from_api()
+{
+    bool fSuccess = true;
+    std::string baseurl("https://data.climacell.co/v4/timelines?&apikey=");
+    baseurl.append(m_options.getConfig().apikey);
+    baseurl.append("&location=");
+    baseurl.append(m_options.getConfig().location);
+    if(m_options.getConfig().timezone.length() > 0) {
+        baseurl.append("&timezone=");
+        baseurl.append(m_options.getConfig().timezone);
+    }
+    std::string current(baseurl);
+    current.append("&fields=weatherCode,temperature,temperatureApparent,visibility,windSpeed,windDirection,");
+    current.append("precipitationType,precipitationProbability,pressureSeaLevel,");
+    current.append("humidity,dewPoint&timesteps=current&units=metric");
+
+    std::string daily(baseurl);
+    daily.append("&fields=weatherCode,temperatureMax,temperatureMin,sunriseTime,sunsetTime,");
+    daily.append("precipitationType,precipitationProbability&timesteps=1d");
+
+    const char *url = current.c_str();
+    curl_global_init(CURL_GLOBAL_DEFAULT);
+
+    // read the current forecast first
+    CURL *curl = curl_easy_init();
+    if(curl) {
+        std::string response;
+        const char *url = current.c_str();
+        curl_easy_setopt(curl, CURLOPT_URL, url);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_callback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+        auto rc = curl_easy_perform(curl);
+        if(rc != CURLE_OK) {
+            LOG_F(INFO, "curl_easy_perform() failed, return = %s", curl_easy_strerror(rc));
+        } else {
+            this->result_current = json::parse(response.c_str());
+            if(result_current["data"].empty()) {
+                LOG_F(INFO, "Current forecast: Request failed, no valid data received");
+            } else if(m_options.getConfig().nocache) {
+                LOG_F(INFO, "Current forecast: Skipping cache refresh (--nocache option present)");
+            } else {
+                std::string path(m_options.getConfig().data_dir_path);
+                path.append(ProgramOptions::_forecast_cache_file);
+                std::ofstream f(path);
+                f.write(response.c_str(), response.length());
+                f.flush();
+                f.close();
+            }
+        }
+    }
+    curl_easy_cleanup(curl);
+
+    // now the daily forecast
+    curl = curl_easy_init();
+    if(curl) {
+        std::string response;
+        const char *url = daily.c_str();
+        curl_easy_setopt(curl, CURLOPT_URL, url);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_callback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+        auto rc = curl_easy_perform(curl);
+        if(rc != CURLE_OK) {
+            LOG_F(INFO, "curl_easy_perform() failed for forecast request, return = %s", curl_easy_strerror(rc));
+        } else {
+            this->result_forecast = json::parse(response.c_str());
+            if(result_forecast["data"].empty()) {
+                LOG_F(INFO, "Daily forecast: Request failed, no valid data received");
+            } else if(m_options.getConfig().nocache) {
+                LOG_F(INFO, "Daily forecast: Skipping cache refresh (--nocache option present)");
+            } else {
+                std::string path(m_options.getConfig().data_dir_path);
+                path.append(ProgramOptions::_forecast_cache_file);
+                std::ofstream f(path);
+                f.write(response.c_str(), response.length());
+                f.flush();
+                f.close();
+            }
+        }
+    }
+    curl_easy_cleanup(curl);
+    curl_global_cleanup();
+    return (fSuccess && !this->result_current["data"].empty() && !this->result_forecast["data"].empty());
+}
+
+/**
+ * Write the database entry, unless database recording is disabled
+ *
+ * @author alex (25.02.21)
+ */
 void DataHandler::write_to_db()
 {
     sqlite3 *the_db = 0;

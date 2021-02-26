@@ -28,8 +28,7 @@ int main(int argc, char **argv)
     loguru::init(argc, argv);
     ProgramOptions &opt = ProgramOptions::getInstance();
     auto result = opt.parse(argc, argv);
-    std::cout << "The result was " << result << std::endl;
-
+    LOG_F(INFO, "main(): The result from ProgramOptions::parse() was: %d", result);
     // catch the help
     if (0 == result)
         exit(result);
@@ -43,17 +42,5 @@ int main(int argc, char **argv)
     LOG_F(INFO, "Log file : %s", opt.getLogFilePath().c_str());
 
     DataHandler dh;
-
-    std::string path(opt.getConfig().data_dir_path);
-    path.append("/cache/cache.json");
-    std::cout << "The path to cache: " << path << std::endl;
-    std::ifstream f(path);
-    std::stringstream buffer;
-    buffer << f.rdbuf();
-    buffer.seekg(0, std::ios::end);
-    std::cout << "The length of the buffer is: " << buffer.str().length() << std::endl;
-
-    json j = json::parse(buffer.str());
-    std::cout << j["timezone"].get<std::string>() << std::endl;
-    std::cout << j["currently"] << std::endl;
+    dh.run();
 }

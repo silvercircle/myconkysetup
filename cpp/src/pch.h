@@ -17,7 +17,6 @@
 #include "nlohmann/json.hpp"
 #include "loguru/loguru.hpp"
 #include "conf.h"
-#include "smart_pointers.h"
 #include "options.h"
 #include "DataHandler.h"
 

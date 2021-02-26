@@ -39,6 +39,9 @@ typedef struct _cfg {
     std::string vis_unit;
     std::string speed_unit;
     std::string output_dir;
+    std::string location;
+    std::string timezone;
+    bool offline, nocache, skipcache;
 } CFG;
 
 class ProgramOptions {
@@ -61,6 +64,13 @@ class ProgramOptions {
 
     const std::string &getLogFilePath()
     { return this->logfile_path; }
+
+    /*
+     * the file names for the two cache files, relativ to CFG.data_dir_path
+     * (usually $HOME/.local/share/APPNAME on *iX).
+     */
+    static inline std::string const _current_cache_file = "/cache/current.json";
+    static inline std::string const _forecast_cache_file = "/cache/forecast.json";
 
   private:
     CLI::App m_oCommand;

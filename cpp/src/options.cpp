@@ -29,7 +29,8 @@ ProgramOptions::ProgramOptions() : m_oCommand(),
                                      .temp_unit = 'C', .config_dir_path = "",
                                      .apikey = "MY_API_KEY", .data_url="http://foobar.org",
                                      .vis_unit = "km", .speed_unit = "km/h",
-                                     .output_dir = ""
+                                     .output_dir = "", .location="", .timezone="",
+                                     .offline = false, .nocache = false, .skipcache = false
                                    }
 {
     this->_init();
@@ -38,7 +39,21 @@ ProgramOptions::ProgramOptions() : m_oCommand(),
 void ProgramOptions::_init()
 {
     m_oCommand.add_flag("--version,-V", "Show program version");
+    m_oCommand.add_flag("--offline", this->m_config.offline, "No API request, used cached result only");
+    m_oCommand.add_flag("--nocache", this->m_config.nocache, "Do not cache the result");
+    m_oCommand.add_flag("--skipcache", this->m_config.skipcache, "Do not read from cached results, even when online request fails");
+
     m_oCommand.add_option("--apikey,-a", this->m_config.apikey, "Set the API key");
+
+    // TODO location
+    /*
+     * locationi can be either a registered location id or a lat,lon format
+     * e.g. 48.1222795,16.3347827
+     */
+    m_oCommand.add_option("--loc,-l", this->m_config.location, "Set the location");
+    m_oCommand.add_option("--tz", this->m_config.timezone, "Set the time zone");
+    m_oCommand.add_option("--ouput,-o", this->m_config.output_dir,
+                          R"("Write result to this file instead of stdout. Must have write access)");
 }
 
 /**
@@ -62,12 +77,13 @@ int ProgramOptions::parse(int argc, char **argv)
 {
     CLI11_PARSE(this->m_oCommand, argc, argv);
 
-    //po::positional_options_description p;
     const gchar *datadir = g_get_user_data_dir();
     const gchar *homedir = g_get_home_dir();
     const gchar *cfgdir = g_get_user_config_dir();
+
     std::string tmp(cfgdir);
     tmp.append("/objctest/config.toml");
+
     this->m_config.config_file_path.assign(tmp);
     this->m_config.data_dir_path.assign(datadir);
     this->m_config.data_dir_path.append("/climacell");
@@ -82,13 +98,15 @@ int ProgramOptions::parse(int argc, char **argv)
     std::error_code ec;
 
     if (bool res = fs::create_directories(path, ec)) {
-        std::cout << "the error code was: " << ec << std::endl;
+        LOG_F(INFO, "ProgramOptions::parse(): create_directories result: %d : %s", ec.value(), ec.message().c_str());
         if (0 == ec.value()) {
             fs::permissions(path, fs::perms::owner_all, fs::perm_options::replace);
             fs::permissions(path.parent_path(), fs::perms::owner_all, fs::perm_options::replace);
         }
     } else {
-        std::cout << "The data dir already exists, error code: " << ec << std::endl;
+        LOG_F(INFO, "ProgramOptions::parse(): Could not create the data directories. Maybe no permission or they exist?");
+        LOG_F(INFO, "ProgramOptions::parse(): Attempted to create: %s", path.c_str());
+        LOG_F(INFO, "ProgramOptions::parse(): Error code: %d : %s", ec.value(), ec.message().c_str());
     }
 
     return this->m_oCommand.get_option("--version")->count() ? 1 : 2;
