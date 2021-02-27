@@ -29,7 +29,7 @@
 
 namespace utils {
 
-  time_t IsoToUnixtime(const char *iso_string, GTimeZone *tz)
+  time_t ISOToUnixtime(const char *iso_string, GTimeZone *tz)
   {
       GDateTime *g = g_date_time_new_from_iso8601(iso_string, tz);
 
@@ -39,7 +39,7 @@ namespace utils {
   }
 
 
-  time_t IsoToUnixtime(const std::string& iso_string, GTimeZone *tz)
+  time_t ISOToUnixtime(const std::string& iso_string, GTimeZone *tz)
   {
       GDateTime *g = g_date_time_new_from_iso8601(iso_string.c_str(), tz);
 

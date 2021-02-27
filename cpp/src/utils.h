@@ -33,8 +33,8 @@
 #include <ctime>
 
 namespace utils {
-  time_t IsoToUnixtime(const char *iso_string, GTimeZone *tz = 0);
-  time_t IsoToUnixtime(const std::string& s, GTimeZone *tz = 0);
+  time_t ISOToUnixtime(const char *iso_string, GTimeZone *tz = 0);
+  time_t ISOToUnixtime(const std::string& s, GTimeZone *tz = 0);
 }
 
 #endif //CLIMACELL_FETCH_SRC_UTILS_H_

@@ -25,10 +25,12 @@
 #ifndef OBJCTEST_SRC_DATAHANDLER_H_
 #define OBJCTEST_SRC_DATAHANDLER_H_
 
+#include <nlohmann/json.hpp>
+
 class DataHandler {
   public:
     DataHandler();
-    ~DataHandler() { writeToDB(); }
+    ~DataHandler() { writeToDB(this->result_current); }
 
     bool readFromCache();
     bool readFromAPI();
@@ -44,11 +46,13 @@ class DataHandler {
     double                              convertWindspeed    (double speed);
     double                              convertVis          (const double vis);
     double                              convertPressure     (double hPa);
+    const char*                         getCondition        (int weatherCode);
 
     void outputTemperature  (double val, const bool addUnit = false,
                              const char *format = "%.1f%s\n");
     void outputDailyForecast(const nlohmann::json& data, const bool is_day = true);
     char getCode            (const int weatherCode, const bool daylight = true);
+    void populateSnapshot   (const nlohmann::json& data);
 
     static constexpr const char *wind_directions[] =
       {"N", "NNE", "NE",
@@ -70,7 +74,7 @@ class DataHandler {
     std::map<int, const char *>     m_conditions;
     std::map<int, const char *>     m_icons;
 
-    void writeToDB();
+    void writeToDB(nlohmann::json& data);
 };
 
 #endif //OBJCTEST_SRC_DATAHANDLER_H_

@@ -27,7 +27,8 @@
 
 #include <time.h>
 #include <utils.h>
-#include <codecvt>
+#include "DataHandler.h"
+#include <chrono>
 
 static int callback(void *NotUsed, int argc, char **argv, char **azColName) {
     int i;
@@ -131,29 +132,56 @@ void DataHandler::output()
 
     std::time_t t = system_clock::to_time_t(system_clock::now());
     bool ec;
+    const CFG& cfg = this->m_options.getConfig();
+
     time_t _t = time(0);
 
-    std::stringstream foo;
-    foo << std::put_time( std::localtime( &t ), "%FT%T%z" );
-
-    std::cout << "** Begin output  " << foo.str() << " **" << std::endl;
+    std::cout << "** Begin output **" << std::endl;
 
     //std::cout << t1 << std::endl;
 
     nlohmann::json& cur = this->result_current["data"]["timelines"][0]["intervals"][0]["values"];
     nlohmann::json& forc = result_forecast["data"]["timelines"][0]["intervals"][0]["values"];
 
-    time_t sunset_time = utils::IsoToUnixtime(forc["sunsetTime"].get<std::string>(), 0);
-    time_t sunrise_time = utils::IsoToUnixtime(forc["sunriseTime"].get<std::string>(), 0);
+    time_t sunset_time = utils::ISOToUnixtime(forc["sunsetTime"].get<std::string>(), 0);
+    time_t sunrise_time = utils::ISOToUnixtime(forc["sunriseTime"].get<std::string>(), 0);
 
     time_t now = time(0);
     bool is_daylight =   (now > sunrise_time && now < sunset_time);
     printf("%c\n", this->getCode(cur["weatherCode"].get<int>(), is_daylight));
     this->outputTemperature(cur["temperature"], true);
 
+    /*
+     * The 3 days of forecast
+     */
     this->outputDailyForecast(result_forecast["data"]["timelines"][0]["intervals"][1]["values"], true);
     this->outputDailyForecast(result_forecast["data"]["timelines"][0]["intervals"][2]["values"], true);
     this->outputDailyForecast(result_forecast["data"]["timelines"][0]["intervals"][3]["values"], true);
+
+    this->outputTemperature(cur["temperatureApparent"], true);                                  // 16
+    this->outputTemperature(cur["dewPoint"], true);                                             // 17
+    printf("Humidity: %.1f\n", cur["humidity"].get<double>());                                  // 18
+    printf(cfg.pressure_unit == "hpa" ? "%.1f hPa\n" : "%.2f InHg\n",
+           this->convertPressure(cur["pressureSeaLevel"].get<double>()));
+    printf("%.1f %s\n", this->convertWindspeed(cur["windSpeed"].get<double>()), cfg.speed_unit.c_str());// 20
+    printf("UV: %d\n", 0);      // TODO UV index                                                // 21
+    printf("%.1f %s\n", this->convertVis(cur["visibility"]), cfg.vis_unit.c_str()); // 22
+
+    tm *sunrise = localtime(&sunrise_time);
+    printf("%02d:%02d\n", sunrise->tm_hour, sunrise->tm_min);                       // 23
+    tm *sunset = localtime(&sunset_time);
+    printf("%02d:%02d\n", sunset->tm_hour, sunset->tm_min);                         // 24
+
+    printf("%s\n", this->degToBearing(cur["windDirection"].get<int>()).first.c_str());// 25
+
+    GDateTime *g = g_date_time_new_now_local();
+    printf("%02d:%02d\n", g_date_time_get_hour(g), g_date_time_get_minute(g));      // 26
+    g_date_time_unref(g);
+    printf("%s\n", this->getCondition(cur["weatherCode"]));                         // 27
+    printf("%s\n", cfg.timezone.c_str());                                           // 28
+    outputTemperature(result_forecast["data"]["timelines"][0]["intervals"][0]["values"]["temperatureMin"], true);		// 29
+    outputTemperature(result_forecast["data"]["timelines"][0]["intervals"][0]["values"]["temperatureMax"], true);		// 30
+    printf("** end data **\n");                                          		    // 31
 }
 
 char DataHandler::getCode(const int weatherCode, const bool daylight)
@@ -204,7 +232,7 @@ double DataHandler::convertVis(const double vis)
 double DataHandler::convertWindspeed(double speed)
 {
     const std::string& _unit = m_options.getConfig().speed_unit;
-    if(_unit == "km")
+    if(_unit == "km/h")
         return speed * 3.6;
     else if(_unit == "mph")
         return speed * 2.237;
@@ -220,8 +248,13 @@ double DataHandler::convertPressure(double hPa)
     return m_options.getConfig().pressure_unit == "inhg" ? hPa / 33.863886666667 : hPa;
 }
 
-// output a single temperature value, assume float, but
-// the Json can also return int.
+/**
+ * Output a single temperature value.
+ *
+ * @param val       temperature always in metric (Celsius)
+ * @param addUnit   add the Unit (°C or °F)
+ * @param format    use this format for output. See .h for defaults.
+ */
 void DataHandler::outputTemperature(double val, const bool addUnit, const char *format)
 {
     char unit[5] = "\xc2\xB0X";         // UTF-8!! c2b0 is the sequence for ° (degree symbol)
@@ -334,7 +367,6 @@ bool DataHandler::readFromAPI()
      */
 
     GDateTime *g = g_date_time_new_now_local();                  // now
-    GDateTime *g_end = g_date_time_add_days(g, 5);     // +1 day
 
     char cl[128];
     snprintf(cl, 40, "%04d-%02d-%02dT06:00:00Z",
@@ -347,6 +379,7 @@ bool DataHandler::readFromAPI()
     /*
      * calculate the end date, we need 5 days at max for our forecast
      */
+    GDateTime *g_end = g_date_time_add_days(g, 5);     // 5 days forecast
     snprintf(cl, 40, "%04d-%02d-%02dT06:00:00Z",
              g_date_time_get_year(g_end),
              g_date_time_get_month(g_end), g_date_time_get_day_of_month(g_end));
@@ -427,10 +460,12 @@ bool DataHandler::readFromAPI()
  *
  * @author alex (25.02.21)
  */
-void DataHandler::writeToDB()
+void DataHandler::writeToDB(nlohmann::json& data)
 {
-    sqlite3 *the_db = 0;
-    char    *err = 0;
+    sqlite3         *the_db = 0;
+    sqlite3_stmt    *stmt = 0;
+    char            *err = 0;
+
     LOG_F(INFO, "Flushing DB, attemptint to open: %s", this->db_path.c_str());
     auto rc = sqlite3_open(this->db_path.c_str(), &the_db);
     if(rc) {
@@ -470,5 +505,50 @@ void DataHandler::writeToDB()
         sqlite3_free(err);
     }
 
+    rc = sqlite3_prepare_v2(the_db, "INSERT INTO history(timestamp, summary, icon, temperature"
+                                    "feelslike, dewpoint, windbearing, windspeed"
+                                    "windgust, humidity, visibility, pressure"
+                                    "precip_probability, precip_intensity, precip_type"
+                                    "uvindex, sunrise, sunset)"
+                                    "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", -1, &stmt, 0);
+
+    /*
+    st.bind(":timestamp", currently["time"].get!int);
+    st.bind(":summary", currently["summary"].get!string);
+    st.bind(":icon", currently["icon"].get!string);
+    st.bind(":temperature", currently["temperature"].getFloatValue());
+    st.bind(":feelslike", currently["apparentTemperature"].getFloatValue());
+    st.bind(":dewpoint", currently["dewPoint"].getFloatValue());
+    st.bind(":windbearing", currently["windBearing"].get!int);
+    st.bind(":windspeed", currently["windSpeed"].getFloatValue());
+    st.bind(":windgust", currently["windGust"].getFloatValue());
+    st.bind(":humidity", currently["humidity"].getFloatValue());
+    st.bind(":visibility", currently["visibility"].getFloatValue());
+    st.bind(":pressure", currently["pressure"].get!float);
+    st.bind(":precip_intensity", currently["precipIntensity"].getFloatValue());
+    st.bind(":precip_probability", currently["precipProbability"].getFloatValue());
+    st.bind(":precip_type", "precipType" in currently ? currently["precipType"].get!string : "none");
+    st.bind(":uvindex", currently["uvIndex"].get!int);
+
+    st.bind(":sunrise", data["daily"]["data"][0]["sunriseTime"].get!int);
+    st.bind(":sunset", data["daily"]["data"][0]["sunsetTime"].get!int);
+     */
+    //st.execute();
+    //st.reset();
+
     sqlite3_close(the_db);
+}
+
+// TODO, safely populate a structure with all the data and strict error
+// checking.
+void DataHandler::populateSnapshot(const json &data)
+{
+
+}
+const char *DataHandler::getCondition(int weatherCode)
+{
+    if(DataHandler::m_conditions.find(weatherCode) != DataHandler::m_icons.end()) {
+        return DataHandler::m_conditions[weatherCode];
+    }
+    return "UNDEFINED";
 }

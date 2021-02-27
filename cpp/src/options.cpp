@@ -28,7 +28,7 @@ ProgramOptions::ProgramOptions() : m_oCommand(),
                                    m_config{
                                      .temp_unit = 'C', .config_dir_path = "",
                                      .apikey = "MY_API_KEY", .data_url="http://foobar.org",
-                                     .vis_unit = "km", .speed_unit = "km/h", .pressure_unit = "hPa",
+                                     .vis_unit = "km", .speed_unit = "km/h", .pressure_unit = "hpa",
                                      .output_dir = "", .location="", .timezone="",
                                      .offline = false, .nocache = false, .skipcache = false,
                                      .silent = false
