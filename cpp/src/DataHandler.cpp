@@ -27,6 +27,7 @@
 
 #include <time.h>
 #include <utils.h>
+#include <codecvt>
 
 static int callback(void *NotUsed, int argc, char **argv, char **azColName) {
     int i;
@@ -108,13 +109,13 @@ int DataHandler::run()
 {
     if(m_options.getConfig().offline) {
         LOG_F(INFO, "DataHandler::run(): Attempting to read from cache (--offline option present");
-        if(!this->read_from_cache()) {
+        if(!this->readFromCache()) {
             LOG_F(INFO, "run() Reading from cache failed, giving up.");
             return -1;
         }
     } else {
         LOG_F(INFO, "DataHandler::run(): --offline not specified, attemptingn to fetch from API");
-        this->read_from_api();
+        this->readFromAPI();
     }
     if(!this->result_current["data"].empty() && !this->result_forecast["data"].empty()) {
         LOG_F(INFO, "run() - valid data, beginning output");
@@ -133,12 +134,9 @@ void DataHandler::output()
     time_t _t = time(0);
 
     std::stringstream foo;
-
     foo << std::put_time( std::localtime( &t ), "%FT%T%z" );
 
-    std::cout << "Output test at: " << foo.str() << std::endl;
-
-    time_t now = utils::IsoToUnixtime(foo.str().c_str());
+    std::cout << "** Begin output  " << foo.str() << " **" << std::endl;
 
     //std::cout << t1 << std::endl;
 
@@ -148,13 +146,22 @@ void DataHandler::output()
     time_t sunset_time = utils::IsoToUnixtime(forc["sunsetTime"].get<std::string>(), 0);
     time_t sunrise_time = utils::IsoToUnixtime(forc["sunriseTime"].get<std::string>(), 0);
 
-    std::cout << "Sunrise: " << sunrise_time
-        << ", Now: " << now
-        << ", Sunset: " << sunset_time << std::endl;
+    time_t now = time(0);
+    bool is_daylight =   (now > sunrise_time && now < sunset_time);
+    printf("%c\n", this->getCode(cur["weatherCode"].get<int>(), is_daylight));
+    this->outputTemperature(cur["temperature"], true);
 
-    std::cout << ((now > sunrise_time && now < sunset_time) ? "day" : "night") << std::endl;
-    std::cout << this->m_conditions[cur["weatherCode"].get<int>()] << std::endl;
+    this->outputDailyForecast(result_forecast["data"]["timelines"][0]["intervals"][1]["values"], true);
+    this->outputDailyForecast(result_forecast["data"]["timelines"][0]["intervals"][2]["values"], true);
+    this->outputDailyForecast(result_forecast["data"]["timelines"][0]["intervals"][3]["values"], true);
+}
 
+char DataHandler::getCode(const int weatherCode, const bool daylight)
+{
+    if(DataHandler::m_icons.find(weatherCode) != DataHandler::m_icons.end()) {
+        return DataHandler::m_icons[weatherCode][daylight ? 0 : 1];
+    }
+    return 'a';
 }
 /**
  * convert a wind bearing in degrees into a human-readable form (i.e. "SW" for
@@ -163,7 +170,7 @@ void DataHandler::output()
  * @param wind_direction    - wind bearing in degrees
  * @return                  - wind direction and speed unit as a std::pair
  */
-std::pair<std::string, std::string> DataHandler::deg_to_bearing(unsigned int wind_direction)
+std::pair<std::string, std::string> DataHandler::degToBearing(unsigned int wind_direction)
 {
     wind_direction = (wind_direction > 360) ? 0 : wind_direction;
     size_t _val = (size_t) (((double) wind_direction / 22.5) + 0.5);
@@ -179,7 +186,7 @@ std::pair<std::string, std::string> DataHandler::deg_to_bearing(unsigned int win
  * @param unit      - destination unit (F or C are allowed)
  * @return          - temperature and its unit as a std::pair
  */
-std::pair<double, char> DataHandler::convert_temperature(double temp, char unit)
+std::pair<double, char> DataHandler::convertTemperature(double temp, char unit)
 {
     double converted_temp = temp;
     unit = (unit == 'C' || unit == 'F') ? unit : 'C';
@@ -189,7 +196,7 @@ std::pair<double, char> DataHandler::convert_temperature(double temp, char unit)
     return std::pair<double, char>(converted_temp, unit);
 }
 
-double DataHandler::convert_vis(const double vis)
+double DataHandler::convertVis(const double vis)
 {
     return this->m_options.getConfig().vis_unit == "miles" ? vis / 1.609 : vis;
 }
@@ -217,40 +224,55 @@ double DataHandler::convertPressure(double hPa)
 // the Json can also return int.
 void DataHandler::outputTemperature(double val, const bool addUnit, const char *format)
 {
-    auto result = this->convert_temperature(val, this->m_options.getConfig().temp_unit).first;
+    char unit[5] = "\xc2\xB0X";         // UTF-8!! c2b0 is the sequence for ° (degree symbol)
+    char res[129];
 
-    std::string _unit("°X");
-    _unit[1] = this->m_options.getConfig().temp_unit;
+    auto result = this->convertTemperature(val, this->m_options.getConfig().temp_unit).first;
 
-    printf(format, this->convert_temperature(val, this->m_options.getConfig().temp_unit),
-           addUnit ? _unit.c_str() : "");
+    unit[2] = this->m_options.getConfig().temp_unit;
+
+    printf("%.1f%s\n", result, addUnit ? unit : "");
 }
 
-/*
-/++
-+ output low/high temperature and condition "icon" for one day in the
-+ forecast
-+/
-void outputForecast(Json day)
+/**
+ * output low/high temperature and condition "icon" for one day in the
+ * forecast
+ *
+ * @param day           the JSON data for the forecast day to process
+ * param  is_daylight   whether we should use the day or night weather symbol
+ */
+void DataHandler::outputDailyForecast(const nlohmann::json& data, const bool is_day)
+
 {
-    if(day["icon"].get!string in daytimeCodes) {
-        writeln(daytimeCodes[day["icon"].get!string]);
-    } else {
-        writeln("a");
+    const int code = data["weatherCode"].get<int>();
+
+    if(DataHandler::m_icons.find(code) != DataHandler::m_icons.end()) {
+        printf("%c\n", DataHandler::m_icons[code][ is_day ? 0 : 1]);
     }
-    outputTemperature(day["apparentTemperatureLow"], false, "%.0f%s\n");
-    outputTemperature(day["apparentTemperatureHigh"], false, "%.0f%s\n");
-    const SysTime t = SysTime.fromUnixTime(day["time"].get!int);
-    writeln(capitalize(cast(string)t.dayOfWeek.to!string));
+    else {
+        printf("a\n");
+    }
+
+    outputTemperature(data["temperatureMin"].get<double>(), false, "%.0f%s\n");
+    outputTemperature(data["temperatureMax"].get<double>(), false, "%.0f%s\n");
+
+    GDateTime *g = g_date_time_new_from_iso8601(data["sunriseTime"].get<std::string>().c_str(), 0);
+    gint weekday = g_date_time_get_day_of_week(g);
+    g_date_time_unref(g);
+
+    if(weekday >= 1 && weekday <= 7)
+        printf("%s\n", DataHandler::weekDays[weekday - 1]);
+    else
+        printf("%s\n", DataHandler::weekDays[7]);       // print "invalid"
 }
-*/
+
 
 /**
  * attempt to read current and forecast data from cached JSON
  *
  * @return  true if successful, false otherwise.
  */
-bool DataHandler::read_from_cache()
+bool DataHandler::readFromCache()
 {
     std::string path(m_options.getConfig().data_dir_path);
     path.append(ProgramOptions::_current_cache_file);
@@ -287,7 +309,7 @@ bool DataHandler::read_from_cache()
  *
  * @return      - true if successful.
  */
-bool DataHandler::read_from_api()
+bool DataHandler::readFromAPI()
 {
     bool fSuccess = true;
     std::string baseurl("https://data.climacell.co/v4/timelines?&apikey=");
@@ -305,7 +327,36 @@ bool DataHandler::read_from_api()
 
     std::string daily(baseurl);
     daily.append("&fields=weatherCode,temperatureMax,temperatureMin,sunriseTime,sunsetTime,");
-    daily.append("precipitationType,precipitationProbability&timesteps=1d");
+    daily.append("precipitationType,precipitationProbability&timesteps=1d&startTime=");
+
+    /*
+     * figure out the startTime parameter for the forcast. It needs to be UTC and tomorrow
+     */
+
+    GDateTime *g = g_date_time_new_now_local();                  // now
+    GDateTime *g_end = g_date_time_add_days(g, 5);     // +1 day
+
+    char cl[128];
+    snprintf(cl, 40, "%04d-%02d-%02dT06:00:00Z",
+             g_date_time_get_year(g),
+             g_date_time_get_month(g), g_date_time_get_day_of_month(g));
+
+    std::string _tmp(cl);
+    daily.append(_tmp);
+
+    /*
+     * calculate the end date, we need 5 days at max for our forecast
+     */
+    snprintf(cl, 40, "%04d-%02d-%02dT06:00:00Z",
+             g_date_time_get_year(g_end),
+             g_date_time_get_month(g_end), g_date_time_get_day_of_month(g_end));
+
+    g_date_time_unref(g_end);
+    g_date_time_unref(g);
+
+    daily.append("&endTime=");
+    _tmp.assign(cl);
+    daily.append(_tmp);
 
     const char *url = current.c_str();
     curl_global_init(CURL_GLOBAL_DEFAULT);
@@ -376,7 +427,7 @@ bool DataHandler::read_from_api()
  *
  * @author alex (25.02.21)
  */
-void DataHandler::write_to_db()
+void DataHandler::writeToDB()
 {
     sqlite3 *the_db = 0;
     char    *err = 0;

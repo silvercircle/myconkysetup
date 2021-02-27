@@ -28,10 +28,10 @@
 class DataHandler {
   public:
     DataHandler();
-    ~DataHandler() { write_to_db(); }
+    ~DataHandler() { writeToDB(); }
 
-    bool read_from_cache();
-    bool read_from_api();
+    bool readFromCache();
+    bool readFromAPI();
     int run();
     void output();
 
@@ -39,13 +39,17 @@ class DataHandler {
      * TODO: fix unit stuff
      */
 
-    std::pair<std::string, std::string> deg_to_bearing(unsigned int wind_direction);
-    std::pair<double, char> convert_temperature(double temp, char unit);
-    double convertWindspeed(double speed);
-    double convert_vis(const double vis);
-    double convertPressure(double hPa);
+    std::pair<std::string, std::string> degToBearing        (unsigned int wind_direction);
+    std::pair<double, char>             convertTemperature  (double temp, char unit);
+    double                              convertWindspeed    (double speed);
+    double                              convertVis          (const double vis);
+    double                              convertPressure     (double hPa);
 
-    void outputTemperature(double val, const bool addUnit = false, const char *format = "%.1f%s\n");
+    void outputTemperature  (double val, const bool addUnit = false,
+                             const char *format = "%.1f%s\n");
+    void outputDailyForecast(const nlohmann::json& data, const bool is_day = true);
+    char getCode            (const int weatherCode, const bool daylight = true);
+
     static constexpr const char *wind_directions[] =
       {"N", "NNE", "NE",
        "ENE", "E", "ESE",
@@ -56,14 +60,17 @@ class DataHandler {
 
     static constexpr const char *speed_units[] = {"m/s", "kts", "km/h"};
 
+    static constexpr const char *weekDays[] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat",
+                                               "Sun", "_invalid"};
+
   private:
     ProgramOptions                  &m_options;
     nlohmann::json                  result_current, result_forecast;
     std::string                     db_path;
     std::map<int, const char *>     m_conditions;
     std::map<int, const char *>     m_icons;
-    
-    void write_to_db();
+
+    void writeToDB();
 };
 
 #endif //OBJCTEST_SRC_DATAHANDLER_H_
