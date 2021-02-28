@@ -105,10 +105,10 @@ ${color}
 ${voffset -25}${execpi 120 sed -n '28p' ${template0}} (${execpi 120 sed -n '26p' ${template0}}) ${hr 2}
 ${color aaaa40}
 ${voffset -15}
-${font Ubuntu:bold:size=20}${alignr}${voffset -15}${execpi 120 sed -n '16p' ${template0}}
+${font Ubuntu:bold:size=20}${alignr}${voffset -15}${execpi 120 sed -n '3p' ${template0}}
 ${font Ubuntu:size=10}${voffset -40}${goto 85}${execpi 120 sed -n '29p' ${template0}}
 ${goto 85}${execpi 120 sed -n '30p' ${template0}}
-${voffset -20}${alignr}${font Ubuntu Condensed:size=10}${voffset 20}Feels like: ${execpi 120 sed -n '3p' ${template0}}
+${voffset -20}${alignr}${font Ubuntu Condensed:size=10}${voffset 20}Feels like: ${execpi 120 sed -n '16p' ${template0}}
 ${voffset -2}${alignr}${execpi 120 sed -n '27p' ${template0}}
 ${voffset -60}${font conkyweather:size=50}${execpi 120 sed -n '2p' ${template0}}${font}
 ${font Ubuntu Condensed:size=11}
@@ -117,7 +117,7 @@ ${execpi 120 sed -n '18p' ${template0}}%${alignr}${execpi 120 sed -n '19p' ${tem
 Wind: ${execpi 120 sed -n '25p' ${template0}} at ${execpi 120 sed -n '20p' ${template0}}${alignr}${execpi 120 sed -n '22p' ${template0}}
 ${voffset -3}${font Weather Icons:bold:size=10}${font Ubuntu:size=9} ${execpi 120 sed -n '23p' ${template0}}${alignr}${execpi 120 sed -n '24p' ${template0}} ${font Weather Icons:bold:size=10}${font Ubuntu:size=9}
 ${voffset -8}${hr 1}
-${voffset -23}${font conkyweather:size=30}${voffset 20}${goto 15}${execpi 120 sed -n '4p' ${template0}}${goto 90}${execpi 120 sed -n '8p' ${template0}}${goto 165}${execpi 120 sed -n '12p' ${template0}}${voffset 12}${goto 15}${font Ubuntu:size=10}${execpi 120 sed -n '5p' ${template0}}°/${execpi 120 sed -n '6p' ${template0}}°${goto 85}${execpi 120 sed -n '9p' ${template0}}°/${execpi 120 sed -n '10p' ${template0}}°${goto 160}${execpi 120 sed -n '13p' ${template0}}°/${execpi 120 sed -n '14p' ${template0}}°${voffset 14}${goto 25}${execpi 120 sed -n '7p' ${template0}}${goto 95}${execpi 120 sed -n '11p' ${template0}}${goto 170}${execpi 120 sed -n '15p' ${template0}}${font}
+${voffset -23}${font conkyweather:size=30}${voffset 20}${goto 15}${execpi 120 sed -n '4p' ${template0}}${goto 90}${execpi 120 sed -n '8p' ${template0}}${goto 165}${execpi 120 sed -n '12p' ${template0}}${voffset 12}${goto 10}${font Ubuntu:size=10}${execpi 120 sed -n '5p' ${template0}}°/${execpi 120 sed -n '6p' ${template0}}°${goto 80}${execpi 120 sed -n '9p' ${template0}}°/${execpi 120 sed -n '10p' ${template0}}°${goto 150}${execpi 120 sed -n '13p' ${template0}}°/${execpi 120 sed -n '14p' ${template0}}°${voffset 14}${goto 25}${execpi 120 sed -n '7p' ${template0}}${goto 100}${execpi 120 sed -n '11p' ${template0}}${goto 175}${execpi 120 sed -n '15p' ${template0}}${font}
 ${voffset -5}
 ${color}
 ${font}

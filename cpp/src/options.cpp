@@ -29,7 +29,7 @@ ProgramOptions::ProgramOptions() : m_oCommand(),
                                      .temp_unit = 'C', .config_dir_path = "",
                                      .apikey = "MY_API_KEY", .data_url="http://foobar.org",
                                      .vis_unit = "km", .speed_unit = "km/h", .pressure_unit = "hpa",
-                                     .output_dir = "", .location="", .timezone="",
+                                     .output_dir = "", .location="", .timezone="Europe/Vienna",
                                      .offline = false, .nocache = false, .skipcache = false,
                                      .silent = false
                                    }

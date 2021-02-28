@@ -27,32 +27,50 @@
 
 #include <nlohmann/json.hpp>
 
+typedef struct _DataPoint {
+    bool            valid = false;
+    bool            is_day;
+    time_t          timeRecorded, sunsetTime, sunriseTime;
+    char            timeRecordedAsText[10];
+    char            timeZone[128];
+    int             weatherCode;
+    char            weatherSymbol;
+    double          temperature, temperatureApparent, temperatureMin, temperatureMax;
+    double          visibility;
+    double          windSpeed;
+    unsigned int    windDirection;
+    int             precipitationType;
+    char            precipitationTypeAsString[20];
+    double          precipitationProbability;
+    double          pressureSeaLevel, humidity, dewPoint;
+    char            sunsetTimeAsString[20], sunriseTimeAsString[20], windBearing[10], windUnit[10];
+    char            conditionAsString[100];
+} DataPoint;
+
 class DataHandler {
   public:
     DataHandler();
-    ~DataHandler() { writeToDB(this->result_current); }
+    ~DataHandler() { writeToDB(); }
 
     bool readFromCache();
     bool readFromAPI();
-    int run();
-    void output();
+    int  run();
+    void doOutput();
 
-    /**
-     * TODO: fix unit stuff
-     */
-
-    std::pair<std::string, std::string> degToBearing        (unsigned int wind_direction);
-    std::pair<double, char>             convertTemperature  (double temp, char unit);
-    double                              convertWindspeed    (double speed);
-    double                              convertVis          (const double vis);
-    double                              convertPressure     (double hPa);
+    std::pair<std::string, std::string> degToBearing        (unsigned int wind_direction) const;
+    std::pair<double, char>             convertTemperature  (double temp, char unit) const;
+    double                              convertWindspeed    (double speed) const;
+    double                              convertVis          (const double vis) const;
+    double                              convertPressure     (double hPa) const;
     const char*                         getCondition        (int weatherCode);
+    const char*                         getPrecipType       (int code) const;
+    const DataPoint&                    getDataPoint        () const { return m_DataPoint; }
 
     void outputTemperature  (double val, const bool addUnit = false,
                              const char *format = "%.1f%s\n");
     void outputDailyForecast(const nlohmann::json& data, const bool is_day = true);
     char getCode            (const int weatherCode, const bool daylight = true);
-    void populateSnapshot   (const nlohmann::json& data);
+    void populateSnapshot   ();
 
     static constexpr const char *wind_directions[] =
       {"N", "NNE", "NE",
@@ -67,14 +85,16 @@ class DataHandler {
     static constexpr const char *weekDays[] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat",
                                                "Sun", "_invalid"};
 
+    static constexpr const char *precipType[] = { "", "(Rain)", "(Snow)", "(Freezing Rain)", "(Ice Pellets)" };
   private:
     ProgramOptions                  &m_options;
     nlohmann::json                  result_current, result_forecast;
     std::string                     db_path;
     std::map<int, const char *>     m_conditions;
     std::map<int, const char *>     m_icons;
+    DataPoint                       m_DataPoint;
 
-    void writeToDB(nlohmann::json& data);
+    void writeToDB();
 };
 
 #endif //OBJCTEST_SRC_DATAHANDLER_H_

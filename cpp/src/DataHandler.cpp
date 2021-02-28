@@ -28,7 +28,6 @@
 #include <time.h>
 #include <utils.h>
 #include "DataHandler.h"
-#include <chrono>
 
 static int callback(void *NotUsed, int argc, char **argv, char **azColName) {
     int i;
@@ -94,7 +93,9 @@ DataHandler::DataHandler() : m_options{ProgramOptions::getInstance()},
       {6000, "xx"},                 {6001, "yy"},
       {6200, "ss"},                 {6201, "yy"},
       {7000, "uu"},                 {7001, "uu"},
-      {7102, "uu"},                 {8000, "kK"} }
+      {7102, "uu"},                 {8000, "kK"} },
+
+    m_DataPoint { .valid = false }
 {
     this->db_path.assign(m_options.getConfig().data_dir_path);
     this->db_path.append("/DB.sqlite3");
@@ -120,36 +121,22 @@ int DataHandler::run()
     }
     if(!this->result_current["data"].empty() && !this->result_forecast["data"].empty()) {
         LOG_F(INFO, "run() - valid data, beginning output");
-        this->output();
+        this->doOutput();
         return 1;
     }
     return 0;
 }
 
-void DataHandler::output()
+void DataHandler::doOutput()
 {
     using namespace std::chrono;
 
-    std::time_t t = system_clock::to_time_t(system_clock::now());
-    bool ec;
     const CFG& cfg = this->m_options.getConfig();
-
-    time_t _t = time(0);
 
     std::cout << "** Begin output **" << std::endl;
 
-    //std::cout << t1 << std::endl;
-
-    nlohmann::json& cur = this->result_current["data"]["timelines"][0]["intervals"][0]["values"];
-    nlohmann::json& forc = result_forecast["data"]["timelines"][0]["intervals"][0]["values"];
-
-    time_t sunset_time = utils::ISOToUnixtime(forc["sunsetTime"].get<std::string>(), 0);
-    time_t sunrise_time = utils::ISOToUnixtime(forc["sunriseTime"].get<std::string>(), 0);
-
-    time_t now = time(0);
-    bool is_daylight =   (now > sunrise_time && now < sunset_time);
-    printf("%c\n", this->getCode(cur["weatherCode"].get<int>(), is_daylight));
-    this->outputTemperature(cur["temperature"], true);
+    printf("%c\n", m_DataPoint.weatherSymbol);
+    this->outputTemperature(m_DataPoint.temperature, true);
 
     /*
      * The 3 days of forecast
@@ -158,29 +145,26 @@ void DataHandler::output()
     this->outputDailyForecast(result_forecast["data"]["timelines"][0]["intervals"][2]["values"], true);
     this->outputDailyForecast(result_forecast["data"]["timelines"][0]["intervals"][3]["values"], true);
 
-    this->outputTemperature(cur["temperatureApparent"], true);                                  // 16
-    this->outputTemperature(cur["dewPoint"], true);                                             // 17
-    printf("Humidity: %.1f\n", cur["humidity"].get<double>());                                  // 18
-    printf(cfg.pressure_unit == "hpa" ? "%.1f hPa\n" : "%.2f InHg\n",
-           this->convertPressure(cur["pressureSeaLevel"].get<double>()));
-    printf("%.1f %s\n", this->convertWindspeed(cur["windSpeed"].get<double>()), cfg.speed_unit.c_str());// 20
-    printf("UV: %d\n", 0);      // TODO UV index                                                // 21
-    printf("%.1f %s\n", this->convertVis(cur["visibility"]), cfg.vis_unit.c_str()); // 22
+    this->outputTemperature(m_DataPoint.temperatureApparent, true);                             // 16
+    this->outputTemperature(m_DataPoint.dewPoint, true);                                        // 17
+    printf("Humidity: %.1f\n", m_DataPoint.humidity);                                           // 18
+    printf(cfg.pressure_unit == "hpa" ? "%.1f hPa\n" : "%.2f InHg\n",m_DataPoint.pressureSeaLevel);     // 19
+    printf("%.1f %s\n", m_DataPoint.windSpeed, cfg.speed_unit.c_str());                                 // 20
+    //printf("UV: %d\n", 0);      // TODO UV index                                                      // 21
+    printf("Prec: %.1f %s\n", m_DataPoint.precipitationProbability,
+      m_DataPoint.precipitationProbability > 0 ? m_DataPoint.precipitationTypeAsString : "");           // 21
+    printf("%.1f %s\n", m_DataPoint.visibility, cfg.vis_unit.c_str());                                  // 22
 
-    tm *sunrise = localtime(&sunrise_time);
-    printf("%02d:%02d\n", sunrise->tm_hour, sunrise->tm_min);                       // 23
-    tm *sunset = localtime(&sunset_time);
-    printf("%02d:%02d\n", sunset->tm_hour, sunset->tm_min);                         // 24
+    printf("%s\n", m_DataPoint.sunriseTimeAsString);                                                    // 23
+    printf("%s\n", m_DataPoint.sunsetTimeAsString);                                                     // 24
 
-    printf("%s\n", this->degToBearing(cur["windDirection"].get<int>()).first.c_str());// 25
-
+    printf("%s\n", m_DataPoint.windBearing);                                                            // 25
     GDateTime *g = g_date_time_new_now_local();
-    printf("%02d:%02d\n", g_date_time_get_hour(g), g_date_time_get_minute(g));      // 26
-    g_date_time_unref(g);
-    printf("%s\n", this->getCondition(cur["weatherCode"]));                         // 27
+    printf("%s\n", m_DataPoint.timeRecordedAsText);                                 // 26
+    printf("%s\n", m_DataPoint.conditionAsString);                                  // 27
     printf("%s\n", cfg.timezone.c_str());                                           // 28
-    outputTemperature(result_forecast["data"]["timelines"][0]["intervals"][0]["values"]["temperatureMin"], true);		// 29
-    outputTemperature(result_forecast["data"]["timelines"][0]["intervals"][0]["values"]["temperatureMax"], true);		// 30
+    outputTemperature(m_DataPoint.temperatureMin, true);		                    // 29
+    outputTemperature(m_DataPoint.temperatureMax, true);		                    // 30
     printf("** end data **\n");                                          		    // 31
 }
 
@@ -198,13 +182,13 @@ char DataHandler::getCode(const int weatherCode, const bool daylight)
  * @param wind_direction    - wind bearing in degrees
  * @return                  - wind direction and speed unit as a std::pair
  */
-std::pair<std::string, std::string> DataHandler::degToBearing(unsigned int wind_direction)
+std::pair<std::string, std::string> DataHandler::degToBearing(unsigned int wind_direction) const
 {
     wind_direction = (wind_direction > 360) ? 0 : wind_direction;
     size_t _val = (size_t) (((double) wind_direction / 22.5) + 0.5);
     std::string retval;
     retval.assign(DataHandler::wind_directions[_val % 16]);
-    return std::pair<std::string, std::string>(retval, std::string(DataHandler::speed_units[0]));
+    return std::pair<std::string, std::string>(retval, this->m_options.getConfig().speed_unit);
 }
 
 /**
@@ -214,7 +198,7 @@ std::pair<std::string, std::string> DataHandler::degToBearing(unsigned int wind_
  * @param unit      - destination unit (F or C are allowed)
  * @return          - temperature and its unit as a std::pair
  */
-std::pair<double, char> DataHandler::convertTemperature(double temp, char unit)
+std::pair<double, char> DataHandler::convertTemperature(double temp, char unit) const
 {
     double converted_temp = temp;
     unit = (unit == 'C' || unit == 'F') ? unit : 'C';
@@ -224,12 +208,12 @@ std::pair<double, char> DataHandler::convertTemperature(double temp, char unit)
     return std::pair<double, char>(converted_temp, unit);
 }
 
-double DataHandler::convertVis(const double vis)
+double DataHandler::convertVis(const double vis) const
 {
     return this->m_options.getConfig().vis_unit == "miles" ? vis / 1.609 : vis;
 }
 
-double DataHandler::convertWindspeed(double speed)
+double DataHandler::convertWindspeed(double speed) const
 {
     const std::string& _unit = m_options.getConfig().speed_unit;
     if(_unit == "km/h")
@@ -243,7 +227,7 @@ double DataHandler::convertWindspeed(double speed)
 }
 
 // hPa > InHg
-double DataHandler::convertPressure(double hPa)
+double DataHandler::convertPressure(double hPa) const
 {
     return m_options.getConfig().pressure_unit == "inhg" ? hPa / 33.863886666667 : hPa;
 }
@@ -329,6 +313,7 @@ bool DataHandler::readFromCache()
 
     if(!result_current["data"].empty() && !result_forecast["data"].empty()) {
         LOG_F(INFO, "Cache read successful.");
+        this->populateSnapshot();
         return true;
     }
     return false;
@@ -357,6 +342,7 @@ bool DataHandler::readFromAPI()
     current.append("&fields=weatherCode,temperature,temperatureApparent,visibility,windSpeed,windDirection,");
     current.append("precipitationType,precipitationProbability,pressureSeaLevel,");
     current.append("humidity,dewPoint&timesteps=current&units=metric");
+    //std::cout << current << std::endl;
 
     std::string daily(baseurl);
     daily.append("&fields=weatherCode,temperatureMax,temperatureMin,sunriseTime,sunsetTime,");
@@ -369,7 +355,7 @@ bool DataHandler::readFromAPI()
     GDateTime *g = g_date_time_new_now_local();                  // now
 
     char cl[128];
-    snprintf(cl, 40, "%04d-%02d-%02dT06:00:00Z",
+    snprintf(cl, 40, "%04d-%02d-%02dT23:00:00Z",
              g_date_time_get_year(g),
              g_date_time_get_month(g), g_date_time_get_day_of_month(g));
 
@@ -390,7 +376,7 @@ bool DataHandler::readFromAPI()
     daily.append("&endTime=");
     _tmp.assign(cl);
     daily.append(_tmp);
-
+    //std::cout << daily << std::endl;
     const char *url = current.c_str();
     curl_global_init(CURL_GLOBAL_DEFAULT);
 
@@ -411,7 +397,9 @@ bool DataHandler::readFromAPI()
                 LOG_F(INFO, "Current forecast: Request failed, no valid data received");
             } else if(m_options.getConfig().nocache) {
                 LOG_F(INFO, "Current forecast: Skipping cache refresh (--nocache option present)");
+                this->populateSnapshot();
             } else {
+                this->populateSnapshot();
                 std::string path(m_options.getConfig().data_dir_path);
                 path.append(ProgramOptions::_current_cache_file);
                 std::ofstream f(path);
@@ -460,11 +448,12 @@ bool DataHandler::readFromAPI()
  *
  * @author alex (25.02.21)
  */
-void DataHandler::writeToDB(nlohmann::json& data)
+void DataHandler::writeToDB()
 {
     sqlite3         *the_db = 0;
     sqlite3_stmt    *stmt = 0;
     char            *err = 0;
+    DataPoint&      d = this->m_DataPoint;
 
     LOG_F(INFO, "Flushing DB, attemptint to open: %s", this->db_path.c_str());
     auto rc = sqlite3_open(this->db_path.c_str(), &the_db);
@@ -541,14 +530,101 @@ void DataHandler::writeToDB(nlohmann::json& data)
 
 // TODO, safely populate a structure with all the data and strict error
 // checking.
-void DataHandler::populateSnapshot(const json &data)
+void DataHandler::populateSnapshot()
 {
+    // shortcuts
+    nlohmann::json& d =     this->result_current["data"]["timelines"][0]["intervals"][0]["values"];
+    nlohmann::json& df =    this->result_forecast["data"]["timelines"][0]["intervals"][0]["values"];
+    DataPoint& p = this->m_DataPoint;
+    const CFG& cfg = this->m_options.getConfig();
+    char tmp[128];
 
+    if(d["weatherCode"].empty())
+        return; // datapoint likely not valid
+
+    p.weatherCode = d["weatherCode"].is_number() ? d["weatherCode"].get<int>() : 0;
+    snprintf(p.timeZone, 127, "%s", m_options.getConfig().timezone.c_str());
+
+    p.timeRecorded = time(0);
+    tm *now = localtime(&p.timeRecorded);
+    snprintf(p.timeRecordedAsText, 19, "%02d:%02d", now->tm_hour, now->tm_min);
+
+    p.dewPoint = d["dewPoint"].is_number() ?
+      this->convertTemperature(d["dewPoint"].get<double>(), cfg.temp_unit).first : 0.0f;
+
+    p.humidity = d["humidity"].is_number() ?
+      d["humidity"].get<double>() : 0.0f;
+
+    p.precipitationProbability = d["precipitationProbability"].is_number() ?
+      d["precipitationProbability"].get<double>() : 0.0f;
+
+    p.temperature = d["temperature"].is_number() ?
+      this->convertTemperature(d["temperature"].get<double>(), cfg.temp_unit).first : 0.0f;
+
+    p.temperatureApparent = d["temperatureApparent"].is_number() ?
+      this->convertTemperature(d["temperatureApparent"].get<double>(), cfg.temp_unit).first : 0;
+
+    p.temperatureMin = df["temperatureMin"].is_number() ?
+      this->convertTemperature(df["temperatureMin"].get<double>(),
+        cfg.temp_unit).first : 0;
+
+    p.temperatureMax = df["temperatureMax"].is_number() ?
+      this->convertTemperature(df["temperatureMax"].get<double>(),
+        cfg.temp_unit).first : 0;
+
+    p.visibility = d["visibility"].is_number() ? this->convertVis(d["visibility"].get<double>()) : 0.0f;
+    p.pressureSeaLevel = d["pressureSeaLevel"].is_number() ?
+      this->convertPressure(d["pressureSeaLevel"].get<double>()) : 0.0f;
+
+    p.windSpeed = d["windSpeed"].is_number() ? this->convertWindspeed(d["windSpeed"].get<double>()) : 0.0f;
+    p.windDirection = d["windDirection"].is_number() ? d["windDirection"].get<int>() : 0;
+
+    auto wind = this->degToBearing(p.windDirection);
+    snprintf(p.windBearing, 9, "%s", wind.first.c_str());
+    snprintf(p.windUnit, 9, "%s", wind.second.c_str());
+
+    p.sunsetTime = df["sunsetTime"].is_string() ?
+      utils::ISOToUnixtime(df["sunsetTime"].get<std::string>(), 0) : 0;
+    p.sunriseTime= df["sunriseTime"].is_string() ?
+      utils::ISOToUnixtime(df["sunriseTime"].get<std::string>(), 0) : 0;
+
+    p.is_day = (p.sunriseTime < p.timeRecorded < p.sunsetTime);
+
+    tm *sunset = localtime(&p.sunsetTime);
+    snprintf(tmp, 100, "%02d:%02d", sunset->tm_hour, sunset->tm_min);
+    snprintf(p.sunsetTimeAsString, 19, "%s", tmp);
+    tm *sunrise = localtime(&p.sunriseTime);
+    snprintf(tmp, 100, "%02d:%02d", sunrise->tm_hour, sunrise->tm_min);
+    snprintf(p.sunriseTimeAsString, 19, "%s", tmp);
+
+
+    p.precipitationType = d["precipitationType"].is_number() ? d["precipitationType"].get<int>() : 0;
+    snprintf(p.precipitationTypeAsString, 19, "%s", this->getPrecipType(p.precipitationType));
+    snprintf(p.conditionAsString, 99, "%s", this->getCondition(p.weatherCode));
+
+    p.weatherSymbol = this->getCode(p.weatherCode, p.is_day);
+
+    printf("Temp: %f - Feels: %f\n", p.temperature, p.temperatureApparent);
+    printf("Sunrise: %s - Sunset: %s\n", p.sunriseTimeAsString, p.sunsetTimeAsString);
+    printf("Pressure: %f - Humidity: %f\n", p.pressureSeaLevel, p.humidity);
+    printf("Code: %d, Symbol: %c, Condition: %s\n", p.weatherCode, p.weatherSymbol, p.conditionAsString);
+
+    p.valid = true;
+    LOG_F(INFO, "DataHandler::populateSnapshot(): snapshot populated successfully.");
+#if __clang_major__ >= 8
+    //__builtin_dump_struct(&m_DataPoint, &printf);
+#endif
 }
+
 const char *DataHandler::getCondition(int weatherCode)
 {
     if(DataHandler::m_conditions.find(weatherCode) != DataHandler::m_icons.end()) {
         return DataHandler::m_conditions[weatherCode];
     }
     return "UNDEFINED";
+}
+const char *DataHandler::getPrecipType(int code) const
+{
+    code = (code > 4 || code < 0) ? 0 : code;
+    return DataHandler::precipType[code];
 }
