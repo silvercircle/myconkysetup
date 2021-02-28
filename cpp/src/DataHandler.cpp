@@ -98,7 +98,7 @@ DataHandler::DataHandler() : m_options{ProgramOptions::getInstance()},
     m_DataPoint { .valid = false }
 {
     this->db_path.assign(m_options.getConfig().data_dir_path);
-    this->db_path.append("/DB.sqlite3");
+    this->db_path.append("/history.sqlite3");
     LOG_F(INFO, "Database path: %s", this->db_path.c_str());
 }
 
@@ -151,7 +151,7 @@ void DataHandler::doOutput()
     printf(cfg.pressure_unit == "hpa" ? "%.1f hPa\n" : "%.2f InHg\n",m_DataPoint.pressureSeaLevel);     // 19
     printf("%.1f %s\n", m_DataPoint.windSpeed, cfg.speed_unit.c_str());                                 // 20
     //printf("UV: %d\n", 0);      // TODO UV index                                                      // 21
-    printf("Prec: %.1f %s\n", m_DataPoint.precipitationProbability,
+    printf("Prec: %.0f %s\n", m_DataPoint.precipitationProbability,
       m_DataPoint.precipitationProbability > 0 ? m_DataPoint.precipitationTypeAsString : "");           // 21
     printf("%.1f %s\n", m_DataPoint.visibility, cfg.vis_unit.c_str());                                  // 22
 
@@ -340,8 +340,8 @@ bool DataHandler::readFromAPI()
     }
     std::string current(baseurl);
     current.append("&fields=weatherCode,temperature,temperatureApparent,visibility,windSpeed,windDirection,");
-    current.append("precipitationType,precipitationProbability,pressureSeaLevel,");
-    current.append("humidity,dewPoint&timesteps=current&units=metric");
+    current.append("precipitationType,precipitationProbability,pressureSeaLevel,windGust,");
+    current.append("humidity,precipitationIntensity,dewPoint&timesteps=current&units=metric");
     //std::cout << current << std::endl;
 
     std::string daily(baseurl);
@@ -397,9 +397,7 @@ bool DataHandler::readFromAPI()
                 LOG_F(INFO, "Current forecast: Request failed, no valid data received");
             } else if(m_options.getConfig().nocache) {
                 LOG_F(INFO, "Current forecast: Skipping cache refresh (--nocache option present)");
-                this->populateSnapshot();
             } else {
-                this->populateSnapshot();
                 std::string path(m_options.getConfig().data_dir_path);
                 path.append(ProgramOptions::_current_cache_file);
                 std::ofstream f(path);
@@ -440,6 +438,7 @@ bool DataHandler::readFromAPI()
     }
     curl_easy_cleanup(curl);
     curl_global_cleanup();
+    this->populateSnapshot();
     return (fSuccess && !this->result_current["data"].empty() && !this->result_forecast["data"].empty());
 }
 
@@ -454,6 +453,9 @@ void DataHandler::writeToDB()
     sqlite3_stmt    *stmt = 0;
     char            *err = 0;
     DataPoint&      d = this->m_DataPoint;
+
+    if(!m_DataPoint.valid)
+        return;
 
     LOG_F(INFO, "Flushing DB, attemptint to open: %s", this->db_path.c_str());
     auto rc = sqlite3_open(this->db_path.c_str(), &the_db);
@@ -494,12 +496,49 @@ void DataHandler::writeToDB()
         sqlite3_free(err);
     }
 
-    rc = sqlite3_prepare_v2(the_db, "INSERT INTO history(timestamp, summary, icon, temperature"
-                                    "feelslike, dewpoint, windbearing, windspeed"
-                                    "windgust, humidity, visibility, pressure"
-                                    "precip_probability, precip_intensity, precip_type"
+    rc = sqlite3_prepare_v2(the_db, "INSERT INTO history(timestamp, summary, icon, temperature,"
+                                    "feelslike, dewpoint, windbearing, windspeed,"
+                                    "windgust, humidity, visibility, pressure,"
+                                    "precip_probability, precip_intensity, precip_type,"
                                     "uvindex, sunrise, sunset)"
                                     "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", -1, &stmt, 0);
+
+    if(SQLITE_OK == rc) {
+        DataPoint& p = this->m_DataPoint;       // shortcut
+        char    tmp[10];
+        LOG_F(INFO, "DataHandler::writeToDB(): sqlite3_prepare_v2() succeeded. Statement compiled");
+        sqlite3_bind_int(stmt, 1, static_cast<int>(p.timeRecorded));
+        sqlite3_bind_text(stmt, 2, p.conditionAsString, -1, 0);
+        tmp[0] = p.weatherSymbol;
+        sqlite3_bind_text(stmt, 3, tmp, -1, 0);
+        sqlite3_bind_double(stmt, 4, p.temperature);
+        sqlite3_bind_double(stmt, 5, p.temperatureApparent);
+        sqlite3_bind_double(stmt, 6, p.dewPoint);
+        sqlite3_bind_int(stmt, 7, p.windDirection);
+        sqlite3_bind_double(stmt, 8, p.windSpeed);
+        sqlite3_bind_double(stmt, 9, p.windGust);
+        sqlite3_bind_double(stmt, 10, p.humidity);
+        sqlite3_bind_double(stmt, 11, p.visibility);
+        sqlite3_bind_double(stmt, 12, p.pressureSeaLevel);
+        sqlite3_bind_double(stmt, 13, p.precipitationProbability);
+        sqlite3_bind_double(stmt, 14, p.precipitationIntensity);
+        sqlite3_bind_text(stmt, 15, p.precipitationTypeAsString, -1, 0);
+        sqlite3_bind_int(stmt, 16, 0);              // TODO UVindex
+        sqlite3_bind_int(stmt, 17, static_cast<int>(p.sunriseTime));
+        sqlite3_bind_int(stmt, 18, static_cast<int>(p.sunsetTime));
+
+        rc = sqlite3_step(stmt);
+        if(SQLITE_OK == rc) {
+            LOG_F(INFO, "DataHandler::writeToDB(): sqlite3_step() succeeded. Insert done.");
+            rc = sqlite3_finalize(stmt);
+        } else {
+            LOG_F(INFO, "DataHandler::writeToDB(): sqlite3_step error: %s", sqlite3_errmsg(the_db));
+        }
+
+    }
+    else {
+        LOG_F(INFO, "DataHandler::writeToDB(): prepare stmt, error: %s", sqlite3_errmsg(the_db));
+    }
 
     /*
     st.bind(":timestamp", currently["time"].get!int);
@@ -558,6 +597,9 @@ void DataHandler::populateSnapshot()
     p.precipitationProbability = d["precipitationProbability"].is_number() ?
       d["precipitationProbability"].get<double>() : 0.0f;
 
+    p.precipitationIntensity = d["precipitationIntensity"].is_number() ?
+      d["precipitationIntensity"].get<double>() : 0.0f;
+
     p.temperature = d["temperature"].is_number() ?
       this->convertTemperature(d["temperature"].get<double>(), cfg.temp_unit).first : 0.0f;
 
@@ -578,6 +620,7 @@ void DataHandler::populateSnapshot()
 
     p.windSpeed = d["windSpeed"].is_number() ? this->convertWindspeed(d["windSpeed"].get<double>()) : 0.0f;
     p.windDirection = d["windDirection"].is_number() ? d["windDirection"].get<int>() : 0;
+    p.windGust = d["windGust"].is_number() ? this->convertWindspeed(d["windGust"].get<double>()) : 0.0f;
 
     auto wind = this->degToBearing(p.windDirection);
     snprintf(p.windBearing, 9, "%s", wind.first.c_str());
@@ -604,10 +647,12 @@ void DataHandler::populateSnapshot()
 
     p.weatherSymbol = this->getCode(p.weatherCode, p.is_day);
 
+    /*
     printf("Temp: %f - Feels: %f\n", p.temperature, p.temperatureApparent);
     printf("Sunrise: %s - Sunset: %s\n", p.sunriseTimeAsString, p.sunsetTimeAsString);
     printf("Pressure: %f - Humidity: %f\n", p.pressureSeaLevel, p.humidity);
     printf("Code: %d, Symbol: %c, Condition: %s\n", p.weatherCode, p.weatherSymbol, p.conditionAsString);
+     */
 
     p.valid = true;
     LOG_F(INFO, "DataHandler::populateSnapshot(): snapshot populated successfully.");

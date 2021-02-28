@@ -11,7 +11,7 @@ conky.config = {
     own_window = true,
     own_window_transparent = true,
     own_window_type = "desktop",
-    border_inner_margin = 10,
+    border_inner_margin = 5,
 
     own_window_argb_visual = true,
     own_window_argb_value = 150,
@@ -23,7 +23,7 @@ conky.config = {
     double_buffer = true,
 
     -- Minimum size of text area
-    maximum_width = 200,
+    maximum_width = 210,
 
     -- Draw shades?
     draw_shades = yes,
@@ -48,8 +48,8 @@ conky.config = {
     -- alignment bottom_left
     alignment = "bottom_right",
 
-    gap_x = 10,
-    gap_y = 44,
+    gap_x = 5,
+    gap_y = 39,
 
     -- Subtract file system buffers from used memory?
     no_buffers = yes,

@@ -37,11 +37,11 @@ typedef struct _DataPoint {
     char            weatherSymbol;
     double          temperature, temperatureApparent, temperatureMin, temperatureMax;
     double          visibility;
-    double          windSpeed;
+    double          windSpeed, windGust;
     unsigned int    windDirection;
     int             precipitationType;
     char            precipitationTypeAsString[20];
-    double          precipitationProbability;
+    double          precipitationProbability, precipitationIntensity;
     double          pressureSeaLevel, humidity, dewPoint;
     char            sunsetTimeAsString[20], sunriseTimeAsString[20], windBearing[10], windUnit[10];
     char            conditionAsString[100];
