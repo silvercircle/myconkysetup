@@ -25,6 +25,8 @@
 #ifndef CLIMACELL_FETCH__DATAHANDLER_H_
 #define CLIMACELL_FETCH__DATAHANDLER_H_
 
+#include <nlohmann/json.hpp>
+
 typedef struct _DataPoint {
     bool            valid = false;
     bool            is_day;
@@ -45,23 +47,53 @@ typedef struct _DataPoint {
     char            conditionAsString[100];
 } DataPoint;
 
+typedef struct _DailyForecast {
+    char            code;
+    double          temperatureMin, temperatureMax;
+    char            weekDay[10];
+} DailyForecast;
+
 class DataHandler {
 
   public:
     DataHandler();
-    ~DataHandler() {}
+    ~DataHandler() { writeToDB(); }
+
+    void doOutput();
+    void dumpSnapshot();
 
     std::pair<std::string, std::string> degToBearing        (unsigned int wind_direction) const;
     std::pair<double, char>             convertTemperature  (double temp, char unit) const;
     double                              convertWindspeed    (double speed) const;
     double                              convertVis          (const double vis) const;
     double                              convertPressure     (double hPa) const;
+    const DataPoint&                    getDataPoint        () const { return m_DataPoint; }
 
     void outputTemperature  (double val, const bool addUnit = false,
                              const char *format = "%.1f%s\n");
+    void outputDailyForecast(const bool is_day = true);
 
+    static constexpr const char *wind_directions[] =
+      {"N", "NNE", "NE",
+       "ENE", "E", "ESE",
+       "SE", "SSE", "S",
+       "SSW", "SW", "WSW",
+       "W", "WNW", "NW",
+       "NNW"};
+
+    static constexpr const char *speed_units[] = {"m/s", "kts", "km/h"};
+    static constexpr const char *weekDays[] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat",
+                                               "Sun", "_invalid"};
   protected:
     ProgramOptions                  &m_options;
+    DataPoint                       m_DataPoint;
+    DailyForecast                   m_daily[3];         // 3 days, might be desireable to have this customizable
+    nlohmann::json                  result_current, result_forecast;
+
+    void writeToDB();
+
+  private:
+    std::string                     db_path;
 };
 
 #endif //CLIMACELL_FETCH__DATAHANDLER_H_

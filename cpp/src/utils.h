@@ -36,6 +36,7 @@ namespace utils {
   time_t ISOToUnixtime(const char *iso_string, GTimeZone *tz = 0);
   time_t ISOToUnixtime(const std::string& s, GTimeZone *tz = 0);
   size_t curl_callback(void *contents, size_t size, size_t nmemb, std::string *s);
+  int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName);
 }
 
 #endif //CLIMACELL_FETCH_SRC_UTILS_H_
