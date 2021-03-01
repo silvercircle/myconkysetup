@@ -24,6 +24,7 @@
 
 int main(int argc, char **argv)
 {
+    bool extended_checks_failed = false;
     loguru::g_stderr_verbosity = loguru::Verbosity_OFF;
     loguru::init(argc, argv);
     ProgramOptions &opt = ProgramOptions::getInstance();
@@ -39,10 +40,46 @@ int main(int argc, char **argv)
         exit(0);
     }
 
+    /* more sanity checks */
+
+    const CFG& cfg = opt.getConfig();
+    if(cfg.offline && cfg.skipcache) {
+        /* ignoring both online mode and the cache does not make sense */
+        printf("The options --offline and --skipcache are mutually exclusive\n"
+               "and cannot be used together.");
+        LOG_F(INFO, "main(): The options --offline and --skipcache cannot be used together");
+        exit(-1);
+    }
+    if(cfg.silent && cfg.output_dir.length() == 0) {
+        /* --silent without a filename for dumping the output does not make sense
+         * either
+         */
+        printf("The option --silent requires a filename specified with --output.");
+        LOG_F(INFO, "main(): --silent option was specified without using --output");
+        exit(-1);
+    }
+
+    if(cfg.apikey.length() == 0) {
+        LOG_F(INFO, "main(): Api KEY missing. Aborting.");
+        extended_checks_failed = true;
+        printf("\nThe API Key is missing. You must specify it with --apikey=your_key.\n");
+    }
+
+    if(cfg.location.length() == 0) {
+        LOG_F(INFO, "main(): Location is missing. Aborting.");
+        extended_checks_failed = true;
+        printf("No location given. Option --loc=LOCATION is mandatory, where LOCATION\n"
+               "is either in LAT,LON form or a location ID created on your ClimaCell dashboard.\n");
+
+    }
+
+    if(extended_checks_failed)
+        exit(-1);
+
     LOG_F(INFO, "Config file: %s", opt.getConfig().config_file_path.c_str());
     LOG_F(INFO, "Data dir : %s", opt.getConfig().data_dir_path.c_str());
     LOG_F(INFO, "Log file : %s", opt.getLogFilePath().c_str());
 
-    DataHandler dh;
+    DataHandler_ImplClimaCell dh;
     dh.run();
 }

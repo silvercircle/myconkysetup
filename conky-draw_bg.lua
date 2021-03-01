@@ -23,7 +23,7 @@ Changelog:
 
 -- "corner_r" is the radius, in pixels, of the rounded corners. If you don't want rounded corners, use 0.
 
-	local corner_r = 10
+	local corner_r = 0
 
 -- Set the colour and transparency (alpha) of your background (0.00 - 0.99).
 

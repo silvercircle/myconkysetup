@@ -27,11 +27,11 @@
 ProgramOptions::ProgramOptions() : m_oCommand(),
                                    m_config{
                                      .temp_unit = 'C', .config_dir_path = "",
-                                     .apikey = "MY_API_KEY", .data_url="http://foobar.org",
+                                     .apikey = "", .data_url="http://foobar.org",
                                      .vis_unit = "km", .speed_unit = "km/h", .pressure_unit = "hpa",
                                      .output_dir = "", .location="", .timezone="Europe/Vienna",
                                      .offline = false, .nocache = false, .skipcache = false,
-                                     .silent = false
+                                     .silent = false, .debug = false
                                    }
 {
     this->_init();
@@ -51,6 +51,9 @@ void ProgramOptions::_init()
     m_oCommand.add_flag("--silent,-s",
                         this->m_config.silent, "Do not print anything to stdout. "
                                                "Makes only sense with --output.");
+    m_oCommand.add_flag("--debug,-d",
+                        this->m_config.debug, "Show various debugging output on the console "
+                                              "and possibly in the\nlog files. Do not use in production!");
     m_oCommand.add_option("--apikey,-a", this->m_config.apikey, "Set the API key");
 
     // TODO location

@@ -23,6 +23,7 @@
 #include "conf.h"
 #include "options.h"
 #include "DataHandler.h"
+#include "DataHandler_ImplClimaCell.h"
 
 namespace fs = std::filesystem;
 using namespace nlohmann;

@@ -47,4 +47,19 @@ namespace utils {
       g_date_time_unref(g);
       return _unix;
   }
+
+  /**
+   * This callback is used by curl to store the data.
+   *
+   * @param contents  - the data chunk read
+   * @param size      - the length of the chunk
+   * @param nmemb
+   * @param s         - user-supplied data (std::string *)
+   * @return          - the total length of data read
+   */
+  size_t curl_callback(void *contents, size_t size, size_t nmemb, std::string *s)
+  {
+      s->append((char *)contents);
+      return s->length();
+  }
 }

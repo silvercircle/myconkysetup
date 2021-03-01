@@ -22,10 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef OBJCTEST_SRC_DATAHANDLER_H_
-#define OBJCTEST_SRC_DATAHANDLER_H_
-
-#include <nlohmann/json.hpp>
+#ifndef CLIMACELL_FETCH__DATAHANDLER_H_
+#define CLIMACELL_FETCH__DATAHANDLER_H_
 
 typedef struct _DataPoint {
     bool            valid = false;
@@ -48,53 +46,22 @@ typedef struct _DataPoint {
 } DataPoint;
 
 class DataHandler {
+
   public:
     DataHandler();
-    ~DataHandler() { writeToDB(); }
-
-    bool readFromCache();
-    bool readFromAPI();
-    int  run();
-    void doOutput();
+    ~DataHandler() {}
 
     std::pair<std::string, std::string> degToBearing        (unsigned int wind_direction) const;
     std::pair<double, char>             convertTemperature  (double temp, char unit) const;
     double                              convertWindspeed    (double speed) const;
     double                              convertVis          (const double vis) const;
     double                              convertPressure     (double hPa) const;
-    const char*                         getCondition        (int weatherCode);
-    const char*                         getPrecipType       (int code) const;
-    const DataPoint&                    getDataPoint        () const { return m_DataPoint; }
 
     void outputTemperature  (double val, const bool addUnit = false,
                              const char *format = "%.1f%s\n");
-    void outputDailyForecast(const nlohmann::json& data, const bool is_day = true);
-    char getCode            (const int weatherCode, const bool daylight = true);
-    void populateSnapshot   ();
 
-    static constexpr const char *wind_directions[] =
-      {"N", "NNE", "NE",
-       "ENE", "E", "ESE",
-       "SE", "SSE", "S",
-       "SSW", "SW", "WSW",
-       "W", "WNW", "NW",
-       "NNW"};
-
-    static constexpr const char *speed_units[] = {"m/s", "kts", "km/h"};
-
-    static constexpr const char *weekDays[] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat",
-                                               "Sun", "_invalid"};
-
-    static constexpr const char *precipType[] = { "", "(Rain)", "(Snow)", "(Freezing Rain)", "(Ice Pellets)" };
-  private:
+  protected:
     ProgramOptions                  &m_options;
-    nlohmann::json                  result_current, result_forecast;
-    std::string                     db_path;
-    std::map<int, const char *>     m_conditions;
-    std::map<int, const char *>     m_icons;
-    DataPoint                       m_DataPoint;
-
-    void writeToDB();
 };
 
-#endif //OBJCTEST_SRC_DATAHANDLER_H_
+#endif //CLIMACELL_FETCH__DATAHANDLER_H_

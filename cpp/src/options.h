@@ -42,7 +42,7 @@ typedef struct _cfg {
     std::string output_dir;
     std::string location;
     std::string timezone;
-    bool offline, nocache, skipcache, silent;
+    bool offline, nocache, skipcache, silent, debug;
 } CFG;
 
 class ProgramOptions {
