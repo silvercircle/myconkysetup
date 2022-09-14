@@ -29,18 +29,18 @@ Changelog:
 
 --	(Light Shading Example)
 --	local bg_colour = 0x4d4d4d
---	local bg_alpha = 0.50
+--	local bg_alpha = 0.1
 
 --	(Medium Shading Example)
 --	local bg_colour = 0x222222
---	local bg_alpha = 0.50
+--	local bg_alpha = 0.10
 
 --	(Dark Shading Example)
 --	local bg_colour = 0x000000
---	local bg_alpha = 0.50
+--	local bg_alpha = 0.10
 
-	local bg_colour = 0x202040
-	local bg_alpha = 0.6
+	local bg_colour = 0x801020
+	local bg_alpha = 0.01
 
 -- Tweaks the height of your background, in pixels. If you don't need to adjust the height, use 0.
 

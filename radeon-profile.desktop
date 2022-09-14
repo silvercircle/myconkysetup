@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Radeon Profile
+Exec=radeon-profile
+# Translators: Do NOT translate or transliterate this text (this is an icon file name)!
+Terminal=false
+Type=Application
+StartupNotify=true
+MimeType=inode/directory;
+Categories=GTK;GNOME;System;Filesystem;X-GNOME-Utilities;
+DBusActivatable=true
+X-GNOME-UsesNotifications=true

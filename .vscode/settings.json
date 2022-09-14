@@ -1,0 +1,17 @@
+{
+    "git.autofetch": false,
+    "git.enabled": true,
+    "git.alwaysShowStagedChangesResourceGroup": true,
+    "git.autorefresh": false,
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.dub": true,
+        "**.exe": true,
+        "**.vp*": true,
+        "**/.DS_Store": true
+    },
+    "git.ignoreLimitWarning": true
+}

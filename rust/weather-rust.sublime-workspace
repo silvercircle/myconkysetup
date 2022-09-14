@@ -1,0 +1,1251 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"reportmis",
+				"\"reportMissingTypeStubs\""
+			],
+			[
+				"ve",
+				"\"venv\""
+			],
+			[
+				"ac",
+				"activeView"
+			],
+			[
+				"show",
+				"show_at_center"
+			],
+			[
+				"get",
+				"getRegion"
+			],
+			[
+				"a",
+				"activeView"
+			],
+			[
+				"lo",
+				"Log"
+			],
+			[
+				"m_",
+				"m_config"
+			],
+			[
+				"the",
+				"theme_default"
+			],
+			[
+				"no",
+				"no_sidebar"
+			],
+			[
+				"font-",
+				"font-family"
+			],
+			[
+				"max",
+				"max-height"
+			],
+			[
+				"over",
+				"overflow-y"
+			],
+			[
+				"ca",
+				"category"
+			],
+			[
+				"in",
+				"inline"
+			],
+			[
+				"f",
+				"false"
+			],
+			[
+				"bord",
+				"border-radius"
+			],
+			[
+				"cli",
+				"clickable"
+			],
+			[
+				"r",
+				"registers"
+			],
+			[
+				"fina",
+				"final_url"
+			],
+			[
+				"fin",
+				"final_url"
+			],
+			[
+				"text",
+				"text-overflow"
+			],
+			[
+				"text-o",
+				"text-overflow"
+			],
+			[
+				"max-",
+				"max-height"
+			],
+			[
+				"ch",
+				"child"
+			],
+			[
+				"padd",
+				"padding-top"
+			],
+			[
+				"box-",
+				"box-shadow"
+			],
+			[
+				"back",
+				"background-color"
+			],
+			[
+				"b",
+				"baseurl"
+			],
+			[
+				"fi",
+				"first-child"
+			],
+			[
+				"bac",
+				"background-color"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "src/context.rs",
+			"settings":
+			{
+				"buffer_size": 6515,
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+			]
+		},
+		{
+			"file": "src/main.rs",
+			"settings":
+			{
+				"buffer_size": 13782,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+				[
+					14,
+					1,
+					"insert",
+					{
+						"characters": "\n"
+					},
+					"AQAAAPQBAAAAAAAA9QEAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA9AEAAAAAAAD0AQAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					19,
+					1,
+					"right_delete",
+					null,
+					"AQAAAPUBAAAAAAAA9QEAAAAAAAABAAAACg",
+					"AQAAAAAAAAABAAAA9QEAAAAAAAD1AQAAAAAAAAAAAAAAAAAA"
+				]
+			]
+		},
+		{
+			"contents": "unicode_start skipped on /dev/pts/5\n _________________________________________                                                                                      \n< We've upped our standards, so up yours! >\n -----------------------------------------\n        \\   ^__^\n         \\  (oo)\\_______\n            (__)\\       )\\/\\\n                ||----w |\n                ||     ||\n[alex@warpcore:/home/alex/.weather/rust]$>",
+			"settings":
+			{
+				"buffer_size": 417,
+				"line_ending": "Unix",
+				"name": "Fish",
+				"scratch": true
+			},
+			"undo_stack":
+			[
+				[
+					2,
+					4,
+					"terminus_render",
+					null,
+					"bgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAABAAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAgAAAAAAAAAAAAAAAgAAAAAAAAACAAAAAAAAAAAAAAACAAAAAAAAAAMAAAAAAAAAAAAAAAMAAAAAAAAAAwAAAAAAAAAAAAAAAwAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAABQAAAAAAAAAAAAAABQAAAAAAAAAFAAAAAAAAAAAAAAAFAAAAAAAAAAYAAAAAAAAAAAAAAAYAAAAAAAAABgAAAAAAAAAAAAAABgAAAAAAAAAHAAAAAAAAAAAAAAAHAAAAAAAAAAcAAAAAAAAAAAAAAAcAAAAAAAAACAAAAAAAAAAAAAAACAAAAAAAAAAIAAAAAAAAAAAAAAAIAAAAAAAAAAkAAAAAAAAAAAAAAAkAAAAAAAAACQAAAAAAAAAAAAAACQAAAAAAAAAKAAAAAAAAAAAAAAAKAAAAAAAAAAoAAAAAAAAAAAAAAAoAAAAAAAAACwAAAAAAAAAAAAAACwAAAAAAAAALAAAAAAAAAAAAAAALAAAAAAAAAAwAAAAAAAAAAAAAAAwAAAAAAAAADAAAAAAAAAAAAAAADAAAAAAAAAANAAAAAAAAAAAAAAANAAAAAAAAAA0AAAAAAAAAAAAAAA0AAAAAAAAADgAAAAAAAAAAAAAADgAAAAAAAAAOAAAAAAAAAAAAAAAOAAAAAAAAAA8AAAAAAAAAAAAAAA8AAAAAAAAADwAAAAAAAAAAAAAADwAAAAAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAAAAAABAAAAAAAAAAEQAAAAAAAAAAAAAAEQAAAAAAAAARAAAAAAAAAAAAAAARAAAAAAAAABIAAAAAAAAAAAAAABIAAAAAAAAAEgAAAAAAAAAAAAAAEgAAAAAAAAATAAAAAAAAAAAAAAATAAAAAAAAABMAAAAAAAAAAAAAABMAAAAAAAAAFAAAAAAAAAAAAAAAFAAAAAAAAAAUAAAAAAAAAAAAAAAUAAAAAAAAABUAAAAAAAAAAAAAABUAAAAAAAAAFQAAAAAAAAAAAAAAFQAAAAAAAAAWAAAAAAAAAAAAAAAWAAAAAAAAABYAAAAAAAAAAAAAABYAAAAAAAAAFwAAAAAAAAAAAAAAFwAAAAAAAAAXAAAAAAAAAAAAAAAXAAAAAAAAABgAAAAAAAAAAAAAABgAAAAAAAAAGAAAAAAAAAAAAAAAGAAAAAAAAAAZAAAAAAAAAAAAAAAZAAAAAAAAABkAAAAAAAAAAAAAABkAAAAAAAAAGgAAAAAAAAAAAAAAGgAAAAAAAAAaAAAAAAAAAAAAAAAaAAAAAAAAABsAAAAAAAAAAAAAABsAAAAAAAAAGwAAAAAAAAAAAAAAGwAAAAAAAAAcAAAAAAAAAAAAAAAcAAAAAAAAABwAAAAAAAAAAAAAABwAAAAAAAAAHQAAAAAAAAAAAAAAHQAAAAAAAAAdAAAAAAAAAAAAAAAcAAAAAAAAABwAAAAAAAAAAQAAAAobAAAAAAAAABsAAAAAAAAAAQAAAAoaAAAAAAAAABoAAAAAAAAAAQAAAAoZAAAAAAAAABkAAAAAAAAAAQAAAAoYAAAAAAAAABgAAAAAAAAAAQAAAAoXAAAAAAAAABcAAAAAAAAAAQAAAAoWAAAAAAAAABYAAAAAAAAAAQAAAAoVAAAAAAAAABUAAAAAAAAAAQAAAAoUAAAAAAAAABQAAAAAAAAAAQAAAAoTAAAAAAAAABMAAAAAAAAAAQAAAAoSAAAAAAAAABIAAAAAAAAAAQAAAAoRAAAAAAAAABEAAAAAAAAAAQAAAAoQAAAAAAAAABAAAAAAAAAAAQAAAAoPAAAAAAAAAA8AAAAAAAAAAQAAAAoOAAAAAAAAAA4AAAAAAAAAAQAAAAoNAAAAAAAAAA0AAAAAAAAAAQAAAAoMAAAAAAAAAAwAAAAAAAAAAQAAAAoLAAAAAAAAAAsAAAAAAAAAAQAAAAoKAAAAAAAAAAoAAAAAAAAAAQAAAAoJAAAAAAAAAAkAAAAAAAAAAQAAAAoIAAAAAAAAAAgAAAAAAAAAAQAAAAoHAAAAAAAAAAcAAAAAAAAAAQAAAAoGAAAAAAAAAAYAAAAAAAAAAQAAAAoFAAAAAAAAAAUAAAAAAAAAAQAAAAoEAAAAAAAAAAQAAAAAAAAAAQAAAAoDAAAAAAAAAAMAAAAAAAAAAQAAAAoCAAAAAAAAAAIAAAAAAAAAAQAAAAoBAAAAAAAAAAEAAAAAAAAAAQAAAAoAAAAAAAAAAAAAAAAAAAAAAQAAAAoAAAAAAAAAACMAAAAAAAAAAAAAACMAAAAAAAAAJAAAAAAAAAAAAAAAJAAAAAAAAABOAAAAAAAAAAAAAABOAAAAAAAAAKQAAAAAAAAAAAAAAKQAAAAAAAAApQAAAAAAAAAAAAAApQAAAAAAAADQAAAAAAAAAAAAAADQAAAAAAAAANEAAAAAAAAAAAAAANEAAAAAAAAA+wAAAAAAAAAAAAAA+wAAAAAAAAD8AAAAAAAAAAAAAAD8AAAAAAAAAAwBAAAAAAAAAAAAAAwBAAAAAAAADQEAAAAAAAAAAAAADQEAAAAAAAAlAQAAAAAAAAAAAAAlAQAAAAAAACYBAAAAAAAAAAAAACYBAAAAAAAAQgEAAAAAAAAAAAAAQgEAAAAAAABDAQAAAAAAAAAAAABDAQAAAAAAAFwBAAAAAAAAAAAAAFwBAAAAAAAAXQEAAAAAAAAAAAAAXQEAAAAAAAB2AQAAAAAAAAAAAAB2AQAAAAAAAHcBAAAAAAAAAAAAAHcBAAAAAAAAoQEAAAAAAAAAAAAAoQEAAAAAAAD3AQAAAAAAAAAAAAChAQAAAAAAAKEBAAAAAAAAVgAAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg",
+					"AQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					4,
+					2,
+					"terminus_render",
+					null,
+					"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"
+				],
+				[
+					6,
+					2,
+					"terminus_render",
+					null,
+					"GQAAAAAAAAAAAAAAIwAAAAAAAAAjAAAAdW5pY29kZV9zdGFydCBza2lwcGVkIG9uIC9kZXYvcHRzLzUkAAAAAAAAAE4AAAAAAAAAgAAAACBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgTgAAAAAAAACkAAAAAAAAAAAAAAClAAAAAAAAANAAAAAAAAAAKwAAADwgV2UndmUgdXBwZWQgb3VyIHN0YW5kYXJkcywgc28gdXAgeW91cnMhID7RAAAAAAAAAPsAAAAAAAAAKgAAACAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLfwAAAAAAAAADAEAAAAAAAAQAAAAICAgICAgICBcICAgXl9fXg0BAAAAAAAAJQEAAAAAAAAYAAAAICAgICAgICAgXCAgKG9vKVxfX19fX19fJgEAAAAAAABCAQAAAAAAABwAAAAgICAgICAgICAgICAoX18pXCAgICAgICApXC9cQwEAAAAAAABcAQAAAAAAABkAAAAgICAgICAgICAgICAgICAgfHwtLS0tdyB8XQEAAAAAAAB2AQAAAAAAABkAAAAgICAgICAgICAgICAgICAgfHwgICAgIHx8dwEAAAAAAAChAQAAAAAAACoAAABbYWxleEB3YXJwY29yZTovaG9tZS9hbGV4Ly53ZWF0aGVyL3J1c3RdJD6hAQAAAAAAAPcBAAAAAAAAAAAAAPcBAAAAAAAA+AEAAAAAAAAAAAAA+AEAAAAAAAD4AQAAAAAAAAAAAAD4AQAAAAAAAPkBAAAAAAAAAAAAAPkBAAAAAAAA+QEAAAAAAAAAAAAA+QEAAAAAAAD6AQAAAAAAAAAAAAD6AQAAAAAAAPoBAAAAAAAAAAAAAPkBAAAAAAAA+QEAAAAAAAABAAAACvgBAAAAAAAA+AEAAAAAAAABAAAACvcBAAAAAAAA9wEAAAAAAAABAAAACqEBAAAAAAAAoQEAAAAAAABWAAAAICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB3AQAAAAAAAKEBAAAAAAAAKgAAAFthbGV4QHdhcnBjb3JlOi9ob21lL2FsZXgvLndlYXRoZXIvcnVzdF0kPqEBAAAAAAAA9wEAAAAAAAAAAAAAoQEAAAAAAAChAQAAAAAAAFYAAAAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA",
+					"AQAAAAAAAAABAAAAoQEAAAAAAAChAQAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					8,
+					2,
+					"terminus_render",
+					null,
+					"FgAAAAAAAAAAAAAAIwAAAAAAAAAjAAAAdW5pY29kZV9zdGFydCBza2lwcGVkIG9uIC9kZXYvcHRzLzUkAAAAAAAAAE4AAAAAAAAAgAAAACBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgTgAAAAAAAACkAAAAAAAAAAAAAAClAAAAAAAAANAAAAAAAAAAKwAAADwgV2UndmUgdXBwZWQgb3VyIHN0YW5kYXJkcywgc28gdXAgeW91cnMhID7RAAAAAAAAAPsAAAAAAAAAKgAAACAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLfwAAAAAAAAADAEAAAAAAAAQAAAAICAgICAgICBcICAgXl9fXg0BAAAAAAAAJQEAAAAAAAAYAAAAICAgICAgICAgXCAgKG9vKVxfX19fX19fJgEAAAAAAABCAQAAAAAAABwAAAAgICAgICAgICAgICAoX18pXCAgICAgICApXC9cQwEAAAAAAABcAQAAAAAAABkAAAAgICAgICAgICAgICAgICAgfHwtLS0tdyB8XQEAAAAAAAB2AQAAAAAAABkAAAAgICAgICAgICAgICAgICAgfHwgICAgIHx8dwEAAAAAAAChAQAAAAAAACoAAABbYWxleEB3YXJwY29yZTovaG9tZS9hbGV4Ly53ZWF0aGVyL3J1c3RdJD6hAQAAAAAAAPcBAAAAAAAAAAAAAPcBAAAAAAAA+AEAAAAAAAAAAAAA+AEAAAAAAAD4AQAAAAAAAAAAAAD4AQAAAAAAAPkBAAAAAAAAAAAAAPkBAAAAAAAA+QEAAAAAAAAAAAAA+AEAAAAAAAD4AQAAAAAAAAEAAAAK9wEAAAAAAAD3AQAAAAAAAAEAAAAKoQEAAAAAAAChAQAAAAAAAFYAAAAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHcBAAAAAAAAoQEAAAAAAAAqAAAAW2FsZXhAd2FycGNvcmU6L2hvbWUvYWxleC8ud2VhdGhlci9ydXN0XSQ+oQEAAAAAAAD3AQAAAAAAAAAAAAChAQAAAAAAAKEBAAAAAAAAVgAAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg",
+					"AQAAAAAAAAABAAAAoQEAAAAAAAChAQAAAAAAAAAAAAAAAPC/"
+				]
+			]
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"terminus open",
+				"Terminus: Open Default Shell in Tab (View)"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"goto",
+				"SublimeBookmarks: Goto Bookmark"
+			],
+			[
+				"lsp",
+				"LSP: Goto Symbol In Project"
+			],
+			[
+				"enable",
+				"Package Control: Enable Package"
+			],
+			[
+				"ena",
+				"Package Control: Enable Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"dis",
+				"Package Control: Disable Package"
+			],
+			[
+				"bookma",
+				"Bookmarks: Select Next"
+			],
+			[
+				"boo",
+				"SublimeBookmarks: Remove A Bookmark"
+			],
+			[
+				"book",
+				"SublimeBookmarks: Goto Bookmark"
+			],
+			[
+				"terminus op",
+				"Terminus: Open Default Shell in Tab (View)"
+			],
+			[
+				"fav",
+				"Favorite Files: Open File(s)"
+			],
+			[
+				"favor",
+				"Favorite Files: Clean Orphaned Favorites"
+			],
+			[
+				"disable",
+				"Package Control: Disable Package"
+			],
+			[
+				"mini",
+				"View: Toggle Minimap"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"remove ",
+				"Package Control: Remove Package"
+			],
+			[
+				"GOTO",
+				"SublimeBookmarks: Goto Bookmark"
+			],
+			[
+				"g",
+				"SublimeBookmarks: Goto Bookmark"
+			],
+			[
+				"terminus",
+				"Preferences: Terminus Settings"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"up",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"enable pa",
+				"Package Control: Enable Package"
+			],
+			[
+				"rremove ",
+				"Package Control: Remove Package"
+			],
+			[
+				"install ",
+				"Package Control: Install Package"
+			],
+			[
+				"terminus theme",
+				"Terminus Utilities: Select Theme"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"package control install",
+				"Package Control: Install Package"
+			],
+			[
+				"package control",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"terminus ope",
+				"Terminus: Open Default Shell in Tab (View)"
+			],
+			[
+				"theme",
+				"UI: Select Theme"
+			],
+			[
+				"pack",
+				"Package Control: List Packages"
+			],
+			[
+				"terminus the",
+				"Terminus Utilities: Select Theme"
+			],
+			[
+				"termi",
+				"Terminus: Open Default Shell in Tab (View)"
+			],
+			[
+				"termin",
+				"Terminus: Open Default Shell in Panel"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"pac",
+				"Package Control: Remove Package"
+			],
+			[
+				"pa",
+				"Package Control: Install Package"
+			],
+			[
+				"auto",
+				"Auto Wrap: Toggle"
+			],
+			[
+				"packa",
+				"Package Control: Install Package"
+			],
+			[
+				"in",
+				"Package Control: Install Package"
+			],
+			[
+				"remov",
+				"Package Control: Remove Package"
+			],
+			[
+				"packagere",
+				"PackageResourceViewer: Open Resource"
+			],
+			[
+				"packageer",
+				"PackageResourceViewer: Open Resource"
+			],
+			[
+				"packageres",
+				"PackageResourceViewer: Open Resource"
+			],
+			[
+				"dict",
+				"View: Toggle Distraction Free"
+			],
+			[
+				"disabl",
+				"Package Control: Disable Package"
+			],
+			[
+				"list",
+				"Package Control: List Packages"
+			],
+			[
+				"packaged",
+				"PackageDev: Edit Current Color Scheme"
+			],
+			[
+				"cont",
+				"Package Control: Install Package"
+			],
+			[
+				"control",
+				"Package Control: Remove Package"
+			],
+			[
+				"dkit",
+				"DKit: Restart DCD Autocompletion Server"
+			],
+			[
+				"contr",
+				"Package Control: Remove Package"
+			],
+			[
+				"contro",
+				"Package Control: Remove Package"
+			],
+			[
+				"package",
+				"Preferences: Browse Packages"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 309.0,
+		"history":
+		[
+			"sublime.log_commands(False)",
+			"sublime.log_commands(True)",
+			"sublime.log_commands(true)",
+			"sublime.logCommands(true)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/alex/.weather/rust"
+	],
+	"file_history":
+	[
+		"/home/alex/.weather/rust/weather-rust.sublime-project",
+		"/home/alex/.config/sublime-text-3/Packages/MyBookmarks/sublimebookmark.py",
+		"/home/alex/.config/sublime-text-3/Packages/MyBookmarks/pyrightconfig.json",
+		"/home/alex/.config/sublime-text-3/Packages/MyBookmarks/bookmark.py",
+		"/home/alex/.config/sublime-text-3/Packages/MyBookmarks/MyBookmarks.sublime-project",
+		"/home/alex/.config/sublime-text-3/Packages/MyBookmarks/common.py",
+		"/home/alex/.config/sublime-text-3/Packages/MyBookmarks/typings/sublime_plugin.pyi",
+		"/home/alex/.config/sublime-text-3/Packages/MyBookmarks/typings/sublime.pyi",
+		"/home/alex/.config/sublime-text-3/Packages/MyBookmarks/MySublimeBookmarks.sublime-project",
+		"/home/alex/.config/sublime-text-3/Packages/MyBookmarks/ui.py",
+		"/home/alex/.config/sublime-text-3/Packages/MyBookmarks/bookmarkWatcher.py",
+		"/seagate/volatile/.cache/sublime-text-3/Cache/Favorites/Favorites",
+		"/home/alex/.config/sublime-text-3/Packages/User/favorites.txt",
+		"/home/alex/.config/sublime-text-3/Packages/User/favorites.sublime-settings",
+		"/home/alex/Downloads/sublime_text_4_patcher.py",
+		"/home/alex/.config/sublime-text-3/Packages/MyBookmarks/__init.py__",
+		"/home/alex/Downloads/MySublimeBookmarks/sublimebookmark.py",
+		"/home/alex/Downloads/MySublimeBookmarks/bookmark.py",
+		"/home/alex/Downloads/MySublimeBookmarks/common.py",
+		"/mnt/shared/data/testpage/_posts/de/2021-08-13-klimawandel.md",
+		"/home/mnt/shared/data/code/c++/qttest/src/playground.cpp",
+		"/home/alex/.config/sublime-text-3/Packages/MyBookmarks/README.md",
+		"/home/alex/.config/sublime-text-3/Packages/MyBookmarks/Default.sublime-keymap",
+		"/home/alex/.config/sublime-text-3/Packages/MyBookmarks/Main.sublime-menu",
+		"/opt/sublime_text/Lib/python33/sublime_plugin.py",
+		"/home/alex/.config/sublime-text-3/Packages/MyBookmarks/Commands.sublime-commands",
+		"/mnt/shared/data/code/fetchweather/src/DataHandler_ImplClimaCell.h",
+		"/home/alex/.config/sublime-text-3/Packages/User/Default.sublime-keymap",
+		"/mnt/shared/data/code/fetchweather/src/options.h",
+		"/mnt/shared/data/code/fetchweather/src/DataHandler.cpp",
+		"/mnt/shared/data/code/fetchweather/src/options.cpp",
+		"/mnt/shared/data/code/fetchweather/src/DataHandler_ImplOWM.cpp",
+		"/mnt/shared/data/code/fetchweather/src/FileDumper.cpp",
+		"/mnt/shared/data/code/fetchweather/src/utils.cpp",
+		"/home/alex/.config/sublime-text-3/Packages/MySublimeBookmarks/sublimebookmark.py",
+		"/usr/include/c++/10/bits/fs_path.h",
+		"/home/mnt/shared/data/code/fetchweather/src/main.cpp",
+		"/home/mnt/shared/data/code/fetchweather/src/options.cpp",
+		"/usr/include/c++/10/bits/fs_ops.h",
+		"/home/mnt/shared/data/code/fetchweather/src/CLI/App.hpp",
+		"/home/mnt/shared/data/code/fetchweather/.gitignore",
+		"/home/mnt/shared/data/code/fetchweather/src/DataHandler.cpp",
+		"/home/alex/.config/sublime-text-3/Packages/User/favorite_files_list.json",
+		"/home/mnt/shared/data/code/fetchweather/foo",
+		"/home/mnt/shared/data/code/fetchweather/fetchweather.sublime-project",
+		"/home/mnt/shared/data/code/fetchweather/compile_commands.json",
+		"/home/mnt/shared/data/code/fetchweather/src/utils.h",
+		"/home/mnt/shared/data/code/fetchweather/src/options.h",
+		"/home/mnt/shared/data/code/fetchweather/src/DataHandler_ImplClimaCell.cpp",
+		"/home/mnt/shared/data/code/fetchweather/src/utils.cpp",
+		"/home/mnt/shared/data/code/fetchweather/src/DataHandler_ImplOWM.h",
+		"/home/mnt/shared/data/code/fetchweather/src/DataHandler_ImplVC.cpp",
+		"/home/mnt/shared/data/code/fetchweather/src/FetchWeatherApp.cpp",
+		"/home/mnt/shared/data/code/fetchweather/src/DataHandler_ImplOWM.cpp",
+		"/home/mnt/shared/data/code/fetchweather/src/nlohmann/json.hpp",
+		"/home/mnt/shared/data/code/fetchweather/CMakeLists.txt",
+		"/home/mnt/shared/data/code/fetchweather/README.md",
+		"/home/mnt/shared/data/testpage/_data/logos.yaml",
+		"/home/mnt/shared/data/testpage/_config.yml",
+		"/opt/sublime_merge/sublime_merge_serial.txt",
+		"/home/alex/Downloads/sublime_merge_path.sh",
+		"/home/alex/.local/share/applications/sublime_merge.desktop",
+		"/mnt/shared/data/testpage/_posts/de/2021-10-07-bastinator.md",
+		"/mnt/shared/data/testpage/_sass/content.scss",
+		"/mnt/shared/data/testpage/subspace.sublime-project",
+		"/mnt/shared/data/testpage/_plugins/img.rb",
+		"/home/alex/.config/sublime-text-3/Packages/User/Default (Linux).sublime-keymap",
+		"/home/alex/.config/sublime-text-3/Packages/Tab Filter/Default (Linux).sublime-keymap",
+		"/home/alex/.config/sublime-text-3/Packages/User/tabfilter.sublime-settings",
+		"/mnt/shared/data/testpage/_sass/customizations.scss",
+		"/home/alex/.config/sublime-text-3/Packages/Tab Filter/tabfilter.sublime-settings",
+		"/mnt/shared/data/testpage/_sass/fancybox.scss",
+		"/mnt/shared/data/testpage/.gitignore",
+		"/mnt/shared/data/testpage/_posts/en/2017-09-18-building-galleries.markdown",
+		"/mnt/shared/data/testpage/_posts/en/2018-05-28-foreigners-travelguide-to-texas.md",
+		"/mnt/shared/data/testpage/_posts/en/2021-09-01-lunrjs-for-jekyll.md",
+		"/mnt/shared/data/testpage/category/drafts/index.html",
+		"/mnt/shared/data/testpage/blog/index.html",
+		"/mnt/shared/data/testpage/_includes/paginator_body.html",
+		"/mnt/shared/data/testpage/_posts/en/2017-09-08-no-love-vegetarian-food.md",
+		"/mnt/shared/data/testpage/_includes/paginator_body_head_min.html",
+		"/mnt/shared/data/testpage/_posts/en/2021-10-10-advanced-img-tag-fancybox.md",
+		"/mnt/shared/data/testpage/_posts/en/2021-10-08-jekyll-custom-liquid-tag.md",
+		"/mnt/shared/data/testpage/_posts/de/2021-10-21-bloede-witze-geloggt.md",
+		"/mnt/shared/data/testpage/_includes/paginator_trail.html",
+		"/mnt/shared/data/testpage/_includes/paginator_trail_dyn.html",
+		"/mnt/shared/data/testpage/_includes/paginator_pagination.html",
+		"/mnt/shared/data/testpage/category/fun/index.html",
+		"/mnt/shared/data/testpage/_posts/en/2021-10-21-jekyll-tweet-embed-tag.md",
+		"/mnt/shared/data/testpage/_posts/en/2021-10-18-table-of-contents-jekyll.md",
+		"/mnt/shared/data/testpage/_includes/post_paginator.html",
+		"/mnt/shared/data/testpage/_includes/menus/minimal.html",
+		"/mnt/shared/data/testpage/_config.yml",
+		"/mnt/shared/data/testpage/_includes/site_header.html",
+		"/mnt/shared/data/testpage/_posts/memes/2021-10-06-kurz-memes.md",
+		"/mnt/shared/data/testpage/_posts/en/2011-05-17-watch-your-weight-there-is-always-a-reason.md",
+		"/mnt/shared/data/testpage/_includes/toc.md",
+		"/mnt/shared/data/testpage/_includes/footer_scripts.html",
+		"/mnt/shared/data/testpage/_plugins/tweet.rb",
+		"/mnt/shared/data/testpage/category/jekyll/index.html",
+		"/mnt/shared/data/testpage/assets/js/footerscripts.js",
+		"/mnt/shared/data/testpage/_posts/en/2021-10-11-codeselect-tag.md",
+		"/mnt/shared/data/testpage/_includes/post_header_min.html",
+		"/mnt/shared/data/testpage/rsync.sh",
+		"/mnt/shared/data/testpage/google_search.html",
+		"/mnt/shared/data/testpage/_layouts/no_sidebar.html",
+		"/mnt/shared/data/testpage/_includes/footers/owa_fragment.html",
+		"/mnt/shared/data/testpage/_includes/paginator_body_head_full.html",
+		"/mnt/shared/data/testpage/_posts/de/2021-10-16-tuerklingel.md",
+		"/mnt/shared/data/testpage/_plugins/video.rb",
+		"/mnt/shared/data/testpage/_sass/theme.scss",
+		"/mnt/shared/data/testpage/_sass/isso.scss",
+		"/home/mnt/shared/data/ghpage/category/jekyll/sbar.html",
+		"/mnt/shared/data/testpage/category/jekyll/sbar.html",
+		"/mnt/shared/data/testpage/_data/logos.yaml",
+		"/mnt/shared/data/testpage/_data/images.yaml",
+		"/mnt/shared/data/testpage/_posts/de/2021-09-03-hunde-weg-sperren.md",
+		"/mnt/shared/data/testpage/_posts/de/2021-08-25-leoparden.md",
+		"/mnt/shared/data/testpage/_posts/memes/2021-09-02-ponies-are-for-pussies.md",
+		"/mnt/shared/data/testpage/_posts/memes/2021-09-12-fichte.md",
+		"/mnt/shared/data/testpage/_posts/memes/2021-09-12-laptop.md",
+		"/mnt/shared/data/testpage/_posts/memes/2021-09-18-picdump.md",
+		"/mnt/shared/data/testpage/_posts/memes/2021-09-02-picdump.md",
+		"/mnt/shared/data/testpage/_posts/memes/2021-08-29-picdump.md",
+		"/mnt/shared/data/testpage/_includes/content_footer.html",
+		"/mnt/shared/data/testpage/_includes/share_post.html",
+		"/mnt/shared/data/testpage/_includes/headers/minimal.html",
+		"/mnt/shared/data/testpage/_includes/headers/default.html"
+	],
+	"find":
+	{
+		"height": 38.0
+	},
+	"find_in_files":
+	{
+		"height": 108.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"scrollbar_highlights": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"use_gitignore": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "src/context.rs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6515,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3170,
+								3170
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": "<",
+									"selector": "text.html, text.xml"
+								},
+								{
+									"rhs_empty": true,
+									"selector": "punctuation.accessor"
+								},
+								{
+									"characters": ":.'",
+									"selector": "meta.tag, source - comment - string.quoted.double.block - string.quoted.single.block - string.unquoted.heredoc",
+									"server": "rust-analyzer"
+								}
+							],
+							"incomplete_sync": null,
+							"lsp_active": true,
+							"lsp_hover_provider_count": 4,
+							"lsp_uri": "file:///home/alex/.weather/rust/src/context.rs",
+							"remote_loading": false,
+							"savefold_scroll_name": "1f673466",
+							"show_definitions": false,
+							"synced": false,
+							"syntax": "Packages/Rust/Rust.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1094.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"stack_multiselect": false,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/main.rs",
+					"selected": true,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 13782,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								9984,
+								9984
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": "<",
+									"selector": "text.html, text.xml"
+								},
+								{
+									"rhs_empty": true,
+									"selector": "punctuation.accessor"
+								},
+								{
+									"characters": ":.'",
+									"selector": "meta.tag, source - comment - string.quoted.double.block - string.quoted.single.block - string.unquoted.heredoc",
+									"server": "rust-analyzer"
+								}
+							],
+							"incomplete_sync": null,
+							"lsp_active": true,
+							"lsp_hover_provider_count": 9,
+							"lsp_uri": "file:///home/alex/.weather/rust/src/main.rs",
+							"remote_loading": false,
+							"savefold_scroll_name": "0ea9b309",
+							"show_definitions": false,
+							"synced": false,
+							"syntax": "Packages/Rust/Rust.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4335.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"stack_multiselect": false,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"sheets":
+			[
+				{
+					"buffer": 2,
+					"selected": true,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 417,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								417,
+								417
+							]
+						],
+						"settings":
+						{
+							"__vi_external_disable": true,
+							"auto_complete": false,
+							"auto_complete_commit_on_tab": false,
+							"auto_complete_triggers":
+							[
+								{
+									"characters": "<",
+									"selector": "text.html, text.xml"
+								},
+								{
+									"rhs_empty": true,
+									"selector": "punctuation.accessor"
+								}
+							],
+							"bracket_highlighter.clone_locations":
+							{
+							},
+							"bracket_highlighter.ignore": true,
+							"color_scheme": "Terminus.hidden-color-scheme",
+							"draw_centered": false,
+							"draw_indent_guides": false,
+							"draw_unicode_white_space": false,
+							"draw_white_space": "none",
+							"gutter": false,
+							"highlight_line": false,
+							"incomplete_sync": null,
+							"is_widget": true,
+							"lsp_uri": "buffer://sublime/764",
+							"result_base_dir": "/home/alex/.weather/rust",
+							"result_file_regex": null,
+							"result_line_regex": null,
+							"rulers":
+							[
+								80,
+								100,
+								120,
+								500
+							],
+							"scroll_past_end": true,
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"terminus.highlight_counter": 6,
+							"terminus_view": true,
+							"terminus_view.args":
+							{
+								"auto_close": true,
+								"cancellable": false,
+								"cmd":
+								[
+									"fish",
+									"-i",
+									"-l"
+								],
+								"config_name": "Fish",
+								"cwd": "/home/alex/.weather/rust",
+								"env":
+								{
+									"LANG": "en_US.UTF-8",
+									"TERM": "linux",
+									"TERMINUS_SUBLIME": "1",
+									"TERM_PROGRAM": "Terminus-Sublime"
+								},
+								"file_regex": null,
+								"line_regex": null,
+								"panel_name": null,
+								"tag": null,
+								"timeit": false,
+								"title": null
+							},
+							"terminus_view.cancellable": false,
+							"terminus_view.key.ctrl+k": true,
+							"terminus_view.key.ctrl+p": true,
+							"terminus_view.natural_keyboard": false,
+							"terminus_view.panel_name": null,
+							"terminus_view.tag": null,
+							"terminus_view.viewport_y": 0.0,
+							"word_wrap": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"stack_multiselect": false,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 26.0
+	},
+	"input":
+	{
+		"height": 41.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				0,
+				1,
+				1,
+				2
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			0.775825786155,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.SFTP":
+	{
+		"height": 0.0
+	},
+	"output.diagnostics":
+	{
+		"height": 248.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.language servers":
+	{
+		"height": 327.0
+	},
+	"output.mdpopups":
+	{
+		"height": 0.0
+	},
+	"output.references":
+	{
+		"height": 271.0
+	},
+	"output.sftp":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "weather-rust.sublime-project",
+	"replace":
+	{
+		"height": 48.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"__init.py__"
+			],
+			[
+				"handler",
+				"src/DataHandler_ImplOWM.cpp"
+			],
+			[
+				"utils",
+				"src/utils.cpp"
+			],
+			[
+				".h",
+				"src/nlohmann/json.hpp"
+			],
+			[
+				"fetch",
+				"src/FetchWeatherApp.cpp"
+			],
+			[
+				"custom",
+				"_sass/customizations.scss"
+			],
+			[
+				"img.",
+				"_plugins/img.rb"
+			],
+			[
+				"klima",
+				"_posts/de/2021-08-13-klimawandel.md"
+			],
+			[
+				".rb",
+				"_plugins/img.rb"
+			],
+			[
+				"content",
+				"_sass/content.scss"
+			],
+			[
+				"paginator_bod",
+				"_includes/paginator_body_head_min.html"
+			],
+			[
+				"pagina",
+				"_includes/paginator_body.html"
+			],
+			[
+				"index.html",
+				"blog/index.html"
+			],
+			[
+				"cont",
+				"_sass/content.scss"
+			],
+			[
+				"kl",
+				"_posts/de/2021-08-13-klimawandel.md"
+			],
+			[
+				"wittz",
+				"_posts/de/2021-10-21-bloede-witze-geloggt.md"
+			],
+			[
+				"conte",
+				"_sass/content.scss"
+			],
+			[
+				"footersc",
+				"assets/js/footerscripts.js"
+			],
+			[
+				"content.",
+				"_sass/content.scss"
+			],
+			[
+				"footer_sc",
+				"_includes/footer_scripts.html"
+			],
+			[
+				"cust",
+				"_sass/customizations.scss"
+			],
+			[
+				"theme.sc",
+				"_sass/theme.scss"
+			],
+			[
+				"footers",
+				"assets/js/footerscripts.js"
+			],
+			[
+				"lunr",
+				"_posts/en/2021-09-01-lunrjs-for-jekyll.md"
+			],
+			[
+				"sear",
+				"_help/searchhelp.md"
+			],
+			[
+				"search",
+				"search.html"
+			],
+			[
+				"se",
+				"search.html"
+			],
+			[
+				"inde",
+				"index.markdown"
+			],
+			[
+				"sea",
+				"search.html"
+			],
+			[
+				"index.",
+				"index.markdown"
+			],
+			[
+				"theme-",
+				"_sass/theme-light.scss"
+			],
+			[
+				"comm",
+				"_includes/comment_fragment.html"
+			],
+			[
+				"defs",
+				"_includes/defs.md"
+			],
+			[
+				"defs.",
+				"_includes/defs.md"
+			],
+			[
+				"abou",
+				"_help/about.markdown"
+			],
+			[
+				"index",
+				"index.markdown"
+			],
+			[
+				"priv",
+				"_help/privacy.md"
+			],
+			[
+				"faq",
+				"_help/sitefaq.md"
+			],
+			[
+				"about",
+				"_help/about.markdown"
+			],
+			[
+				"_cn",
+				"_config.yml"
+			],
+			[
+				"p",
+				"_help/privacy.md"
+			],
+			[
+				"pri",
+				"_help/privacy.md"
+			],
+			[
+				"index.ma",
+				"index.markdown"
+			],
+			[
+				"site_hea",
+				"_includes/site_header.html"
+			],
+			[
+				"seac",
+				"search.html"
+			],
+			[
+				"_config",
+				"_config.yml"
+			],
+			[
+				"font-tisa",
+				"_sass/font-ff-tisa.scss"
+			],
+			[
+				"font-tis",
+				"_sass/font-ff-tisa.scss"
+			],
+			[
+				"searc",
+				"assets/js/search.js"
+			],
+			[
+				"search.js",
+				"assets/js/search.js"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 321.0,
+		"last_filter": "buffer",
+		"selected_items":
+		[
+			[
+				"buffer",
+				"attach_buffer"
+			],
+			[
+				"",
+				"getCurrentActiveGroup"
+			],
+			[
+				"add",
+				"addBookmark"
+			],
+			[
+				"curl_",
+				"curl_fetch"
+			],
+			[
+				"isoto",
+				"ISOToUnixtime"
+			],
+			[
+				"setapp",
+				"setAppObject"
+			],
+			[
+				"pro",
+				"ProgramOptions"
+			],
+			[
+				"content-separ",
+				"hrcontent-separator.thin"
+			],
+			[
+				"content-sep",
+				"hrcontent-separator.thin"
+			],
+			[
+				"video-padd",
+				"divvideo-padded"
+			],
+			[
+				"hide-on",
+				"ulmarkdown-toc, .hide-on-small"
+			],
+			[
+				"ytconta",
+				"divytcontainer"
+			],
+			[
+				"content-s",
+				"hrcontent-separator.superthin"
+			],
+			[
+				"c_pl",
+				"c_pleft"
+			],
+			[
+				"lunr",
+				"lilunr-searchresult"
+			]
+		],
+		"width": 592.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 426.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

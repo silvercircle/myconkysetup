@@ -1,0 +1,13 @@
+${voffset -5}${font Noto Sans:bold:size=18}${alignr}${nodename}${font}
+# ${voffset 5}${font OpenLogos:size=16}${color cc5050}B${color}${font} ${voffset -5}Kernel: ${alignr}${kernel}
+${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU: ${cpu cpu0}% ${alignr}${cpubar cpu0 8,60}
+# ${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU1: ${cpu cpu1}% ${alignr}${cpubar cpu1 8,60}
+# ${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU2: ${cpu cpu2}% ${alignr}${cpubar cpu2 8,60}
+# ${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU3: ${cpu cpu3}% ${alignr}${cpubar cpu3 8,60}
+# ${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU4: ${cpu cpu4}% ${alignr}${cpubar cpu4 8,60}
+${voffset 5}${font StyleBats:size=16}${color cc5050}g${color}${font} ${voffset -3}RAM: $mem ${alignr}${membar 8,60}
+${voffset 5}${font StyleBats:size=16}${color cc5050}j${color}${font} ${voffset -3}SWAP: $swap ${alignr}${swapbar 8,60}
+${voffset 5}${font StyleBats:size=16}${color cc5050}q${color}${font} ${voffset -3}Uptime: ${alignr}${uptime_short}
+${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}CPU temp: ${alignr}${hwmon 0 temp 1}°
+${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}GPU temp: ${alignr}${hwmon 1 temp 1}°
+
