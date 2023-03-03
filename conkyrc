@@ -73,8 +73,9 @@ conky.config = {
 }
 
 conky.text = [[
-${font DejaVu Sans:bold:size=9}SYSTEM ${hr 2}
-${voffset -5}${font Lato:bold:size=18}${alignr}${nodename}${font}
+${font DejaVu Sans:bold:size=9}SYSTEM  ${hr 2} ${font}
+${voffset 1}${font Ubuntu:size=10}${execpi 300 uname -r | awk '{split($0, array, "."); print substr($0, 0, length($0)-7)}'}${font}
+${voffset -22}${font Ubuntu:bold:size=14}${alignr}${nodename}${font}
 # ${voffset 5}${font OpenLogos:size=16}${color cc5050}B${color}${font} ${voffset -5}Kernel: ${alignr}${kernel}
 ${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU: ${cpu cpu0}% ${alignr}${cpubar cpu0 8,60}
 # ${voffset 5}${font StyleBats:size=16}${color cc5050}A${color}${font} ${voffset -3}CPU1: ${cpu cpu1}% ${alignr}${cpubar cpu1 8,60}
@@ -85,8 +86,8 @@ ${voffset 5}${font StyleBats:size=16}${color cc5050}j${color}${font} ${voffset -
 ${voffset 5}${font StyleBats:size=16}${color cc5050}q${color}${font} ${voffset -3}Uptime: ${alignr}${uptime_short}
 ${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}CPU temp: ${alignr}${hwmon 0 temp 1}°C
 ${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}GPU temp: ${alignr}${hwmon 1 temp 1}°C
-#${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}GPU temp: ${alignr}${execpi 120 sensors | grep -m1 temp1 | cut -c 16-19}°C
-${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}Disk hda/hdb: ${alignr}${execpi 180 sudo hddtemp /dev/sda | awk '{print $NF}'}/${execpi 180 sudo hddtemp /dev/sdb | awk '{print $NF}'}
+# ${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}GPU temp: ${alignr}${execpi 120 sensors | grep -m1 temp1 | cut -c 16-19}°C
+${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}Disk hda/hdc: ${alignr}${execpi 180 sudo hddtemp /dev/sda | awk '{print $NF}'}/${execpi 180 sudo hddtemp /dev/sdb | awk '{print $NF}'}
 # ${voffset 5}${font Weather Icons:size=12}${color cc5050}  ${color}${font} ${voffset -3}GPU temp: ${alignr}${nvidia temp}°
 
 ${voffset -7}DATE ${hr 2}
@@ -119,8 +120,8 @@ ${execpi 120 sed -n '25p' ${template0}} at ${execpi 120 sed -n '20p' ${template0
 ${voffset -1}${font Weather Icons:bold:size=10}${font Ubuntu:size=9} ${execpi 120 sed -n '23p' ${template0}}${alignr}${execpi 120 sed -n '24p' ${template0}} ${font Weather Icons:bold:size=10}${font Ubuntu:size=9}
 ${goto 90}${voffset -18}${execpi 120 sed -n '31p' ${template0}}
 ${hr 1}
-# ${voffset -23}${font conkyweather:size=30}${voffset 20}${goto 10}${execpi 120 sed -n '4p' ${template0}}${goto 80}${execpi 120 sed -n '8p' ${template0}}${goto 150}${execpi 120 sed -n '12p' ${template0}}${voffset 12}${goto 6}${font Ubuntu Condensed:size=10}${execpi 120 sed -n '5p' ${template0}}°/${execpi 120 sed -n '6p' ${template0}}°${goto 78}${execpi 120 sed -n '9p' ${template0}}°/${execpi 120 sed -n '10p' ${template0}}°${goto 148}${execpi 120 sed -n '13p' ${template0}}°/${execpi 120 sed -n '14p' ${template0}}°${voffset 14}${goto 23}${execpi 120 sed -n '7p' ${template0}}${goto 95}${execpi 120 sed -n '11p' ${template0}}${goto 165}${execpi 120 sed -n '15p' ${template0}}${font}
-${voffset -23}${font conkyweather:size=30}${voffset 20}${goto 20}${execpi 120 sed -n '4p' ${template0}}${goto 90}${execpi 120 sed -n '8p' ${template0}}${goto 160}${execpi 120 sed -n '12p' ${template0}}${voffset 12}${goto 16}${font Ubuntu Condensed:size=10}${execpi 120 sed -n '5p' ${template0}}°/${execpi 120 sed -n '6p' ${template0}}°${goto 88}${execpi 120 sed -n '9p' ${template0}}°/${execpi 120 sed -n '10p' ${template0}}°${goto 158}${execpi 120 sed -n '13p' ${template0}}°/${execpi 120 sed -n '14p' ${template0}}°${voffset 14}${goto 33}${execpi 120 sed -n '7p' ${template0}}${goto 105}${execpi 120 sed -n '11p' ${template0}}${goto 175}${execpi 120 sed -n '15p' ${template0}}${font}
+${voffset -23}${font conkyweather:size=30}${voffset 20}${goto 10}${execpi 120 sed -n '4p' ${template0}}${goto 80}${execpi 120 sed -n '8p' ${template0}}${goto 150}${execpi 120 sed -n '12p' ${template0}}${voffset 12}${goto 6}${font Ubuntu Condensed:size=10}${execpi 120 sed -n '5p' ${template0}}°/${execpi 120 sed -n '6p' ${template0}}°${goto 78}${execpi 120 sed -n '9p' ${template0}}°/${execpi 120 sed -n '10p' ${template0}}°${goto 148}${execpi 120 sed -n '13p' ${template0}}°/${execpi 120 sed -n '14p' ${template0}}°${voffset 14}${goto 23}${execpi 120 sed -n '7p' ${template0}}${goto 90}${execpi 120 sed -n '11p' ${template0}}${goto 160}${execpi 120 sed -n '15p' ${template0}}${font}
+# ${voffset -23}${font conkyweather:size=30}${voffset 20}${goto 20}${execpi 120 sed -n '4p' ${template0}}${goto 90}${execpi 120 sed -n '8p' ${template0}}${goto 160}${execpi 120 sed -n '12p' ${template0}}${voffset 12}${goto 16}${font Ubuntu Condensed:size=10}${execpi 120 sed -n '5p' ${template0}}°/${execpi 120 sed -n '6p' ${template0}}°${goto 88}${execpi 120 sed -n '9p' ${template0}}°/${execpi 120 sed -n '10p' ${template0}}°${goto 158}${execpi 120 sed -n '13p' ${template0}}°/${execpi 120 sed -n '14p' ${template0}}°${voffset 14}${goto 33}${execpi 120 sed -n '7p' ${template0}}${goto 105}${execpi 120 sed -n '11p' ${template0}}${goto 175}${execpi 120 sed -n '15p' ${template0}}${font}
 ${voffset -5}
 ${color}
 ${font}
